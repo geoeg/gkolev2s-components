@@ -42,7 +42,7 @@
             {
               tag: "h1",
               id: "builder-title",
-              inner: "E-Klausur-Builder"
+              inner: "Exam-Builder"
             }
 
           ]
@@ -60,12 +60,13 @@
             },
             {
               tag: "div",
-              id: "info-forms",
+              id: "info-form",
               inner: []
             }
 
           ]
         },
+
 
         // QUIZ FORM Btns section:
         btns: {
@@ -145,12 +146,34 @@
       //   }
       // ],
 
+      // start submit exam info form instance
+      submit_info: [ "ccm.start", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js", {
+        // Ask: the best way to save config like this here? Now using local paths..
+        "entries": [ "ccm.get", "../../gkolev2s/akless-components/akless-components/submit/resources/datasets.js", "gkolev2s_infoform.data" ],
+        "data": {
+          "store": [ "ccm.store", "../../gkolev2s/akless-components/akless-components/submit/resources/datasets.js" ],
+          "key": "gkolev2s_infoform_init"
+        },
+        "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
+        // not using the json_builder.. may remove it from config
+        // "json_builder": [ "ccm.component", "https://ccmjs.github.io/akless-components/json_builder/versions/ccm.json_builder-1.2.0.js", {
+        //   "html.inner.1": "",
+        //   "directly": true
+        // } ],
+        "onfinish": {
+          "store": true,
+          "alert": "Exam info saved!"
+        }
+      }
+      ],
+
       // start submit quiz form instance
       submit_quiz: [ "ccm.start", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js", {
+        // Ask: the best way to save config like this here? Now using local paths..
         "entries": [ "ccm.get", "../../gkolev2s/akless-components/akless-components/submit/resources/datasets.js", "gkolev2s_quizform.data" ],
         "data": {
           "store": [ "ccm.store", "../../gkolev2s/akless-components/akless-components/submit/resources/datasets.js" ],
-          "key": "gkolev2s_quizform"
+          "key": "gkolev2s_quizform_init"
         },
         "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
         // not using the json_builder.. may remove it from config
@@ -213,7 +236,7 @@
       this.start = async () => {
 
         // get initial form values
-        let data = await $.dataset( this.store2 );
+        // let data = await $.dataset( this.store2 );
 
         // logging of "start" event
         // this.logger && this.logger.log( "start", $.clone( data ) );
@@ -245,7 +268,6 @@
             // add quiz form
             // create new <div> for the form
             const newForm = document.createElement("div");
-            // TODO generate unique-id
             // set id to the new <div>
             newForm.id = "test-id";
             // append the new <div> to the html structure
