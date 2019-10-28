@@ -189,11 +189,12 @@
       // Ask: Where here can I add a key? !DONT CHANGE NAME!
       store2: [ "ccm.store", { name: "data-level-2" } ],
 
-      // create db lvl-2 (using datasets.js)
+      // create db lvl-2 (IndexedDB - using datasets.js)
       // Ask: How to use store_js with key and local file
       store_js: {
         store: [ "ccm.store",  "resources/datasets.js" ],
-        // key: "test_js" // Ask: Why do I need the key here?
+        // store: [ "ccm.store", { name: "name", url: "resources/datasets.js" } ],
+        // key: "quiz_settings" // Ask: Why do I need the key here?
       },
 
       /*** css resources ***/
@@ -243,8 +244,11 @@
             // log current data saved at lvl-2
             console.log("---> data at lvl-2:");
             console.log(await this.store2.get());
+            // log current data saved at lvl-2
+            console.log("---> data at lvl-2 (.js):");
+            console.log(await this.store_js.store.get());
             // log current values of forms
-            console.log("---> current forms values:");
+            console.log("---> current forms values: (1. General exam info; 2. Quiz questions and answers)");
             console.log(submitInfoInst.getValue());
             console.log(submitFormInst.getValue());
           },
@@ -293,11 +297,11 @@
             let results = submitInfoInst.getValue();
             // save current values at datastore lvl-1
             await this.store.set(
-              { key: "info-settings", value: results}
+              { key: "info-settings", values: results}
             );
             // save current values at datastore lvl-2
             await this.store2.set(
-              { key: "info-settings", value: results}
+              { key: "info-settings", values: results}
             );
 
             // log current data saved at lvl-1
@@ -353,58 +357,6 @@
             this.element.querySelector("#test-id").appendChild(submitFormInst.root);
           },
 
-          get: async () => {
-            // log current data saved at lvl-1
-            console.log("---> data at lvl-1:");
-            console.log(await this.store.get());
-            // log current data saved at lvl-2
-            console.log("---> data at lvl-2:");
-            console.log(await this.store2.get());
-            // log current values of forms
-            console.log("---> current forms values:");
-            console.log(submitInfoInst.getValue());
-            console.log(submitFormInst.getValue());
-          },
-
-          set: async () => {
-            let results = submitFormInst.getValue();
-            // save current values at datastore lvl-1
-            await this.store.set(
-              { key: "quiz-settings", value: results}
-            );
-            // save current values at datastore lvl-2
-            await this.store2.set(
-              { key: "quiz-settings", value: results}
-            );
-
-            // log current data saved at lvl-1
-            console.log("---> data stored at lvl-1:");
-            console.log(await this.store.get());
-            // log current data saved at lvl-2
-            console.log("---> data stored at lvl-2:");
-            console.log(await this.store2.get());
-            // log current values of submit_quiz form
-            console.log("---> current form values:");
-            console.log(submitFormInst.getValue());
-
-            $.onFinish(
-              this // runs the "onfinish" section from components config
-              // console.log("some other functions"); // other func may be added here (add ,)
-            );
-          },
-
-          del: async () => {
-            // delete all store data
-            let storeCurrent = await this.store2.get();
-            for (var i = 0; i < storeCurrent.length; i++) {
-              this.store2.del(storeCurrent[i].key);
-            }
-
-            // log current values of submit_quiz form after removing the it
-            console.log("---> data deleted.");
-            console.log(await this.store2.get());
-          },
-
           remove: async () => {
             // remove quiz form
             parent = this.element.querySelector("#quiz-form");
@@ -424,11 +376,35 @@
             let results = submitFormInst.getValue();
             // save current values at datastore lvl-1
             await this.store.set(
-              { key: "quiz-settings", value: results}
+              {
+                key: "quiz-settings",
+                questions: results.questions,
+                start_button: results.start_button,
+                feedback: results.feedback,
+                navigation: results.navigation,
+                skippable: results.skippable,
+                finish_anytime: results.finish_anytime,
+                shuffle_quest_answ: results.shuffle_quest_answ
+              }
             );
             // save current values at datastore lvl-2
             await this.store2.set(
-              { key: "quiz-settings", value: results}
+              {
+                key: "quiz-settings",
+                questions: results.questions,
+                start_button: results.start_button,
+                feedback: results.feedback,
+                navigation: results.navigation,
+                skippable: results.skippable,
+                finish_anytime: results.finish_anytime,
+                shuffle_quest_answ: results.shuffle_quest_answ
+              }
+            );
+            await this.store_js.store.set(
+              {
+                key: "quiz-settings",
+                questions: results.questions
+              }
             );
 
             // log current data saved at lvl-1
@@ -437,6 +413,9 @@
             // log current data saved at lvl-2
             console.log("---> data stored at lvl-2:");
             console.log(await this.store2.get());
+            // log current data saved at lvl-2 (.js)
+            console.log("---> data stored at lvl-2:");
+            console.log(await this.store_js.store.get());
             // log current values of submit_quiz form
             console.log("---> current form values:");
             console.log(submitFormInst.getValue());
@@ -456,50 +435,88 @@
 
         /******************* Ignore: Code experiments ******************/
 
-        /******************** 1 *********************/
-        /*** Functions ***/
-        /**
-         * Shuffles array in place. ES6 version
-         * @param {Array} arr items An array containing the items.
-         * Quelle: https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
-         */
-        function shuffle(arr) {
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
+        // generate unique id for added exercise
+        // Quelle: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+        let createId = () => {
+          return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+          );
         };
 
-        // get data from store2 (lvl-2)
-        // let quizFormData = await this.store2.get("quiz-settings");
-        // clone all answers of question 1 (position[0])
-        // let answersCopy = $.clone(quizFormData.value.questions[0].answers);
-        // console.log("--> cloned answers:");
-        // console.log(answersCopy);
-        // shuffle the answers and set to new array
-        // let answersRandomized = await shuffle(answersCopy);
-        // console.log("---> randomized answers:");
-        // console.log(answersRandomized);
+        // Experiment: Create generator:
+        console.log("-----------------------------------------------");
 
-        // TODO: Set unique-id when shuffling the array!
-        // TODO: Shuffle questions and answers!
-        // TODO: Generate more than one set of randomized data!
+        // get data from store2 (lvl-2)
+        let quizOrigin = await this.store2.get("quiz-settings");
+        // let shuffleOption = quizOrigin.shuffle_quest_answ;
+        let shuffleOption = true;
+
+        // clone all quiz data
+        let dataCopy = $.clone(quizOrigin);
+        console.log("---> cloned data:");
+        console.log(dataCopy);
+
+        // get just the questions
+        let questOrigin = dataCopy.questions;
+        console.log(questOrigin[0].answers);
+
+        // Create a matrix out of array
+        // Quelle: https://stackoverflow.com/questions/4492385/how-to-convert-simple-array-into-two-dimensional-array-matrix-with-javascript
+        const toMatrix = (arr, width) =>
+          arr.reduce((rows, key, index) => (index % width == 0 ?
+            rows.push([key]) : rows[rows.length-1].push(key)) && rows, []);
+
+        let questMatrix = toMatrix(questOrigin, questOrigin.length);
+        console.log("---> created matrix:");
+        console.log(questMatrix);
+
+        /**
+         * Copy values, shuffle those and add as new row in the matrix.
+         * @param {array} arrOrigin array with original values (e.g. original questions)
+         * @param {array} arrMatrix multidimensional array with the original values (arrMatrix[0][i]), where 'i' is the question number and new created versions of original values (arrMatrix[x][y]), where 'x' is the version number and 'y' is the question's current position in array
+         * @param {integer} amount copies of original values to be done
+         * @return {void}
+         */
+        const createVersion = (arrOrigin, arrMatrix, amount) => {
+          for (let i = 0; i < amount; i++) {
+            let arrCopy = $.clone(arrOrigin);
+            if (shuffleOption) {
+              arrCopy = $.shuffleArray(arrCopy);
+            }
+            arrMatrix.push(arrCopy);
+          }
+        };
+
+        await createVersion(questOrigin, questMatrix, 3);
+        console.log("---> result after pushing the new array to the matrix:");
+        console.log(questMatrix);
+
+        /**
+         * Comparing one of the versions of the original with the original to get exact
+         * @param {array} arrOrigin array with original values
+         * @param {array} arrVersion array to be compared with original
+         * @param
+         * @return
+         */
+        // let compareToOriginal = (parent, child, childVersion) => {
+        //
+        //    parent[0][i]
+        //
+        //
+        // };
+
+        console.log("----------------------------------------------");
+
+        //
+        // TODO: Shuffle questions! --- done.
+        // TODO: Shuffle answers! ---
+        // TODO: Set unique-id when shuffling the array! --- no needed? TODO: Compare function
 
         // Ask: How to edit "submit" function of submit component? So that I can add the code from above somehow?
         // Ask: How to generate "appid" from the given data? Insert my exam_builder.js into App_builder?
         // Ask: How to start app_builder and import properly my component?
         /*******************************************/
 
-        /******************* 2 *********************/
-        // let number = 3;
-        // await this.store_js.store.set(
-        //   { key: "somekey", value: "somevalue" }
-        // );
-        // console.log(await this.store_js.store.get());
-        // console.log(await this.store_js.store.get("inner_dataset"));
-        // console.log(await this.store_js.store.get("test_js"));
-        /*******************************************/
       };
 
     }

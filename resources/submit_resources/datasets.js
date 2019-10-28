@@ -19,43 +19,132 @@ ccm.files[ 'datasets.js' ] = {
         "description": "test description 1",
         "answers": [
           {
-            "text": "test answer 1",
+            "text": "test answer 1.1",
             "correct": true,
-            "comment": "test comment 1",
+            "comment": "test comment 1.1",
           },
           {
-            "text": "test answer 2",
+            "text": "test answer 1.2",
             "correct": false,
-            "comment": "test comment 2",
+            "comment": "test comment 1.2",
           },
           {
-            "text": "test answer 3",
+            "text": "test answer 1.3",
             "correct": true,
             "comment": "",
           },
           {
-            "text": "test answer 4",
+            "text": "test answer 1.4",
             "correct": false,
             "comment": "",
           }
         ]
       },
+      {
+        "text": "test question 2",
+        "description": "test description 2",
+        "answers": [
+          {
+            "text": "test answer 2.1",
+            "correct": true,
+            "comment": "test comment 2.1",
+          },
+          {
+            "text": "test answer 2.2",
+            "correct": false,
+            "comment": "test comment 2.2",
+          },
+          {
+            "text": "test answer 2.3",
+            "correct": true,
+            "comment": "",
+          },
+          {
+            "text": "test answer 2.4",
+            "correct": false,
+            "comment": "",
+          }
+        ]
+      },
+      {
+        "text": "test question 3",
+        "description": "test description 3",
+        "answers": [
+          {
+            "text": "test answer 3.1",
+            "correct": true,
+            "comment": "test comment 3.1",
+          },
+          {
+            "text": "test answer 3.2",
+            "correct": false,
+            "comment": "test comment 3.2",
+          },
+          {
+            "text": "test answer 3.3",
+            "correct": true,
+            "comment": "",
+          },
+          {
+            "text": "test answer 3.4",
+            "correct": false,
+            "comment": "",
+          }
+        ]
+      },
+      {
+        "text": "test question 4",
+        "description": "test description 4",
+        "answers": [
+          {
+            "text": "test answer 4.1",
+            "correct": true,
+            "comment": "test comment 4.1",
+          },
+          {
+            "text": "test answer 4.2",
+            "correct": false,
+            "comment": "test comment 4.2",
+          },
+          {
+            "text": "test answer 4.3",
+            "correct": true,
+            "comment": "",
+          },
+          {
+            "text": "test answer 4.4",
+            "correct": false,
+            "comment": "",
+          }
+        ]
+      },
+      {
+        "text": "test question 5",
+        "description": "test description 5",
+        "answers": [
+          {
+            "text": "test answer 5.1",
+            "correct": true,
+            "comment": "test comment 5.1",
+          },
+          {
+            "text": "test answer 5.2",
+            "correct": false,
+            "comment": "test comment 5.2",
+          },
+          {
+            "text": "test answer 5.3",
+            "correct": true,
+            "comment": "",
+          },
+          {
+            "text": "test answer 5.4",
+            "correct": false,
+            "comment": "",
+          }
+        ]
+      }
 
-      // {
-      //   "q-text": "question-2 text",
-      //   "q-description": "question-2 description",
-      //   "q-answers": [
-      //     {
-      //       "a-text": "answer-1",
-      //       "a-description": "answer-1 description",
-      //       "a-correct": false
-      //     },{
-      //       "a-text": "answer-2",
-      //       "a-description": "answer-2 description",
-      //       "a-correct": true
-      //     }
-      //   ]
-      // }
     ],
 
   },
@@ -65,13 +154,13 @@ ccm.files[ 'datasets.js' ] = {
     "key": "gkolev2s_quizform",
     "data": [
 
-            "<legend>Questions and Answers (for Quiz)</legend>",
+            "<legend>Questions and Answers (Quiz)</legend>",
 
             {
-              "label": "questions",
+              // "label": "questions",
               "name": "questions",
               "type": "several",
-              "info": "Fill up the form with quiz questions and answers.",
+              // "info": "Fill up the form with quiz questions and answers.",
               "items": [
                 {
                   "label": "question text",
@@ -113,6 +202,49 @@ ccm.files[ 'datasets.js' ] = {
                 }
               ]
             },
+
+            "<legend>Advanced Settings (Quiz)</legend>",
+
+              {
+                "label": "Start button",
+                "name": "start_button",
+                "type": "checkbox",
+                "info": "helper.."
+              },
+              {
+                "label": "Feedback",
+                "name": "feedback",
+                "type": "checkbox",
+                "info": "helper.."
+              },
+              {
+                "label": "Navigation",
+                "name": "navigation",
+                "type": "checkbox",
+                "info": "helper.."
+              },
+              {
+                "label": "Skippable",
+                "name": "skippable",
+                "type": "checkbox",
+                "info": "helper.."
+              },
+              {
+                "label": "Finish anytime",
+                "name": "finish_anytime",
+                "type": "checkbox",
+                "info": "helper.."
+              },
+              {
+                "label": "Shuffle questions and answers",
+                "name": "shuffle_quest_answ",
+                "type": "checkbox",
+                "info": "helper.."
+              }
+              // {
+              // Time Limit? Labels for Previous/Submit/Next/Finish buttons?
+              // }
+
 
     ]
   },

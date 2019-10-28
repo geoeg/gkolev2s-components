@@ -9,10 +9,56 @@ ccm.files[ 'datasets.js' ] = {
     // this has to be the output config of exam builder
     // and at the same time the input config for a exam reader (for now just quiz)
 
-    "inner_dataset": {
-      "key": "inner_ds",
-      "value": "some inner ds"
+
+
+    /*** example from quiz/configs.js ***/
+
+    "demo": {
+      "key": "demo",
+      "css": [ "ccm.load", "https://ccmjs.github.io/akless-components/quiz/resources/weblysleek.css", { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/weblysleekui/font.css" } ], // !!!
+
+      "questions": [
+        {
+          "text": "How many of these answers are correct?",
+          "description": "Select the correct answer from the following answers.",
+          "answers": [
+            {
+              "text": "one",
+              "correct": true,
+              "comment": "Because you can't choose more than one answer."
+            },
+            { "text": "two" },
+            { "text": "three" }
+          ],
+          "input": "radio"
+        },
+        {
+          "text": "How many answers can be correct here?",
+          "description": "Pay attention to the input field type.",
+          "answers": [
+            {
+              "text": "absolutely none",
+              "correct": true
+            },
+            {
+              "text": "maximum of one",
+              "comment": "Because you can choose more than one answer."
+            },
+            {
+              "text": "more than one",
+              "correct": true
+            }
+          ]
+        }
+      ],
+
+      "feedback": true, // !!!
+      "navigation": true, // !!!
+      "placeholder.finish": "Restart", // !!!
+      "onfinish": { "log": true, "restart": true } // !!!
     }
+
+
 
     /*** datasets for klausur_reader (Quelle: MKaul/klausur_reader/resources) ***/
     // Info: check Ask and TODO from exam_builder
@@ -46,51 +92,5 @@ ccm.files[ 'datasets.js' ] = {
     //     }
     //   ]
     // }
-
-    /*** example from quiz/configs.js ***/
-
-    // "demo": {
-    //   "key": "demo",
-    //   "css": [ "ccm.load", "https://ccmjs.github.io/akless-components/quiz/resources/weblysleek.css", { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/weblysleekui/font.css" } ],
-    //   "questions": [
-    //     {
-    //       "text": "How many of these answers are correct?",
-    //       "description": "Select the correct answer from the following answers.",
-    //       "answers": [
-    //         {
-    //           "text": "one",
-    //           "correct": true,
-    //           "comment": "Because you can't choose more than one answer."
-    //         },
-    //         { "text": "two" },
-    //         { "text": "three" }
-    //       ],
-    //       "input": "radio"
-    //     },
-    //     {
-    //       "text": "How many answers can be correct here?",
-    //       "description": "Pay attention to the input field type.",
-    //       "answers": [
-    //         {
-    //           "text": "absolutely none",
-    //           "correct": true
-    //         },
-    //         {
-    //           "text": "maximum of one",
-    //           "comment": "Because you can choose more than one answer."
-    //         },
-    //         {
-    //           "text": "more than one",
-    //           "correct": true
-    //         }
-    //       ]
-    //     }
-    //   ],
-    //   "feedback": true,
-    //   "navigation": true,
-    //   "placeholder.finish": "Restart",
-    //   "onfinish": { "log": true, "restart": true }
-    // },
-
 
 };
