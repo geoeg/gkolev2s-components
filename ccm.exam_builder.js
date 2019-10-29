@@ -480,14 +480,21 @@
         const createVersion = (arrOrigin, arrMatrix, amount) => {
           for (let i = 0; i < amount; i++) {
             let arrCopy = $.clone(arrOrigin);
+
             if (shuffleOption) {
+              // shuffle questions
               arrCopy = $.shuffleArray(arrCopy);
-            }
+              // shuffle answers of each question
+              for (var j = 0; j < arrCopy.length; j++) {
+                arrCopy[j].answers = $.shuffleArray(arrCopy[j].answers);
+              }
+            };
+            // add new array with shuffled Q&A to the matrix
             arrMatrix.push(arrCopy);
           }
         };
 
-        await createVersion(questOrigin, questMatrix, 3);
+        await createVersion(questOrigin, questMatrix, 10);
         console.log("---> result after pushing the new array to the matrix:");
         console.log(questMatrix);
 
@@ -509,8 +516,9 @@
 
         //
         // TODO: Shuffle questions! --- done.
-        // TODO: Shuffle answers! ---
-        // TODO: Set unique-id when shuffling the array! --- no needed? TODO: Compare function
+        // TODO: Shuffle answers! --- done.
+        // TODO: Set unique-id when shuffling the array! --- no needed? instead of that:
+        // TODO: Compare function!
 
         // Ask: How to edit "submit" function of submit component? So that I can add the code from above somehow?
         // Ask: How to generate "appid" from the given data? Insert my exam_builder.js into App_builder?
