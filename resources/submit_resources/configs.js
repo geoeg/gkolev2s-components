@@ -7,6 +7,24 @@
 
 ccm.files[ 'configs.js' ] = {
 
+  "gkolev2s": {
+    "key": "gkolev2s",
+    "entries": [ "ccm.get", "../submit/resources/datasets.js", "gkolev2s.data" ],
+    "data": {
+      "store": [ "ccm.store", "../submit/resources/datasets.js" ],
+      "key": "gkolev2s_init"
+    },
+    "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
+    "json_builder": [ "ccm.component", "https://ccmjs.github.io/akless-components/json_builder/versions/ccm.json_builder-1.2.0.js", {
+      "html.inner.1": "",
+      "directly": true
+    } ],
+    "onfinish": {
+      // "store": true,
+      "alert": "All forms saved!"
+    }
+  },
+
   "gkolev2s_demo": {
     "key": "gkolev2s_demo",
    // "inner": [ "ccm.load", { "url": "../submit/resources/demo.html", "type": "data" } ],

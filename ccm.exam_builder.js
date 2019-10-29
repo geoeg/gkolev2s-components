@@ -204,6 +204,7 @@
         "resources/default.css"
       ],
 
+
     },
 
     Instance: function () {
@@ -236,7 +237,8 @@
 
         // section topbar logo, title
         const topbar = $.html( this.html.topbar, {
-
+          // additional funtions to help working with data
+          // will be deleted at the end
           get: async () => {
             // log current data saved at lvl-1
             console.log("---> data at lvl-1:");
@@ -267,6 +269,42 @@
 
         });
 
+        /******************************* changes ********************************/
+        // Submit Config: 'Exam-Builder as one form'
+        const submitConfig = {
+          "entries": [ "ccm.get", "resources/submit_resources/datasets.js", "gkolev2s.data" ],
+          "data": {
+            "store": [ "ccm.store", "resources/submit_resources/datasets.js" ],
+            "key": "gkolev2s_init"
+          },
+          "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
+          "onfinish": {
+            "alert": "Data saved!",
+            // "store": true,
+            // TODO fix store
+            // "store": [ "ccm.store", { name: "data-level-2" } ],
+            // TODO fix it!
+            // "store": async () => {
+            //   let results = submitInstance.getValue();
+            //   await this.store2.set(
+            //     {
+            //       key: "settings",
+            //       subject: results.subject,
+            //       date: results.date,
+            //       time: results.time,
+            //       info: results.textarea,
+            //       // TODO think about how to deal with the quiz[i] here!
+            //       questions: results.quiz[0].questions
+            //     }
+            //   );
+            // }
+        }
+      };
+        // create, start and append submit instance for 'Info Form' to html structure
+        const submitInstance = await this.submit.instance(submitConfig);
+        const submitResult = await submitInstance.start();
+        /*************************************************************************/
+
         // Submit Config: 'Info Form'
         const submitInfoConfig = {
           // old way of loading
@@ -280,7 +318,7 @@
           },
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
           "onfinish": {
-            "store": true,
+            // "store": true,
             "alert": "Exam info saved!"
           }
         };
@@ -373,39 +411,44 @@
         const forms = $.html( this.html.forms, {
 
           set: async () => {
-            let results = submitFormInst.getValue();
+          /******************************* changes *********************************/
+            // let results = submitFormInst.getValue(); // this goes with the commented func loc:418
+            let results = submitInstance.getValue();
+            console.log(results);
+
             // save current values at datastore lvl-1
-            await this.store.set(
-              {
-                key: "quiz-settings",
-                questions: results.questions,
-                start_button: results.start_button,
-                feedback: results.feedback,
-                navigation: results.navigation,
-                skippable: results.skippable,
-                finish_anytime: results.finish_anytime,
-                shuffle_quest_answ: results.shuffle_quest_answ
-              }
-            );
-            // save current values at datastore lvl-2
             await this.store2.set(
               {
-                key: "quiz-settings",
-                questions: results.questions,
-                start_button: results.start_button,
-                feedback: results.feedback,
-                navigation: results.navigation,
-                skippable: results.skippable,
-                finish_anytime: results.finish_anytime,
-                shuffle_quest_answ: results.shuffle_quest_answ
+                key: "settings",
+                subject: results.subject,
+                date: results.date,
+                time: results.time,
+                info: results.textarea,
+                // TODO think about how to deal with the quiz[i] here!
+                questions: results.quiz[0].questions
               }
             );
-            await this.store_js.store.set(
-              {
-                key: "quiz-settings",
-                questions: results.questions
-              }
-            );
+            /******************************* changes *********************************/
+
+            // save current values at datastore lvl-2
+            // await this.store2.set(
+            //   {
+            //     key: "quiz-settings",
+            //     questions: results.questions,
+            //     start_button: results.start_button,
+            //     feedback: results.feedback,
+            //     navigation: results.navigation,
+            //     skippable: results.skippable,
+            //     finish_anytime: results.finish_anytime,
+            //     shuffle_quest_answ: results.shuffle_quest_answ
+            //   }
+            // );
+            // await this.store_js.store.set(
+            //   {
+            //     key: "quiz-settings",
+            //     questions: results.questions
+            //   }
+            // );
 
             // log current data saved at lvl-1
             console.log("---> data stored at lvl-1:");
@@ -414,7 +457,7 @@
             console.log("---> data stored at lvl-2:");
             console.log(await this.store2.get());
             // log current data saved at lvl-2 (.js)
-            console.log("---> data stored at lvl-2:");
+            console.log("---> data stored at lvl-2 (.js):");
             console.log(await this.store_js.store.get());
             // log current values of submit_quiz form
             console.log("---> current form values:");
@@ -431,9 +474,13 @@
         // render the sections to the given in config html structure
         $.setContent( this.element, [ topbar, info, btns, forms ] );
         // append 'info-form' to the html structure
-        this.element.querySelector("#info-form").appendChild(submitInfoInst.root);
 
-        /******************* Ignore: Code experiments ******************/
+        /******************************* changes *********************************/
+        // this.element.querySelector("#info-form").appendChild(submitInfoInst.root);
+        this.element.querySelector("#info-form").appendChild(submitInstance.root);
+        /********************************************************************************/
+
+        /******************* Ignore: *******************/
 
         // generate unique id for added exercise
         // Quelle: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
@@ -443,11 +490,20 @@
           );
         };
 
-        // Experiment: Create generator:
+        /*** Experiment: Create generator: ***/
+
+        // TODO: Shuffle questions! --- done.
+        // TODO: Shuffle answers! --- done.
+        // TODO: Set unique-id when shuffling the array! --- no needed? instead of that:
+        // TODO: Compare (quest-text/description?) function! Create a way to compare a copy to the original!
+
         console.log("-----------------------------------------------");
 
         // get data from store2 (lvl-2)
-        let quizOrigin = await this.store2.get("quiz-settings");
+        /******************************* changes *********************************/
+        // let quizOrigin = await this.store2.get("quiz-settings");
+        let quizOrigin = await this.store2.get("settings");
+        /*************************************************************************/
         // let shuffleOption = quizOrigin.shuffle_quest_answ;
         let shuffleOption = true;
 
@@ -513,16 +569,6 @@
         // };
 
         console.log("----------------------------------------------");
-
-        //
-        // TODO: Shuffle questions! --- done.
-        // TODO: Shuffle answers! --- done.
-        // TODO: Set unique-id when shuffling the array! --- no needed? instead of that:
-        // TODO: Compare function!
-
-        // Ask: How to edit "submit" function of submit component? So that I can add the code from above somehow?
-        // Ask: How to generate "appid" from the given data? Insert my exam_builder.js into App_builder?
-        // Ask: How to start app_builder and import properly my component?
         /*******************************************/
 
       };
