@@ -100,15 +100,9 @@
       // add submit component
       submit: [ "ccm.component", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js" ],
 
-      // Ask: Do I really need the logger?
+      // add logger instance
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
       [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
-
-      // on finish actions (called with $.onFinish())
-      onfinish: {
-        alert: "Form data saved successfully on datastore lvl-2!",
-
-      },
 
       /*** ccm-Datastores ***/
 
@@ -116,14 +110,12 @@
       store: [ "ccm.store" ],
 
       // create db lvl-2 (IndexedDB)
-      // Ask: Where here can I add a key? !DONT CHANGE NAME!
       store2: [ "ccm.store", { name: "data-level-2" } ],
 
       // create db lvl-2 (IndexedDB - using datasets.js)
       store_js: {
         store: [ "ccm.store",  "resources/datasets.js" ],
-        // store: [ "ccm.store", { name: "name", url: "resources/datasets.js" } ],
-        // key: "quiz_settings" // Ask: Why do I need the key here?
+        // add key?
       },
 
       /*** css resources ***/
@@ -160,9 +152,9 @@
         // let data = await $.dataset( this.store2 );
 
         // logging of "start" event
+        this.logger.log( "start" );
         // this.logger && this.logger.log( "start", $.clone( data ) );
-        // Ask: Why not using directly logger.log()?
-        // this.logger.log( "start" );
+        // Ask: Why not using just logger.log()?
 
         // section topbar logo, title
         const topbar = $.html( this.html.topbar, {
@@ -202,20 +194,24 @@
           },
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
           "onfinish": {
-            "alert": "Data saved successfully!",
+            "alert": "Data saved successfully! Check console for Exam ID.",
             "log": true,
             "store": {
               settings: {
                 name: "data-level-2"
               },
             },
+            callback: async () => {
+             console.log( await getCurrentExamKey() );
+            }
             // TODO add exam generator
             // "render": {
             //   component: "component_url", // exam generator component
             //   config: {...} // config of exam generator component
             // }
-        }
-      };
+          }
+        };
+
         // create, start and append submit instance for 'Info Form' to html structure
         const submitInstance = await this.submit.instance(submitConfig);
         const submitResult = await submitInstance.start();
@@ -228,96 +224,93 @@
         // append 'info-form' to the html structure
         this.element.querySelector("#info-form").appendChild(submitInstance.root);
 
-        /********************************************************************************/
-
-        // generate unique id for added exercise
-        // Quelle: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
-        let createId = () => {
-          return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-          );
+        // get key of last saved exam
+        let getCurrentExamKey = async () => {
+          let results = await this.store2.get();
+          return results[results.length - 1].key[0];
         };
 
-        console.log("-------------------------------------------------");
-        console.log("------------- Exam config generator -------------");
-        console.log("-------------------------------------------------");
-        // TODO: Shuffle questions! --- done.
-        // TODO: Shuffle answers! --- done.
-        // TODO: Set unique-id when shuffling the array! --- no needed? instead of that:
-        // TODO: Compare (quest-text/description?) function! Create a way to compare a copy to the original!
-
-        // get data from store2 (lvl-2)
-        // TODO: add field, where the user can add the key and add it here as argument
-        let quizOrigin = await this.store2.get(["1572443683359X5908329239166108"]);
-        console.log("---> original data:");
-        console.log(quizOrigin);
-
-        // let shuffleOption = quizOrigin.shuffle_quest_answ;
-        let shuffleOption = true;
-
-        // clone all quiz data
-        let dataCopy = $.clone(quizOrigin);
-        console.log("---> cloned data:");
-        console.log(dataCopy);
-
-        // get just the questions
-        let questOrigin = dataCopy.quiz[0].questions;
-        console.log("---> questOrigin:");
-        console.log(questOrigin);
-
-        // Create a matrix out of array
-        // Quelle: https://stackoverflow.com/questions/4492385/how-to-convert-simple-array-into-two-dimensional-array-matrix-with-javascript
-        const toMatrix = (arr, width) =>
-          arr.reduce((rows, key, index) => (index % width == 0 ?
-            rows.push([key]) : rows[rows.length-1].push(key)) && rows, []);
-
-        let questMatrix = toMatrix(questOrigin, questOrigin.length);
-        console.log("---> created matrix:");
-        console.log(questMatrix);
-
-        /**
-         * Copy values, shuffle those and add as new row in the matrix.
-         * @param {array} arrOrigin array with original values (e.g. original questions)
-         * @param {array} arrMatrix multidimensional array with the original values (arrMatrix[0][i]), where 'i' is the question number and new created versions of original values (arrMatrix[x][y]), where 'x' is the version number and 'y' is the question's current position in array
-         * @param {integer} amount copies of original values to be done
-         * @return {void}
-         */
-        const createVersion = (arrOrigin, arrMatrix, amount) => {
-          for (let i = 0; i < amount; i++) {
-            let arrCopy = $.clone(arrOrigin);
-
-            if (shuffleOption) {
-              // shuffle questions
-              arrCopy = $.shuffleArray(arrCopy);
-              // shuffle answers of each question
-              for (var j = 0; j < arrCopy.length; j++) {
-                arrCopy[j].answers = $.shuffleArray(arrCopy[j].answers);
-              }
-            };
-            // add new array with shuffled Q&A to the matrix
-            arrMatrix.push(arrCopy);
-          }
-        };
-
-        await createVersion(questOrigin, questMatrix, 10);
-        console.log("---> result after pushing the new array to the matrix:");
-        console.log(questMatrix);
-
-        /**
-         * Comparing one of the versions of the original with the original to get exact
-         * @param {array} arrOrigin array with original values
-         * @param {array} arrVersion array to be compared with original
-         * @param
-         * @return
-         */
-        // let compareToOriginal = (parent, child, childVersion) => {
+        // console.log("-------------------------------------------------");
+        // console.log("------------- Exam config generator -------------");
+        // console.log("------------- Moved as extra component ----------");
+        // console.log("-------------------------------------------------");
+        // // TODO: Shuffle questions! --- done.
+        // // TODO: Shuffle answers! --- done.
+        // // TODO: Set unique-id when shuffling the array! --- no needed? instead of that:
+        // // TODO: Compare (quest-text/description?) function! Create a way to compare a copy to the original!
         //
-        //    parent[0][i]
+        // // get data from store2 (lvl-2)
+        // // TODO: add field, where the user can add the key and add it here as argument
+        // let quizOrigin = await this.store2.get(["1572443683359X5908329239166108"]);
+        // console.log("---> original data:");
+        // console.log(quizOrigin);
         //
+        // // let shuffleOption = quizOrigin.shuffle_quest_answ;
+        // let shuffleOption = true;
         //
+        // // clone all quiz data
+        // let dataCopy = $.clone(quizOrigin);
+        // console.log("---> cloned data:");
+        // console.log(dataCopy);
+        //
+        // // get just the questions
+        // let questOrigin = dataCopy.quiz[0].questions;
+        // console.log("---> questOrigin:");
+        // console.log(questOrigin);
+        //
+        // // Create a matrix out of array
+        // // Quelle: https://stackoverflow.com/questions/4492385/how-to-convert-simple-array-into-two-dimensional-array-matrix-with-javascript
+        // const toMatrix = (arr, width) =>
+        //   arr.reduce((rows, key, index) => (index % width == 0 ?
+        //     rows.push([key]) : rows[rows.length-1].push(key)) && rows, []);
+        //
+        // let questMatrix = toMatrix(questOrigin, questOrigin.length);
+        // console.log("---> created matrix:");
+        // console.log(questMatrix);
+        //
+        // /**
+        //  * Copy values, shuffle those and add as new row in the matrix.
+        //  * @param {array} arrOrigin array with original values (e.g. original questions)
+        //  * @param {array} arrMatrix multidimensional array with the original values (arrMatrix[0][i]), where 'i' is the question number and new created versions of original values (arrMatrix[x][y]), where 'x' is the version number and 'y' is the question's current position in array
+        //  * @param {integer} amount copies of original values to be done
+        //  * @return {void}
+        //  */
+        // const createVersion = (arrOrigin, arrMatrix, amount) => {
+        //   for (let i = 0; i < amount; i++) {
+        //     let arrCopy = $.clone(arrOrigin);
+        //
+        //     if (shuffleOption) {
+        //       // shuffle questions
+        //       arrCopy = $.shuffleArray(arrCopy);
+        //       // shuffle answers of each question
+        //       for (var j = 0; j < arrCopy.length; j++) {
+        //         arrCopy[j].answers = $.shuffleArray(arrCopy[j].answers);
+        //       }
+        //     };
+        //     // add new array with shuffled Q&A to the matrix
+        //     arrMatrix.push(arrCopy);
+        //   }
         // };
-
-        console.log("----------------------------------------------");
+        //
+        // await createVersion(questOrigin, questMatrix, 10);
+        // console.log("---> result after pushing the new array to the matrix:");
+        // console.log(questMatrix);
+        //
+        // /**
+        //  * Comparing one of the versions of the original with the original to get exact
+        //  * @param {array} arrOrigin array with original values
+        //  * @param {array} arrVersion array to be compared with original
+        //  * @param
+        //  * @return
+        //  */
+        // // let compareToOriginal = (parent, child, childVersion) => {
+        // //
+        // //    parent[0][i]
+        // //
+        // //
+        // // };
+        //
+        // console.log("-------------------------------------------------");
       };
 
     }
