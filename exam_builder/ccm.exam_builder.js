@@ -202,7 +202,7 @@
               },
             },
             callback: async () => {
-             console.log( await getCurrentExamKey() );
+             await getCurrentExamKey()
             }
             // TODO add exam generator
             // "render": {
@@ -227,7 +227,9 @@
         // get key of last saved exam
         let getCurrentExamKey = async () => {
           let results = await this.store2.get();
-          return results[results.length - 1].key[0];
+          let key = results[results.length - 1].key[0];
+
+          $.onFinish(this, window.alert("Here is your exam id: " + key));
         };
 
         // console.log("-------------------------------------------------");
