@@ -168,7 +168,9 @@
             rows.push([key]) : rows[rows.length-1].push(key)) && rows, []);
 
           // create matrix with [0][i] original questions
-          let questMatrix = toMatrix(questOrigin, questOrigin.length);
+          let questMatrix = toMatrix(quizOrigin, questOrigin.length);
+          console.log("--------------");
+          console.log(questMatrix);
 
           /**
           * Copy values, shuffle those and add as new row in the matrix.

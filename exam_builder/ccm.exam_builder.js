@@ -113,16 +113,16 @@
       store2: [ "ccm.store", { name: "data-level-2" } ],
 
       // create db lvl-2 (IndexedDB - using datasets.js)
-      store_js: {
-        store: [ "ccm.store",  "resources/datasets.js" ],
-        // add key?
-      },
+      // store_js: {
+      //   store: [ "ccm.store",  "resources/datasets.js" ],
+      //   // add key?
+      // },
 
       /*** css resources ***/
       css: ["ccm.load",
       "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
       { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-        "resources/default.css"
+        // "resources/default.css"
       ],
 
 

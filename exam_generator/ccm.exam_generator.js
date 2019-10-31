@@ -18,6 +18,7 @@
       /*** html-Structure ***/
       html: {
 
+        // TODO no need if loading the generator after submitting the data in exam_builder (there is already a topbar)
         // TOPBAR section:
         topbar: {
 
@@ -42,6 +43,28 @@
             // TODO: add user login?
             {
               tag: "hr"
+            },
+            // additional buttons for easy work with saved data
+            // TODO: delete at the end
+            {
+              tag: "div",
+              id: "data-btns",
+              inner: [
+                {
+                  tag: "button",
+                  class: "btn btn-primary",
+                  inner: "get current saved data",
+                  title: "get current data on lvl-1 & 2 in console",
+                  onclick: "%get%"
+                },
+                {
+                  tag: "button",
+                  class: "btn btn-primary",
+                  inner: "delete all saved data!",
+                  title: "delete all saved data on lvl-1 & 2 (check console)",
+                  onclick: "%del%"
+                }
+              ]
             }
 
           ]
@@ -74,8 +97,9 @@
       [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
 
       /*** ccm-Datastores ***/
+
       // create db lvl-1 (lost after reload)
-      // store: [ "ccm.store" ],
+      store: [ "ccm.store" ],
 
       // db lvl-2 (IndexedDB)
       store2: [ "ccm.store", { name: "data-level-2" } ],
@@ -111,7 +135,28 @@
         this.logger.log( "start" );
 
         // section topbar logo, title
-        const topbar = $.html( this.html.topbar, {});
+        const topbar = $.html( this.html.topbar, {
+          // additional funtions to help working with data
+          // will be deleted at the end
+          get: async () => {
+            // log current data saved at store2
+            console.log("---> data at lvl-1:");
+            console.log(await this.store.get());
+            console.log("---> data at lvl-2:");
+            console.log(await this.store2.get());
+          },
+
+          del: async () => {
+            // delete all data on store2
+            let storeCurrent = await this.store2.get();
+            for (var i = 0; i < storeCurrent.length; i++) {
+              this.store2.del(storeCurrent[i].key);
+            };
+            // log current values from store 2 after deleting all
+            console.log("---> saved data deleted.");
+            console.log(await this.store2.get());
+          }
+        });
 
         // Submit Config: 'Exam-Generator form'
         // TODO: update submit form
@@ -155,6 +200,7 @@
 
           // get data from store2 (lvl-2)
           let quizOrigin = await this.store2.get([examId]);
+
           // get the original questions
           let questOrigin = quizOrigin.quiz[0].questions;
 
@@ -195,6 +241,21 @@
 
           console.log("---> result after pushing the new array to the matrix:");
           console.log(questMatrix);
+          console.log("-------------------------------------------------");
+
+          // Experimenting..
+          let configsArr = [];
+          configsArr.push(quizOrigin);
+
+          for (let i = 1; i < questMatrix.length; i++) {
+            let quizOriginCopy = $.clone(quizOrigin);
+            quizOriginCopy.quiz[0] = questMatrix[i];
+            quizOriginCopy.key[0] = $.generateKey();
+            configsArr.push(quizOriginCopy);
+          };
+
+          console.log("---> configs: ([0] - Original, [0 + i] - Shuffled copies)");
+          console.log(configsArr);
           console.log("-------------------------------------------------");
         };
 
