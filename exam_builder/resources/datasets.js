@@ -1,6 +1,7 @@
 /**
- * @overview
- * @author
+ * @overview  datasets of ccm component for building exams
+ * @author André Kless <andre.kless@web.de> 2017-2018
+ * @editor Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  */
 

@@ -1,6 +1,7 @@
 /**
  * @overview ccm component for building exams
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
+ * @version 1.0.0
  * @license The MIT License (MIT)
  *
  */
@@ -13,6 +14,8 @@
 
     /*** component's name ***/
     name: 'exam_builder',
+
+    version: [1, 0, 0],
 
     /*** used ccm-framework ***/
     ccm: 'https://ccmjs.github.io/ccm/ccm.js',

@@ -7,8 +7,6 @@
 
 ccm.files[ 'datasets.js' ] = {
 
-  /**********************************/
-
   // initial values for gkolev2s_generator
   "gkolev2s_generator_init": {
     "key": "gkolev2s_generator_init",
@@ -25,7 +23,7 @@ ccm.files[ 'datasets.js' ] = {
 
     "data": [
 
-      "<legend>Add  Exam</legend>",
+      "<legend>Add Exam</legend>",
 
       {
         "label": "Exam ID",
@@ -52,7 +50,5 @@ ccm.files[ 'datasets.js' ] = {
 
     ]
   }
-
-  /**********************************/
 
 };

@@ -1,6 +1,7 @@
 /**
  * @overview ccm component for generating exams
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
+ * @version 1.0.0
  * @license The MIT License (MIT)
  *
  */
@@ -10,6 +11,8 @@
   const component = {
 
     name: 'exam_generator',
+
+    version: [1, 0, 0],
 
     ccm: 'https://ccmjs.github.io/ccm/ccm.js',
 

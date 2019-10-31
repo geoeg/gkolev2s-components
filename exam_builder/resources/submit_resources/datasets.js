@@ -7,313 +7,6 @@
 
 ccm.files[ 'datasets.js' ] = {
 
-  /**********************************/
-
-  // initial values for input elements of gkolev2s_quizform
-  "gkolev2s_quizform_init": {
-    "key": "gkolev2s_quizform_init",
-
-    "questions": [
-      /*** initial values for quiz form: ***/
-      {
-        "text": "test question 1",
-        "description": "test description 1",
-        "answers": [
-          {
-            "text": "test answer 1.1",
-            "correct": true,
-            "comment": "test comment 1.1",
-          },
-          {
-            "text": "test answer 1.2",
-            "correct": false,
-            "comment": "test comment 1.2",
-          },
-          {
-            "text": "test answer 1.3",
-            "correct": true,
-            "comment": "",
-          },
-          {
-            "text": "test answer 1.4",
-            "correct": false,
-            "comment": "",
-          },
-          {
-            "text": "test answer 1.5",
-            "correct": false,
-            "comment": "",
-          }
-        ]
-      },
-      {
-        "text": "test question 2",
-        "description": "test description 2",
-        "answers": [
-          {
-            "text": "test answer 2.1",
-            "correct": true,
-            "comment": "test comment 2.1",
-          },
-          {
-            "text": "test answer 2.2",
-            "correct": false,
-            "comment": "test comment 2.2",
-          },
-          {
-            "text": "test answer 2.3",
-            "correct": true,
-            "comment": "",
-          }
-        ]
-      },
-      {
-        "text": "test question 3",
-        "description": "test description 3",
-        "answers": [
-          {
-            "text": "test answer 3.1",
-            "correct": true,
-            "comment": "test comment 3.1",
-          },
-          {
-            "text": "test answer 3.2",
-            "correct": false,
-            "comment": "test comment 3.2",
-          }
-        ]
-      },
-      {
-        "text": "test question 4",
-        "description": "test description 4",
-        "answers": [
-          {
-            "text": "test answer 4.1",
-            "correct": true,
-            "comment": "test comment 4.1",
-          },
-          {
-            "text": "test answer 4.2",
-            "correct": false,
-            "comment": "test comment 4.2",
-          },
-          {
-            "text": "test answer 4.3",
-            "correct": true,
-            "comment": "",
-          },
-          {
-            "text": "test answer 4.4",
-            "correct": false,
-            "comment": "",
-          },
-          {
-            "text": "test answer 4.5",
-            "correct": false,
-            "comment": "",
-          },
-          {
-            "text": "test answer 4.6",
-            "correct": false,
-            "comment": "",
-          }
-        ]
-      },
-      {
-        "text": "test question 5",
-        "description": "test description 5",
-        "answers": [
-          {
-            "text": "test answer 5.1",
-            "correct": true,
-            "comment": "test comment 5.1",
-          },
-          {
-            "text": "test answer 5.2",
-            "correct": false,
-            "comment": "test comment 5.2",
-          },
-          {
-            "text": "test answer 5.3",
-            "correct": true,
-            "comment": "",
-          },
-          {
-            "text": "test answer 5.4",
-            "correct": false,
-            "comment": "",
-          }
-        ]
-      }
-
-    ],
-
-
-  },
-
-  // special HTML structure for gkolev2s_quizform
-  "gkolev2s_quizform": {
-    "key": "gkolev2s_quizform",
-    "data": [
-
-            "<legend>Questions and Answers (Quiz)</legend>",
-
-            {
-              // "label": "questions",
-              "name": "questions",
-              "type": "several",
-              // "info": "Fill up the form with quiz questions and answers.",
-              "items": [
-                {
-                  "label": "question text",
-                  "name": "text",
-                  "type": "text",
-                  "info": "Here add the question."
-                },
-                {
-                  "label": "question description",
-                  "name": "description",
-                  "type": "text",
-                  "info": "Here add description to the question."
-                },
-                {
-                  "label": "question answers",
-                  "name": "answers",
-                  "type": "several",
-                  "info": "Fill up the form with answers.",
-                  "items": [
-                    {
-                      "label": "answer text",
-                      "name": "text",
-                      "type": "text",
-                      "info": "Here add the answer."
-                    },
-                    {
-                      "label": "answer correct",
-                      "name": "correct",
-                      "type": "checkbox",
-                      "info": "Check the box if the answer is a correct one."
-                    },
-                    {
-                      "label": "answer comment (optional)",
-                      "name": "comment",
-                      "type": "text",
-                      "info": "Here add comment to the answer."
-                    }
-                  ]
-                }
-              ]
-            },
-
-            "<legend>Advanced Settings (Quiz)</legend>",
-
-              {
-                "label": "Start button",
-                "name": "start_button",
-                "type": "checkbox",
-                "info": "helper.."
-              },
-              {
-                "label": "Feedback",
-                "name": "feedback",
-                "type": "checkbox",
-                "info": "helper.."
-              },
-              {
-                "label": "Navigation",
-                "name": "navigation",
-                "type": "checkbox",
-                "info": "helper.."
-              },
-              {
-                "label": "Skippable",
-                "name": "skippable",
-                "type": "checkbox",
-                "info": "helper.."
-              },
-              {
-                "label": "Finish anytime",
-                "name": "finish_anytime",
-                "type": "checkbox",
-                "info": "helper.."
-              },
-              {
-                "label": "Shuffle questions and answers",
-                "name": "shuffle_quest_answ",
-                "type": "checkbox",
-                "info": "helper.."
-              },
-              {
-                "type": "submit",
-                "info": "helper.."
-              }
-              // {
-              // Time Limit? Labels for Previous/Submit/Next/Finish buttons?
-              // }
-
-
-    ]
-  },
-
-  /**********************************/
-
-  // initial values for input elements
-  "gkolev2s_infoform_init": {
-    "key": "gkolev2s_infoform_init",
-    "date": "2020-01-30",
-    "datetime-local": "2020-01-30T09:00",
-    "subject": "Some Exam Title",
-    "time": "09:00",
-    "textarea": "120 Pts. = 120 Mins.",
-  },
-
-  // special HTML structure for gkolev2s_infoform
-  "gkolev2s_infoform": {
-    "key": "gkolev2s_infoform",
-
-    "data": [
-
-      "<legend>General exam info</legend>",
-
-      {
-        "label": "subject",
-        "name": "subject",
-        "type": "text",
-        "info": "Add exam's subject"
-      },
-      {
-        "label": "date",
-        "name": "date",
-        "type": "date",
-        "info": "Add exam date"
-      },
-      {
-        "label": "time",
-        "name": "time",
-        "type": "time",
-        "info": "Add exam start time"
-      },
-      // alternative to 'date' and 'time':
-      {
-        "label": "datetime-local",
-        "name": "datetime-local",
-        "type": "datetime-local",
-        "info": "Add exam's date and starting time"
-      },
-      {
-        "label": "additional info",
-        "name": "textarea",
-        "type": "textarea",
-        "info": "Add exam's addition information"
-      },
-
-    ]
-  },
-
-  /**********************************/
-
-  /**********************************/
-
   // initial values for gkolev2s
   "gkolev2s_init": {
     "key": "gkolev2s_infoform_init",
@@ -428,11 +121,14 @@ ccm.files[ 'datasets.js' ] = {
                 "comment": "",
               }
             ]
-          },
-        ]
-
-      }
-    ]
+          }
+        ],
+        "feedback": true,
+        "navigation": true,
+        "skippable": true,
+        "finish_anytime": true
+      },
+    ],
   },
 
   // special HTML structure for gkolev2s
@@ -476,7 +172,7 @@ ccm.files[ 'datasets.js' ] = {
           "label": "Quiz",
           "name": "quiz",
           "type": "several",
-          "info": "Text Text Text",
+          "info": "This is a quiz exercise.",
           "items": [
             "<legend>Questions & Answers</legend>",
             {
@@ -527,7 +223,7 @@ ccm.files[ 'datasets.js' ] = {
             },
             "<legend>Advanced Settings</legend>",
 
-            // {
+              // {
               //   "label": "Start button",
               //   "name": "start_button",
               //   "type": "checkbox",
@@ -558,15 +254,8 @@ ccm.files[ 'datasets.js' ] = {
                 "info": "helper.."
               },
               // {
-                //   "label": "Shuffle questions and answers",
-                //   "name": "shuffle_quest_answ",
-                //   "type": "checkbox",
-                //   "info": "helper.."
-                // },
-                // {
-                  // Time Limit? Labels for Previous/Submit/Next/Finish buttons?
-                  // }
-
+              // Time Limit? Labels for Previous/Submit/Next/Finish buttons?
+              // }
                 ]
               },
               {
@@ -574,7 +263,5 @@ ccm.files[ 'datasets.js' ] = {
               }
             ]
           }
-
-  /**********************************/
 
 };
