@@ -39,13 +39,21 @@
               tag: "h1",
               id: "builder-title",
               inner: "Exam-Generator"
-            },
-            // TODO: add user login?
+            }
+
+          ]
+
+        },
+
+        // EXAM GENERATOR FORM section:
+        generator: {
+
+          tag: "div",
+          class: "generator",
+          inner: [
             {
               tag: "hr"
             },
-            // additional buttons for easy work with saved data
-            // TODO: delete at the end
             {
               tag: "div",
               id: "data-btns",
@@ -65,18 +73,10 @@
                   onclick: "%del%"
                 }
               ]
-            }
-
-          ]
-
-        },
-
-        // EXAM GENERATOR FORM section:
-        generator: {
-
-          tag: "div",
-          class: "generator",
-          inner: [
+            },
+            {
+              tag: "hr"
+            },
             {
               // generator form section
               tag: "div",
@@ -104,11 +104,10 @@
       // db lvl-2 (IndexedDB)
       store2: [ "ccm.store", { name: "data-level-2" } ],
 
-      // create db lvl-2 (IndexedDB - using datasets.js)
-      // store_js: {
-      //   store: [ "ccm.store",  "resources/datasets.js" ],
-      //   add key?
-      // },
+      // create db lvl-1 (IndexedDB - using datasets.js)
+      store_js: {
+        store: [ "ccm.store",  "../exam_builder/resources/datasets.js" ],
+      },
 
       /*** css resources ***/
       css: ["ccm.load",
@@ -134,8 +133,32 @@
         // logging of "start" event
         this.logger.log( "start" );
 
-        // section topbar logo, title
-        const topbar = $.html( this.html.topbar, {
+        const topbar = $.html( this.html.topbar, {});
+
+        // Submit Config: 'Exam-Generator form'
+        // TODO: update submit form
+        const submitConfig = {
+          "entries": [ "ccm.get", "resources/datasets.js", "gkolev2s_generator.data" ],
+          "data": {
+            "store": [ "ccm.store", "resources/datasets.js" ],
+            "key": "gkolev2s_generator_init"
+          },
+          "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
+          "onfinish": {
+            "alert": "Exam versions generated successfully!",
+            "log": true,
+            callback: function () {
+              generate()
+            }
+          }
+        };
+
+        // create, start and append submit instance for 'Generator Form' to html structure
+        const submitInstance = await this.submit.instance(submitConfig);
+        const submitResult = await submitInstance.start();
+
+        // section exam info
+        const generator = $.html( this.html.generator, {
           // additional funtions to help working with data
           // will be deleted at the end
           get: async () => {
@@ -144,6 +167,8 @@
             console.log(await this.store.get());
             console.log("---> data at lvl-2:");
             console.log(await this.store2.get());
+            console.log("---> data at lvl-1 (datasets.js):");
+            console.log(await this.store_js.store.get());
           },
 
           del: async () => {
@@ -157,31 +182,6 @@
             console.log(await this.store2.get());
           }
         });
-
-        // Submit Config: 'Exam-Generator form'
-        // TODO: update submit form
-        const submitConfig = {
-          "entries": [ "ccm.get", "resources/submit_resources/datasets.js", "gkolev2s_generator.data" ],
-          "data": {
-            "store": [ "ccm.store", "resources/submit_resources/datasets.js" ],
-            "key": "gkolev2s_generator_init"
-          },
-          "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
-          "onfinish": {
-            "alert": "Exams generated successfully!",
-            "log": true,
-            callback: function () {
-              generate()
-            }
-          }
-        };
-
-        // create, start and append submit instance for 'Generator Form' to html structure
-        const submitInstance = await this.submit.instance(submitConfig);
-        const submitResult = await submitInstance.start();
-
-        // section exam info
-        const generator = $.html( this.html.generator, {});
 
         // render the sections to the given in config html structure
         $.setContent( this.element, [ topbar, generator ] );
@@ -239,10 +239,6 @@
 
           await createVersion(questOrigin, questMatrix, amount);
 
-          console.log("---> result after pushing the new array to the matrix:");
-          console.log(questMatrix);
-          console.log("-------------------------------------------------");
-
           // Experimenting..
           let configsArr = [];
           configsArr.push(quizOrigin);
@@ -254,9 +250,43 @@
             configsArr.push(quizOriginCopy);
           };
 
-          console.log("---> configs: ([0] - Original, [0 + i] - Shuffled copies)");
-          console.log(configsArr);
-          console.log("-------------------------------------------------");
+          // get data from submit form
+          let resultsQuiz = quizOrigin.quiz[0];
+          let defaultCss = await this.store_js.store.get("demo");
+
+          // store exam information
+          await this.store.set(
+            {
+              // TODO generate key from the login data of user (exam creator)
+              "key": "gkolev2s_exam_info",
+              "subject": quizOrigin.subject,
+              "date": quizOrigin.date,
+              "time": quizOrigin.time,
+              "textarea": quizOrigin.textarea
+            }
+          );
+
+          for (var i = 1; i < configsArr.length; i++) {
+            // store original quiz config
+            await this.store.set(
+              {
+                "key": configsArr[i].key[0],
+                "questions": configsArr[i].quiz[0],
+                "feedback": quizOrigin.quiz[0].feedback,
+                "navigation": quizOrigin.quiz[0].navigation,
+                // // other placeholders? start? next? previous? finish?
+                "placeholder.finish": "Restart",
+                "onfinish": {
+                  "log": true,
+                  "restart": false
+                },
+                "css": defaultCss.css
+              }
+            );
+
+          };
+
+
         };
 
         // TODO: Compare (quest-text/description?) function! Create a way to compare a copy to the original!
@@ -273,6 +303,18 @@
         //
         //
         // };
+
+        // TODO: Get exact config by key (Locking system of exam: MatrikelNr + Key/Pass))
+        // get all data:
+        // const data = self.store2.get();
+        // iterate through all data
+        //   data.forEach(function (element) {
+        //     console.log(element);
+        // });
+        // get exact exam by key
+        // self.store2.get(key, function (exam_config) {
+        //        console.log(exam_config);
+        //    });
 
         };
 

@@ -37,7 +37,7 @@
             {
               tag: "img",
               id: "hbrs-logo",
-              src: "resources/hbrs-logo.svg",
+              src: "https://geoeg.github.io/gkolev2s-components/exam_builder/resources/hbrs-logo.svg",
               width: "300rem",
               height: "auto"
             },
@@ -116,16 +116,16 @@
       store2: [ "ccm.store", { name: "data-level-2" } ],
 
       // create db lvl-2 (IndexedDB - using datasets.js)
-      store_js: {
-        store: [ "ccm.store",  "resources/datasets.js" ],
-        // add key?
-      },
+      // store_js: {
+      //   store: [ "ccm.store",  "resources/datasets.js" ],
+      //   // add key?
+      // },
 
       /*** css resources ***/
       css: ["ccm.load",
       "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
       { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-        "resources/default.css"
+        // "resources/default.css"
       ],
 
 
@@ -178,9 +178,9 @@
 
         // Submit Config: 'Exam-Builder as one form'
         const submitConfig = {
-          "entries": [ "ccm.get", "resources/submit_resources/datasets.js", "gkolev2s.data" ],
+          "entries": [ "ccm.get", "https://geoeg.github.io/gkolev2s-components/exam_builder/resources/submit_resources/datasets.js", "gkolev2s.data" ],
           "data": {
-            "store": [ "ccm.store", "resources/submit_resources/datasets.js" ],
+            "store": [ "ccm.store", "https://geoeg.github.io/gkolev2s-components/exam_builder/resources/submit_resources/datasets.js" ],
             "key": "gkolev2s_init"
           },
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],

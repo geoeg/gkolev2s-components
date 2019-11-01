@@ -1,9 +1,10 @@
 /**
- * @overview ccm component for building exams
+ * @overview ccm component for opening a locked exam
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  *
  */
+
 
 (() => {
 
@@ -12,7 +13,7 @@
   const component = {
 
     /*** component's name ***/
-    name: 'exam_builder',
+    name: 'exam_unlocker',
 
     /*** used ccm-framework ***/
     ccm: 'https://ccmjs.github.io/ccm/ccm.js',
@@ -23,14 +24,11 @@
       /*** html-Structure ***/
       html: {
 
-        // TOPBAR section:
-        topbar: {
+        form: {
 
-          // topbar main div container
           tag: "div",
-          class: "topbar",
+          class: "form",
           inner: [
-            // h-brs logo
             {
               tag: "img",
               id: "hbrs-logo",
@@ -38,13 +36,11 @@
               width: "300rem",
               height: "auto"
             },
-            // builder title
             {
               tag: "h1",
-              id: "builder-title",
-              inner: "Exam-Builder"
+              id: "title",
+              inner: "Exam-Unlocker"
             },
-            // TODO: add user login?
             {
               tag: "hr"
             },
@@ -69,28 +65,17 @@
                   onclick: "%del%"
                 }
               ]
-            }
-
-          ]
-
-        },
-
-        // EXAM INFO FORM section:
-        info: {
-
-          tag: "div",
-          class: "info",
-          inner: [
+            },
             {
               tag: "hr"
             },
             {
-              // info form section
               tag: "div",
-              id: "info-form",
+              id: "unlock-form",
               inner: []
             }
           ]
+
         }
 
       },
@@ -99,6 +84,9 @@
 
       // add submit component
       submit: [ "ccm.component", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js" ],
+
+      // test
+      blank: [ "ccm.component", "https://ccmjs.github.io/akless-components/blank/ccm.blank.js" ],
 
       // add logger instance
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
@@ -114,12 +102,10 @@
 
       /*** css resources ***/
       css: ["ccm.load",
-      "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
-      { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-        "resources/default.css"
+        "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
+        { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
+          "resources/default.css"
       ],
-
-
     },
 
     Instance: function () {
@@ -136,16 +122,10 @@
 
       this.start = async () => {
 
-        // get initial form values
-        // let data = await $.dataset( this.store2 );
-
         // logging of "start" event
-        this.logger.log( "start" );
-        // this.logger && this.logger.log( "start", $.clone( data ) );
-        // Ask: Why not using just logger.log()?
+        this.logger.log( "exam-unlocker-start" );
 
-        // section topbar logo, title
-        const topbar = $.html( this.html.topbar, {
+        const form = $.html( this.html.form, {
           // additional funtions to help working with data
           // will be deleted at the end
           get: async () => {
@@ -166,77 +146,78 @@
             console.log("---> saved data deleted.");
             console.log(await this.store2.get());
           },
-
         });
 
-        // Submit Config: 'Exam-Builder as one form'
+        // Submit Config: 'Exam-unlocker as one form'
         const submitConfig = {
-          "entries": [ "ccm.get", "resources/datasets.js", "gkolev2s.data" ],
+          "entries": [ "ccm.get", "resources/datasets.js", "gkolev2s_unlocker.data" ],
           "data": {
             "store": [ "ccm.store", "resources/datasets.js" ],
-            "key": "gkolev2s_init"
+            "key": "gkolev2s_unlocker_init"
           },
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
           "onfinish": {
             "log": true,
-            "store": {
-              settings: {
-                name: "data-level-2"
-              },
-            },
-            "alert": "Form data successfully saved!",
             callback: async () => {
-             await getCurrentExamKey()
-           },
-           // render the exam_generator component when exam data is submitted
-            // "render": {
-            //   component: "../exam_generator/ccm.exam_generator.js",
-            //   // TODO: do I need a config here? I load the standard version of the component that works without, but its just on loading.
-            //   config: {} // config of exam generator component
-            // }
-          }
+              await auth()
+            }
+          },
+
         };
 
-        // create, start and append submit instance for 'Info Form' to html structure
+        // create, start and append submit instance for 'Unlock Form' to html structure
         const submitInstance = await this.submit.instance(submitConfig);
         const submitResult = await submitInstance.start();
 
-        // section exam info
-        const info = $.html( this.html.info, {});
-
         // render the sections to the given in config html structure
-        $.setContent( this.element, [ topbar, info ] );
-        // append 'info-form' to the html structure
-        this.element.querySelector("#info-form").appendChild(submitInstance.root);
+        $.setContent( this.element, [ form ] );
+        // append 'unlock-form' to the html structure
+        this.element.querySelector("#unlock-form").appendChild(submitInstance.root);
 
-        // get key of last saved exam
-        let getCurrentExamKey = async () => {
-          let results = await this.store2.get();
-          let key = results[results.length - 1].key[0];
-          // show key to the user as alert
-          $.onFinish(
-            this,
-            copyStringToClipboard(key),
-            window.alert(`Here is your exam id: ${key}. Don't worry. It's already in your clipboard. Just paste it in the exam generator.`));
+        // authentication logic
+        let auth = () => {
+
+          let key = submitInstance.getValue().password;
+
+          if (submitInstance.getValue().password == "123")
+          {
+            console.log("match!");
+            $.onFinish(
+              this,
+              window.alert(`Exam Nr.${key} has been unlocked. Click "OK" to start.`),
+              storeUnlocking(),
+              startExam()
+            );
+          }
+          else
+          {
+            console.log("nah! try again!");
+            $.onFinish(
+              this,
+              window.alert(`The password: ${key} is wrong or there is no match with the added MatrikelNr. Please try again.`),
+            );
+          }
+
         };
 
-        // Copy a string to clipboard
-        // Quelle: https://techoverflow.net/2018/03/30/copying-strings-to-the-clipboard-using-pure-javascript/
-        let copyStringToClipboard = (str) => {
-           // Create new element
-           var el = document.createElement('textarea');
-           // Set value (string to be copied)
-           el.value = str;
-           // Set non-editable to avoid focus and move outside of view
-           el.setAttribute('readonly', '');
-           el.style = {position: 'absolute', left: '-9999px'};
-           document.body.appendChild(el);
-           // Select text inside element
-           el.select();
-           // Copy text to clipboard
-           document.execCommand('copy');
-           // Remove temporary element
-           document.body.removeChild(el);
+        let startExam = async () => {
+
+          const blankInstance = await this.blank.instance();
+          const blankResult = await blankInstance.start();
+          this.element.querySelector("#unlock-form").removeChild(submitInstance.root);
+          this.element.querySelector("#unlock-form").appendChild(blankInstance.root);
+
+        };
+
+        let storeUnlocking = async () => {
+
+          await this.store.set(
+            {
+              "key": submitInstance.getValue().key,
+              "matrikelNr": submitInstance.getValue().matrikelnr
+            }
+          );
+
         };
 
       };
