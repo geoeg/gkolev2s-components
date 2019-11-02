@@ -3,8 +3,15 @@
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  *
- * Done:
- *
+ * Done: Unlock exam form
+ * Done: StudentId is compared to specific array with student ids
+ * TODO: Get student ids data from sis update the array
+ * Done: Password is protected
+ * Done: Password and studentId are checked
+ * Done: On submitting: Load different component
+ * TODO: Load exam_reader
+ * Done: Unlocked exam is saved on datstore lvl-2 together with the studentId + date and time of unlocking
+ * TODO: Block exams and studentIds that have been already used
  */
 
 (() => {

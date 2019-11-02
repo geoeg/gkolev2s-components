@@ -3,7 +3,9 @@
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  *
- * Done:
+ * Done: Generator form (incl. Shuffling the Q&A)
+ * Done: On submitting: save the generated configs on datastore lvl-2 with unique keys
+ * Done: On submitting: save the general exam info as separate object on datastore lvl-2
  *
  */
 
