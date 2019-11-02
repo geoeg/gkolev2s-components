@@ -102,6 +102,9 @@
       // test
       blank: [ "ccm.component", "https://ccmjs.github.io/akless-components/blank/ccm.blank.js" ],
 
+      // test
+      quiz: [ "ccm.component", "https://ccmjs.github.io/akless-components/quiz/versions/ccm.quiz-4.0.0.js" ],
+
       // add logger instance
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
       [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
@@ -273,10 +276,18 @@
          */
         let startExam = async () => {
 
-          const blankInstance = await this.blank.instance();
-          const blankResult = await blankInstance.start();
+          // const blankInstance = await this.blank.instance();
+          // const blankResult = await blankInstance.start();
+
+          // try to start quiz with one of created configs in exam_generator
+          let key = submitInstance.getValue().password;
+          const quizConfig = await this.store2.get(key);
+          const quizInstance = await this.quiz.instance(quizConfig);
+          const quizResult = await quizInstance.start();
+
           this.element.querySelector("#unlock-form").removeChild(submitInstance.root);
-          this.element.querySelector("#unlock-form").appendChild(blankInstance.root);
+          // this.element.querySelector("#unlock-form").appendChild(blankInstance.root);
+          this.element.querySelector("#unlock-form").appendChild(quizInstance.root);
 
         };
 

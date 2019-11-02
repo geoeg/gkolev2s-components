@@ -123,10 +123,16 @@ ccm.files[ 'datasets.js' ] = {
             ]
           }
         ],
+        "start_button": true,
         "feedback": true,
         "navigation": true,
         "skippable": true,
-        "finish_anytime": true
+        "finish_anytime": true,
+        "start_label": "Start",
+        "previous_label": "Previous",
+        "next_label": "Next",
+        "submit_label": "Submit",
+        "finish_label": "Finish"
       },
     ],
   },
@@ -165,108 +171,128 @@ ccm.files[ 'datasets.js' ] = {
         "type": "textarea",
         "info": "Add exam's addition information"
       },
-      // alternative to 'date' and 'time':
-      // {
-        //   "label": "Datetime-local",
-        //   "name": "datetime-local",
-        //   "type": "datetime-local",
-        //   "info": "Add exam's date and starting time"
-        // },
-        {
-          "label": "Quiz",
-          "name": "quiz",
-          "type": "several",
-          "info": "This is a quiz exercise.",
-          "items": [
-            "<legend>Questions & Answers</legend>",
-            {
-              "label": "Questions",
-              "name": "questions",
-              "type": "several",
-              "info": "Fill up the form with quiz questions and answers.",
-              "items": [
-                {
-                  "label": "Question text",
-                  "name": "text",
-                  "type": "text",
-                  "info": "Here add the question."
-                },
-                {
-                  "label": "Question description",
-                  "name": "description",
-                  "type": "text",
-                  "info": "Here add description to the question."
-                },
-                {
-                  "label": "Question answers",
-                  "name": "answers",
-                  "type": "several",
-                  "info": "Fill up the form with answers.",
-                  "items": [
-                    {
-                      "label": "Answer text",
-                      "name": "text",
-                      "type": "text",
-                      "info": "Here add the answer."
-                    },
-                    {
-                      "label": "Answer correct",
-                      "name": "correct",
-                      "type": "checkbox",
-                      "info": "Check the box if the answer is a correct one."
-                    },
-                    {
-                      "label": "Answer comment (optional)",
-                      "name": "comment",
-                      "type": "text",
-                      "info": "Here add comment to the answer."
-                    }
-                  ]
-                }
-              ]
-            },
-            "<legend>Advanced Settings</legend>",
-
-              // {
-              //   "label": "Start button",
-              //   "name": "start_button",
-              //   "type": "checkbox",
-              //   "info": "helper.."
-              // },
+      {
+        "label": "Quiz",
+        "name": "quiz",
+        "type": "several",
+        "info": "This is a quiz exercise.",
+        "items": [
+          "<legend>Questions & Answers</legend>",
+          {
+            "label": "Questions",
+            "name": "questions",
+            "type": "several",
+            "info": "Fill up the form with quiz questions and answers.",
+            "items": [
               {
-                "label": "Feedback",
-                "name": "feedback",
-                "type": "checkbox",
-                "info": "helper.."
+                "label": "Question text",
+                "name": "text",
+                "type": "text",
+                "info": "Here add the question."
               },
               {
-                "label": "Navigation",
-                "name": "navigation",
-                "type": "checkbox",
-                "info": "helper.."
+                "label": "Question description",
+                "name": "description",
+                "type": "text",
+                "info": "Here add description to the question."
               },
               {
-                "label": "Skippable",
-                "name": "skippable",
-                "type": "checkbox",
-                "info": "helper.."
-              },
-              {
-                "label": "Finish anytime",
-                "name": "finish_anytime",
-                "type": "checkbox",
-                "info": "helper.."
-              },
-              // {
-              // Time Limit? Labels for Previous/Submit/Next/Finish buttons?
-              // }
+                "label": "Question answers",
+                "name": "answers",
+                "type": "several",
+                "info": "Fill up the form with answers.",
+                "items": [
+                  {
+                    "label": "Answer text",
+                    "name": "text",
+                    "type": "text",
+                    "info": "Here add the answer."
+                  },
+                  {
+                    "label": "Answer correct",
+                    "name": "correct",
+                    "type": "checkbox",
+                    "info": "Check the box if the answer is a correct one."
+                  },
+                  {
+                    "label": "Answer comment (optional)",
+                    "name": "comment",
+                    "type": "text",
+                    "info": "Here add comment to the answer."
+                  }
                 ]
-              },
-              {
-                "type": "submit"
-              },
+              }
             ]
           },
+          "<legend>Advanced Settings</legend>",
+
+          {
+            "label": "Start button",
+            "name": "start_button",
+            "type": "checkbox",
+            "info": "If checked, the quiz will begin with a [start] button."
+          },
+          {
+            "label": "Feedback",
+            "name": "feedback",
+            "type": "checkbox",
+            "info": "If selected, the user will get feedback on his answers immediately after finishing the quiz."
+          },
+          {
+            "label": "Navigation",
+            "name": "navigation",
+            "type": "checkbox",
+            "info": "If selected, the quiz will include a navigation bar."
+          },
+          {
+            "label": "Skippable",
+            "name": "skippable",
+            "type": "checkbox",
+            "info": "If selected, the user will be able to skip questions."
+          },
+          {
+            "label": "Finish anytime",
+            "name": "finish_anytime",
+            "type": "checkbox",
+            "info": "If selected, the user will be able to finish the quiz anytime."
+          },
+          {
+            "label": "Start button",
+            "name": "start_label",
+            "type": "text",
+            "info": "Add label for 'start button'."
+          },
+          {
+            "label": "Previous button",
+            "name": "previous_label",
+            "type": "text",
+            "info": "Add label for 'previous button'."
+          },
+          {
+            "label": "Next button",
+            "name": "next_label",
+            "type": "text",
+            "info": "Add label for 'next button'"
+          },
+          {
+            "label": "Submit button",
+            "name": "submit_label",
+            "type": "text",
+            "info": "Add label for 'submit button'"
+          },
+          {
+            "label": "Finish button",
+            "name": "finish_label",
+            "type": "text",
+            "info": "Add label for 'finish button'."
+          },
+            ]
+          },
+          {
+            "type": "submit"
+          },
+        ]
+      },
 
   // demo quiz config (example by A.Kless)
   "demo": {
@@ -314,50 +340,7 @@ ccm.files[ 'datasets.js' ] = {
       "onfinish": { "log": true, "restart": true } // !!!
     },
 
-  // demo quiz config (example by A.Kless)
-  "test_config": {
-      "key": "12345",
-      "css": [ "ccm.load", "https://ccmjs.github.io/akless-components/quiz/resources/weblysleek.css", { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/weblysleekui/font.css" } ], // !!!
 
-      "questions": [
-        {
-          "text": "How many of these answers are correct?",
-          "description": "Select the correct answer from the following answers.",
-          "answers": [
-            {
-              "text": "one",
-              "correct": true,
-              "comment": "Because you can't choose more than one answer."
-            },
-            { "text": "two" },
-            { "text": "three" }
-          ]
-        },
-        {
-          "text": "How many answers can be correct here?",
-          "description": "Pay attention to the input field type.",
-          "answers": [
-            {
-              "text": "absolutely none",
-              "correct": true
-            },
-            {
-              "text": "maximum of one",
-              "comment": "Because you can choose more than one answer."
-            },
-            {
-              "text": "more than one",
-              "correct": true
-            }
-          ]
-        }
-      ],
-
-      "feedback": true,
-      "navigation": true,
-      "placeholder.finish": "Restart",
-      "onfinish": { "log": true, "restart": true }
-    }
     /*** datasets for klausur_reader (Quelle: MKaul/klausur_reader/resources) ***/
     // Info: check Ask and TODO from exam_builder
 

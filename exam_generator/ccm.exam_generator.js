@@ -312,11 +312,24 @@
                   "questions": configsArr[i].quiz[0],
                   "feedback": quizOrigin.quiz[0].feedback,
                   "navigation": quizOrigin.quiz[0].navigation,
-                  // // other placeholders? start? next? previous? finish?
-                  "placeholder.finish": "Restart",
+                  "start_button": quizOrigin.quiz[0].start_button,
+                  "placeholder": {
+                    "start": quizOrigin.quiz[0].start_label,
+                    "prev": quizOrigin.quiz[0].previous_label,
+                    "next": quizOrigin.quiz[0].next_label,
+                    "submit": quizOrigin.quiz[0].submit_label,
+                    "finish": quizOrigin.quiz[0].finish_label
+                  },
+                  // "placeholder.finish": "Finish",
                   "onfinish": {
                     "log": true,
-                    "restart": false
+                    "restart": false,
+                    "store": {
+                      "settings": {
+                        "name": "data-level-2"
+                      },
+                    },
+                    "alert": "Configurations, you've finished the quiz successfully!",
                   },
                   "css": defaultCss.css
                 }
