@@ -3,39 +3,52 @@
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  *
+ * Done:
+ *
  */
 
-( function () {
+(() => {
+
+  "use strict";
 
   const component = {
 
+    /**
+     * unique component name
+     */
     name: 'exam_generator',
 
+    /**
+     * recommended used framework version
+     */
     ccm: 'https://ccmjs.github.io/ccm/ccm.js',
 
+    /**
+     * default instance configuration
+     */
     config: {
 
-      /*** html-Structure ***/
+      /*** html structure ***/
       html: {
 
         // TODO no need if loading the generator after submitting the data in exam_builder (there is already a topbar)
-        // TOPBAR section:
+        // topbar section:
         topbar: {
 
           // topbar main div container
           tag: "div",
           class: "topbar",
           inner: [
-            // h-brs logo
             {
+              // h-brs logo
               tag: "img",
               id: "hbrs-logo",
               src: "resources/hbrs-logo.svg",
               width: "300rem",
               height: "auto"
             },
-            // generator title
             {
+              // generator title
               tag: "h1",
               id: "builder-title",
               inner: "Exam-Generator"
@@ -45,7 +58,7 @@
 
         },
 
-        // EXAM GENERATOR FORM section:
+        // exam generator form section:
         generator: {
 
           tag: "div",
@@ -101,15 +114,15 @@
       // create db lvl-1 (lost after reload)
       store: [ "ccm.store" ],
 
-      // db lvl-2 (IndexedDB)
-      store2: [ "ccm.store", { name: "data-level-2" } ],
-
-      // create db lvl-1 (IndexedDB - using datasets.js)
       store_js: {
         store: [ "ccm.store",  "../exam_builder/resources/datasets.js" ],
       },
 
+      // db lvl-2 (IndexedDB)
+      store2: [ "ccm.store", { name: "data-level-2" } ],
+
       /*** css resources ***/
+
       css: ["ccm.load",
       "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
       { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
@@ -117,22 +130,41 @@
       ],
     },
 
+    /**
+     * for creating instances of this component
+     * @constructor
+     */
     Instance: function () {
 
+      /**
+      * shortcut to help functions
+      */
       let $;
 
-      // init is called once after all dependencies are solved and is then deleted
-      this.init = async () => {
+      /**
+       * init is called once after all dependencies are solved and is then deleted
+       */
+       this.init = async () => {
 
-        // set shortcut to helper function
         $ = this.ccm.helper;
+
       };
 
+      /**
+       * starts the instance
+       */
       this.start = async () => {
 
-        // logging of "start" event
-        this.logger.log( "start" );
+        // get current date and time for logging the start
+        const today = new Date();
+        const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        const logDateTime = (date, time) => { return date + "/" + time };
 
+        // logging of "start" event
+        this.logger.log( "start-exam-generator", logDateTime(date, time) );
+
+        // section topbar logo, title
         const topbar = $.html( this.html.topbar, {});
 
         // Submit Config: 'Exam-Generator form'
@@ -165,10 +197,10 @@
             // log current data saved at store2
             console.log("---> data at lvl-1:");
             console.log(await this.store.get());
-            console.log("---> data at lvl-2:");
-            console.log(await this.store2.get());
             console.log("---> data at lvl-1 (datasets.js):");
             console.log(await this.store_js.store.get());
+            console.log("---> data at lvl-2:");
+            console.log(await this.store2.get());
           },
 
           del: async () => {
@@ -207,125 +239,97 @@
             // get the original questions
             let questOrigin = quizOrigin.quiz[0].questions;
 
-            // Create a matrix out of array
-            // Quelle: https://stackoverflow.com/questions/4492385/how-to-convert-simple-array-into-two-dimensional-array-matrix-with-javascript
+            /**
+             * create a matrix out of array
+             * Quelle: https://stackoverflow.com/questions/4492385/how-to-convert-simple-array-into-two-dimensional-array-matrix-with-javascript
+             */
             const toMatrix = (arr, width) =>
-            arr.reduce((rows, key, index) => (index % width == 0 ?
-              rows.push([key]) : rows[rows.length-1].push(key)) && rows, []);
+            arr.reduce((rows, key, index) => (index % width == 0 ? rows.push([key]) : rows[rows.length-1].push(key)) && rows, []);
 
-              // create matrix with [0][i] original questions
-              let questMatrix = toMatrix(questOrigin, questOrigin.length);
+            // create matrix with [0][i] original questions
+            let questMatrix = toMatrix(questOrigin, questOrigin.length);
 
-              /**
-              * Copy values, shuffle those and add as new row in the matrix.
-              * @param {array} arrOrigin array with original values (e.g. original questions)
-              * @param {array} arrMatrix multidimensional array with the original values (arrMatrix[0][i]), where 'i' is the question number and new created versions of original values (arrMatrix[x][y]), where 'x' is the version number and 'y' is the question's current position in array
-              * @param {integer} amount copies of original values to be done
-              * @return {void}
-              */
-              const createVersion = (arrOrigin, arrMatrix, amount) => {
-                for (let i = 0; i < amount; i++) {
-                  let arrCopy = $.clone(arrOrigin);
+            /**
+            * Copy values, shuffle those and add as new row in the matrix.
+            * @param {array} arrOrigin array with original values (e.g. original questions)
+            * @param {array} arrMatrix multidimensional array with the original values (arrMatrix[0][i]), where 'i' is the question number and new created versions of original values (arrMatrix[x][y]), where 'x' is the version number and 'y' is the question's current position in array
+            * @param {integer} amount copies of original values to be done
+            * @return {void}
+            */
+            const createVersion = (arrOrigin, arrMatrix, amount) => {
+              for (let i = 0; i < amount; i++) {
+                let arrCopy = $.clone(arrOrigin);
 
-                  if (shuffleOption) {
-                    // shuffle questions
-                    arrCopy = $.shuffleArray(arrCopy);
-                    // shuffle answers of each question
-                    for (var j = 0; j < arrCopy.length; j++) {
-                      arrCopy[j].answers = $.shuffleArray(arrCopy[j].answers);
-                    }
-                  };
-                  // add new array with shuffled Q&A to the matrix
-                  arrMatrix.push(arrCopy);
-                }
-              };
+                if (shuffleOption) {
+                  // shuffle questions
+                  arrCopy = $.shuffleArray(arrCopy);
+                  // shuffle answers of each question
+                  for (var j = 0; j < arrCopy.length; j++) {
+                    arrCopy[j].answers = $.shuffleArray(arrCopy[j].answers);
+                  }
+                };
+                // add new array with shuffled Q&A to the matrix
+                arrMatrix.push(arrCopy);
+              }
+            };
 
-              await createVersion(questOrigin, questMatrix, amount);
+            await createVersion(questOrigin, questMatrix, amount);
 
-              // Experimenting..
-              let configsArr = [];
-              configsArr.push(quizOrigin);
+            // Experimenting..
+            let configsArr = [];
+            configsArr.push(quizOrigin);
 
-              for (let i = 1; i < questMatrix.length; i++) {
-                let quizOriginCopy = $.clone(quizOrigin);
-                quizOriginCopy.quiz[0] = questMatrix[i];
-                quizOriginCopy.key[0] = $.generateKey();
-                configsArr.push(quizOriginCopy);
-              };
+            for (let i = 1; i < questMatrix.length; i++) {
+              let quizOriginCopy = $.clone(quizOrigin);
+              quizOriginCopy.quiz[0] = questMatrix[i];
+              quizOriginCopy.key[0] = $.generateKey();
+              configsArr.push(quizOriginCopy);
+            };
 
-              // get data from submit form
-              let resultsQuiz = quizOrigin.quiz[0];
-              let defaultCss = await this.store_js.store.get("demo");
+            // get data from submit form
+            let resultsQuiz = quizOrigin.quiz[0];
+            let defaultCss = await this.store_js.store.get("demo");
 
-              // store exam information
+            // store exam information
+            await this.store2.set(
+              {
+                // TODO generate key from the login data of user (exam creator)
+                "key": "gkolev2s_exam_info",
+                "subject": quizOrigin.subject,
+                "date": quizOrigin.date,
+                "time": quizOrigin.time,
+                "textarea": quizOrigin.textarea
+              }
+            );
+
+            for (var i = 1; i < configsArr.length; i++) {
+              // store original quiz config
               await this.store2.set(
                 {
-                  // TODO generate key from the login data of user (exam creator)
-                  "key": "gkolev2s_exam_info",
-                  "subject": quizOrigin.subject,
-                  "date": quizOrigin.date,
-                  "time": quizOrigin.time,
-                  "textarea": quizOrigin.textarea
+                  "key": configsArr[i].key[0],
+                  "questions": configsArr[i].quiz[0],
+                  "feedback": quizOrigin.quiz[0].feedback,
+                  "navigation": quizOrigin.quiz[0].navigation,
+                  // // other placeholders? start? next? previous? finish?
+                  "placeholder.finish": "Restart",
+                  "onfinish": {
+                    "log": true,
+                    "restart": false
+                  },
+                  "css": defaultCss.css
                 }
               );
 
-              for (var i = 1; i < configsArr.length; i++) {
-                // store original quiz config
-                await this.store2.set(
-                  {
-                    "key": configsArr[i].key[0],
-                    "questions": configsArr[i].quiz[0],
-                    "feedback": quizOrigin.quiz[0].feedback,
-                    "navigation": quizOrigin.quiz[0].navigation,
-                    // // other placeholders? start? next? previous? finish?
-                    "placeholder.finish": "Restart",
-                    "onfinish": {
-                      "log": true,
-                      "restart": false
-                    },
-                    "css": defaultCss.css
-                  }
-                );
+            };
 
-              };
-
-            window.alert(`Exam versions generated successfully!`);
-          };
-
-
-
+          window.alert(`Exam versions generated successfully!`);
         };
 
-        // TODO: Compare (quest-text/description?) function! Create a way to compare a copy to the original!
-        /**
-         * Comparing one of the versions of the original with the original to get exact
-         * @param {array} arrOrigin array with original values
-         * @param {array} arrVersion array to be compared with original
-         * @param
-         * @return
-         */
-        // let compareToOriginal = (parent, child, childVersion) => {
-        //
-        //    parent[0][i]
-        //
-        //
-        // };
+      };
 
-        // TODO: Get exact config by key (Locking system of exam: MatrikelNr + Key/Pass))
-        // get all data:
-        // const data = self.store2.get();
-        // iterate through all data
-        //   data.forEach(function (element) {
-        //     console.log(element);
-        // });
-        // get exact exam by key
-        // self.store2.get(key, function (exam_config) {
-        //        console.log(exam_config);
-        //    });
+      };
 
-        };
-
-      }
+    }
 
   };
 

@@ -3,8 +3,9 @@
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  *
+ * Done:
+ *
  */
-
 
 (() => {
 
@@ -12,13 +13,19 @@
 
   const component = {
 
-    /*** component's name ***/
+    /**
+     * unique component name
+     */
     name: 'exam_unlocker',
 
-    /*** used ccm-framework ***/
+    /**
+     * recommended used framework version
+     */
     ccm: 'https://ccmjs.github.io/ccm/ccm.js',
 
-    /*** component config ***/
+    /**
+     * default instance configuration
+     */
     config: {
 
       /*** html-Structure ***/
@@ -105,6 +112,7 @@
       store2: [ "ccm.store", { name: "data-level-2" } ],
 
       /*** css resources ***/
+
       css: ["ccm.load",
         "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
         { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
@@ -112,23 +120,41 @@
       ],
     },
 
+    /**
+     * for creating instances of this component
+     * @constructor
+     */
     Instance: function () {
 
+      /**
+      * shortcut to help functions
+      */
       let $;
 
-      // init is called once after all dependencies are solved and is then deleted
+      /**
+       * init is called once after all dependencies are solved and is then deleted
+       */
       this.init = async () => {
 
-        // set shortcut to helper function
         $ = this.ccm.helper;
 
       };
 
+      /**
+       * starts the instance
+       */
       this.start = async () => {
 
-        // logging of "start" event
-        this.logger.log( "exam-unlocker-start" );
+        // get current date and time for logging the start
+        const today = new Date();
+        const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        const logDateTime = (date, time) => { return date + "/" + time };
 
+        // logging of "start" event
+        this.logger.log( "start-exam-unlocker", logDateTime(date, time) );
+
+        // section unlocker form
         const form = $.html( this.html.form, {
           // additional funtions to help working with data
           // will be deleted at the end
@@ -184,7 +210,9 @@
         // TODO: get matrikelNr list from sis
         let studentIds = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
 
-        // authentication logic
+        /**
+         * authentication logic
+         */
         let auth = async () => {
 
           // get key (password) from the unlock form
@@ -232,8 +260,10 @@
 
         };
 
-        // start the exam component
-        // TODO: set exam_reader component
+        /**
+         * start the exam component
+         * TODO: set exam_reader component
+         */
         let startExam = async () => {
 
           const blankInstance = await this.blank.instance();
@@ -243,8 +273,10 @@
 
         };
 
-        // store the unlocked exam and the student that unlocked it at exact time and date
-        // TODO: save data on server
+        /**
+         * store the unlocked exam and the student that unlocked it at exact time and date
+         * TODO: save data on server
+         */
         let storeUnlocked = async () => {
 
           let examId = submitInstance.getValue().password;

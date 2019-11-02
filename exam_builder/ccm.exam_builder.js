@@ -3,6 +3,11 @@
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  *
+ * Done: Form for general exam information
+ * Done: Flexible form for adding one or more quiz exercises
+ * Done: At submitting the form save it on datastore lvl-2 with unique key
+ * Done: Copying the generated exam key to the clipboard and inform the user for it
+ *
  */
 
 (() => {
@@ -11,35 +16,41 @@
 
   const component = {
 
-    /*** component's name ***/
+    /**
+     * unique component name
+     */
     name: 'exam_builder',
 
-    /*** used ccm-framework ***/
+    /**
+     * recommended used framework version
+     */
     ccm: 'https://ccmjs.github.io/ccm/ccm.js',
 
-    /*** component config ***/
+    /**
+     * default instance configuration
+     */
     config: {
 
-      /*** html-Structure ***/
+      /*** html structure ***/
       html: {
 
-        // TOPBAR section:
+        // topbar section:
         topbar: {
 
           // topbar main div container
           tag: "div",
           class: "topbar",
           inner: [
-            // h-brs logo
             {
+              // h-brs logo
               tag: "img",
               id: "hbrs-logo",
               src: "resources/hbrs-logo.svg",
               width: "300rem",
               height: "auto"
             },
-            // builder title
             {
+              // builder title
               tag: "h1",
               id: "builder-title",
               inner: "Exam-Builder"
@@ -48,9 +59,9 @@
             {
               tag: "hr"
             },
-            // additional buttons for easy work with saved data
-            // TODO: delete at the end
             {
+              // additional buttons for easy work with saved data
+              // TODO: delete at the end
               tag: "div",
               id: "data-btns",
               inner: [
@@ -75,7 +86,7 @@
 
         },
 
-        // EXAM INFO FORM section:
+        // exam info section:
         info: {
 
           tag: "div",
@@ -95,7 +106,7 @@
 
       },
 
-      /*** ccm-Components ***/
+      /*** ccm components ***/
 
       // add submit component
       submit: [ "ccm.component", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js" ],
@@ -104,7 +115,7 @@
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
       [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
 
-      /*** ccm-Datastores ***/
+      /*** ccm datastores ***/
 
       // create db lvl-1 (lost after reload)
       store: [ "ccm.store" ],
@@ -113,6 +124,7 @@
       store2: [ "ccm.store", { name: "data-level-2" } ],
 
       /*** css resources ***/
+
       css: ["ccm.load",
       "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
       { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
@@ -122,27 +134,39 @@
 
     },
 
+    /**
+     * for creating instances of this component
+     * @constructor
+     */
     Instance: function () {
 
+      /**
+      * shortcut to help functions
+      */
       let $;
 
-      // init is called once after all dependencies are solved and is then deleted
+      /**
+       * init is called once after all dependencies are solved and is then deleted
+       */
       this.init = async () => {
 
-        // set shortcut to helper function
         $ = this.ccm.helper;
 
       };
 
+      /**
+       * starts the instance
+       */
       this.start = async () => {
 
-        // get initial form values
-        // let data = await $.dataset( this.store2 );
+        // get current date and time for logging the start
+        const today = new Date();
+        const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        const logDateTime = (date, time) => { return date + "/" + time };
 
         // logging of "start" event
-        this.logger.log( "start" );
-        // this.logger && this.logger.log( "start", $.clone( data ) );
-        // Ask: Why not using just logger.log()?
+        this.logger.log( "start-exam-builder", logDateTime(date, time) );
 
         // section topbar logo, title
         const topbar = $.html( this.html.topbar, {
@@ -197,7 +221,7 @@
           }
         };
 
-        // create, start and append submit instance for 'Info Form' to html structure
+        // create, start and append submit instance (info form) to html structure
         const submitInstance = await this.submit.instance(submitConfig);
         const submitResult = await submitInstance.start();
 
@@ -209,7 +233,10 @@
         // append 'info-form' to the html structure
         this.element.querySelector("#info-form").appendChild(submitInstance.root);
 
-        // get key of last saved exam
+
+        /**
+         * get key of last saved exam
+         */
         let getCurrentExamKey = async () => {
           let results = await this.store2.get();
           let key = results[results.length - 1].key[0];
@@ -220,8 +247,10 @@
             window.alert(`Here is your exam id: ${key}. Don't worry. It's already in your clipboard. Just paste it in the exam generator.`));
         };
 
-        // Copy a string to clipboard
-        // Quelle: https://techoverflow.net/2018/03/30/copying-strings-to-the-clipboard-using-pure-javascript/
+        /**
+         * copy a string to clipboard
+         * Quelle: https://techoverflow.net/2018/03/30/copying-strings-to-the-clipboard-using-pure-javascript/
+         */
         let copyStringToClipboard = (str) => {
            // Create new element
            var el = document.createElement('textarea');
