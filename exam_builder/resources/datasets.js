@@ -135,6 +135,7 @@ ccm.files[ 'datasets.js' ] = {
   "gkolev2s": {
     "key": "gkolev2s",
     "data": [
+      // TODO: dete first submit button
       {
         "type": "submit"
       },
@@ -311,8 +312,52 @@ ccm.files[ 'datasets.js' ] = {
       "navigation": true, // !!!
       "placeholder.finish": "Restart", // !!!
       "onfinish": { "log": true, "restart": true } // !!!
-    }
+    },
 
+  // demo quiz config (example by A.Kless)
+  "test_config": {
+      "key": "12345",
+      "css": [ "ccm.load", "https://ccmjs.github.io/akless-components/quiz/resources/weblysleek.css", { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/weblysleekui/font.css" } ], // !!!
+
+      "questions": [
+        {
+          "text": "How many of these answers are correct?",
+          "description": "Select the correct answer from the following answers.",
+          "answers": [
+            {
+              "text": "one",
+              "correct": true,
+              "comment": "Because you can't choose more than one answer."
+            },
+            { "text": "two" },
+            { "text": "three" }
+          ]
+        },
+        {
+          "text": "How many answers can be correct here?",
+          "description": "Pay attention to the input field type.",
+          "answers": [
+            {
+              "text": "absolutely none",
+              "correct": true
+            },
+            {
+              "text": "maximum of one",
+              "comment": "Because you can choose more than one answer."
+            },
+            {
+              "text": "more than one",
+              "correct": true
+            }
+          ]
+        }
+      ],
+
+      "feedback": true,
+      "navigation": true,
+      "placeholder.finish": "Restart",
+      "onfinish": { "log": true, "restart": true }
+    }
     /*** datasets for klausur_reader (Quelle: MKaul/klausur_reader/resources) ***/
     // Info: check Ask and TODO from exam_builder
 

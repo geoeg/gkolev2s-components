@@ -145,7 +145,7 @@
           },
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
           "onfinish": {
-            "alert": "Exam versions generated successfully!",
+            // "alert": "Exam versions generated successfully!",
             "log": true,
             callback: function () {
               generate()
@@ -201,90 +201,97 @@
           // get data from store2 (lvl-2)
           let quizOrigin = await this.store2.get([examId]);
 
-          // get the original questions
-          let questOrigin = quizOrigin.quiz[0].questions;
+          if (quizOrigin == null) {
+            window.alert(`The exam ID: ${examId} is wrong. Please try again.`);
+          } else {
+            // get the original questions
+            let questOrigin = quizOrigin.quiz[0].questions;
 
-          // Create a matrix out of array
-          // Quelle: https://stackoverflow.com/questions/4492385/how-to-convert-simple-array-into-two-dimensional-array-matrix-with-javascript
-          const toMatrix = (arr, width) =>
-          arr.reduce((rows, key, index) => (index % width == 0 ?
-            rows.push([key]) : rows[rows.length-1].push(key)) && rows, []);
+            // Create a matrix out of array
+            // Quelle: https://stackoverflow.com/questions/4492385/how-to-convert-simple-array-into-two-dimensional-array-matrix-with-javascript
+            const toMatrix = (arr, width) =>
+            arr.reduce((rows, key, index) => (index % width == 0 ?
+              rows.push([key]) : rows[rows.length-1].push(key)) && rows, []);
 
-          // create matrix with [0][i] original questions
-          let questMatrix = toMatrix(questOrigin, questOrigin.length);
+              // create matrix with [0][i] original questions
+              let questMatrix = toMatrix(questOrigin, questOrigin.length);
 
-          /**
-          * Copy values, shuffle those and add as new row in the matrix.
-          * @param {array} arrOrigin array with original values (e.g. original questions)
-          * @param {array} arrMatrix multidimensional array with the original values (arrMatrix[0][i]), where 'i' is the question number and new created versions of original values (arrMatrix[x][y]), where 'x' is the version number and 'y' is the question's current position in array
-          * @param {integer} amount copies of original values to be done
-          * @return {void}
-          */
-          const createVersion = (arrOrigin, arrMatrix, amount) => {
-            for (let i = 0; i < amount; i++) {
-              let arrCopy = $.clone(arrOrigin);
+              /**
+              * Copy values, shuffle those and add as new row in the matrix.
+              * @param {array} arrOrigin array with original values (e.g. original questions)
+              * @param {array} arrMatrix multidimensional array with the original values (arrMatrix[0][i]), where 'i' is the question number and new created versions of original values (arrMatrix[x][y]), where 'x' is the version number and 'y' is the question's current position in array
+              * @param {integer} amount copies of original values to be done
+              * @return {void}
+              */
+              const createVersion = (arrOrigin, arrMatrix, amount) => {
+                for (let i = 0; i < amount; i++) {
+                  let arrCopy = $.clone(arrOrigin);
 
-              if (shuffleOption) {
-                // shuffle questions
-                arrCopy = $.shuffleArray(arrCopy);
-                // shuffle answers of each question
-                for (var j = 0; j < arrCopy.length; j++) {
-                  arrCopy[j].answers = $.shuffleArray(arrCopy[j].answers);
+                  if (shuffleOption) {
+                    // shuffle questions
+                    arrCopy = $.shuffleArray(arrCopy);
+                    // shuffle answers of each question
+                    for (var j = 0; j < arrCopy.length; j++) {
+                      arrCopy[j].answers = $.shuffleArray(arrCopy[j].answers);
+                    }
+                  };
+                  // add new array with shuffled Q&A to the matrix
+                  arrMatrix.push(arrCopy);
                 }
               };
-              // add new array with shuffled Q&A to the matrix
-              arrMatrix.push(arrCopy);
-            }
+
+              await createVersion(questOrigin, questMatrix, amount);
+
+              // Experimenting..
+              let configsArr = [];
+              configsArr.push(quizOrigin);
+
+              for (let i = 1; i < questMatrix.length; i++) {
+                let quizOriginCopy = $.clone(quizOrigin);
+                quizOriginCopy.quiz[0] = questMatrix[i];
+                quizOriginCopy.key[0] = $.generateKey();
+                configsArr.push(quizOriginCopy);
+              };
+
+              // get data from submit form
+              let resultsQuiz = quizOrigin.quiz[0];
+              let defaultCss = await this.store_js.store.get("demo");
+
+              // store exam information
+              await this.store2.set(
+                {
+                  // TODO generate key from the login data of user (exam creator)
+                  "key": "gkolev2s_exam_info",
+                  "subject": quizOrigin.subject,
+                  "date": quizOrigin.date,
+                  "time": quizOrigin.time,
+                  "textarea": quizOrigin.textarea
+                }
+              );
+
+              for (var i = 1; i < configsArr.length; i++) {
+                // store original quiz config
+                await this.store2.set(
+                  {
+                    "key": configsArr[i].key[0],
+                    "questions": configsArr[i].quiz[0],
+                    "feedback": quizOrigin.quiz[0].feedback,
+                    "navigation": quizOrigin.quiz[0].navigation,
+                    // // other placeholders? start? next? previous? finish?
+                    "placeholder.finish": "Restart",
+                    "onfinish": {
+                      "log": true,
+                      "restart": false
+                    },
+                    "css": defaultCss.css
+                  }
+                );
+
+              };
+
+            window.alert(`Exam versions generated successfully!`);
           };
 
-          await createVersion(questOrigin, questMatrix, amount);
-
-          // Experimenting..
-          let configsArr = [];
-          configsArr.push(quizOrigin);
-
-          for (let i = 1; i < questMatrix.length; i++) {
-            let quizOriginCopy = $.clone(quizOrigin);
-            quizOriginCopy.quiz[0] = questMatrix[i];
-            quizOriginCopy.key[0] = $.generateKey();
-            configsArr.push(quizOriginCopy);
-          };
-
-          // get data from submit form
-          let resultsQuiz = quizOrigin.quiz[0];
-          let defaultCss = await this.store_js.store.get("demo");
-
-          // store exam information
-          await this.store.set(
-            {
-              // TODO generate key from the login data of user (exam creator)
-              "key": "gkolev2s_exam_info",
-              "subject": quizOrigin.subject,
-              "date": quizOrigin.date,
-              "time": quizOrigin.time,
-              "textarea": quizOrigin.textarea
-            }
-          );
-
-          for (var i = 1; i < configsArr.length; i++) {
-            // store original quiz config
-            await this.store.set(
-              {
-                "key": configsArr[i].key[0],
-                "questions": configsArr[i].quiz[0],
-                "feedback": quizOrigin.quiz[0].feedback,
-                "navigation": quizOrigin.quiz[0].navigation,
-                // // other placeholders? start? next? previous? finish?
-                "placeholder.finish": "Restart",
-                "onfinish": {
-                  "log": true,
-                  "restart": false
-                },
-                "css": defaultCss.css
-              }
-            );
-
-          };
 
 
         };

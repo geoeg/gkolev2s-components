@@ -25,7 +25,7 @@ ccm.files[ 'datasets.js' ] = {
       {
         "label": "MatrikelNr.",
         "name": "matrikelnr",
-        "type": "text",
+        "type": "number",
         "info": "Add your MatrikelNr. in the field below."
       },
       {
