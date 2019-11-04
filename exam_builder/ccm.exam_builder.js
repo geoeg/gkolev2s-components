@@ -5,8 +5,10 @@
  *
  * Done: Form for general exam information
  * Done: Flexible form for adding one or more quiz exercises
- * Done: At submitting the form save it on datastore lvl-2 with unique key
+ * Done: At submitting the form save it on datastore lvl-3 with unique key
  * Done: Copying the generated exam key to the clipboard and inform the user for it
+ * Done: Added login that is used for saving the unique exam id
+ * TODO: Make login manditory
  *
  */
 
@@ -55,7 +57,14 @@
               id: "builder-title",
               inner: "Exam-Builder"
             },
-            // TODO: add user login?
+            {
+              tag: "hr"
+            },
+            {
+              tag: "div",
+              id: "user-login",
+              inner: []
+            },
             {
               tag: "hr"
             },
@@ -69,14 +78,14 @@
                   tag: "button",
                   class: "btn btn-primary",
                   inner: "get current saved data",
-                  title: "get current data on lvl-2 in console",
+                  title: "get current data (check console)",
                   onclick: "%get%"
                 },
                 {
                   tag: "button",
                   class: "btn btn-primary",
-                  inner: "delete all saved data!",
-                  title: "delete all saved data on lvl-2 (check console)",
+                  inner: "delete *.* !",
+                  title: "delete all saved data (check console)",
                   onclick: "%del%"
                 }
               ]
@@ -113,22 +122,48 @@
 
       // add logger instance
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
-      [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
+        [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
+
+      // add user instance
+      user: [ 'ccm.instance','https://ccmjs.github.io/akless-components/user/versions/ccm.user-9.3.0.js',
+        [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','guest' ] ],
+
+      // Quelle: MKaul/klausur_reader
+      hash: [ "ccm.load", { "url": "https://ccmjs.github.io/akless-components/modules/md5.mjs", "type": "module" } ],
+      SALT: "123",
 
       /*** ccm datastores ***/
 
-      // create db lvl-1 (lost after reload)
+      // db lvl-1 (lost after reload)
       store: [ "ccm.store" ],
 
-      // create db lvl-2 (IndexedDB)
+      // db lvl-2 (IndexedDB)
       store2: [ "ccm.store", { name: "data-level-2" } ],
+
+      // db lvl-3 (hbrs-Server)
+      store_builder: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_builder", url: "https://ccm2.inf.h-brs.de" } ],
+      },
+
+      store_generator: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
+      },
+
+      store_unlocker: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_unlocker", url: "https://ccm2.inf.h-brs.de" } ],
+      },
+
+      store_results: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_results", url: "https://ccm2.inf.h-brs.de" } ],
+      },
 
       /*** css resources ***/
 
+      // load bootstrap and default css file
       css: ["ccm.load",
-      "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
-      { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-        "resources/default.css"
+        "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
+        { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
+          "resources/default.css"
       ],
 
 
@@ -159,14 +194,35 @@
        */
       this.start = async () => {
 
+        // TODO: make login manditory!
+
+        /*** Quelle: MKaul/klausur_reader ***/
+        /** @type {string} */
+        const username = this.user && this.user.isLoggedIn() ? this.user.data().user : this.user;
+
+        // set a date that will be used for this instance
+        /** @type {string} */
+        const date = new Date().toLocaleString();
+
+        // set signature for the instance -> = unique code
+        /** @type {string} */
+        const signature = this.hash && this.hash.md5( this.name + username + date.slice(0,10) + this.SALT );
+
+        // logging of 'start' event
+        // this.logger && this.logger.log( 'start-exam-builder', { name: this.name, user: username, date, signature } );
+        this.logger && this.logger.log( 'start-exam-builder', { name: this.name, user: username, date } );
+
+        /***********************************/
+        const examSignature = username + "_" + signature;
+
         // get current date and time for logging the start
-        const today = new Date();
-        const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-        const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-        const logDateTime = (date, time) => { return date + "/" + time };
+        // const today = new Date();
+        // const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        // const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        // const logDateTime = (date, time) => { return date + "/" + time };
 
         // logging of "start" event
-        this.logger.log( "start-exam-builder", logDateTime(date, time) );
+        // this.logger.log( "start-exam-builder", logDateTime(date, time) );
 
         // section topbar logo, title
         const topbar = $.html( this.html.topbar, {
@@ -175,21 +231,57 @@
           get: async () => {
             console.log("---> data at lvl-1:");
             console.log(await this.store.get());
-            // log current data saved at store2
             console.log("---> data at lvl-2:");
             console.log(await this.store2.get());
+            console.log("---> data at lvl-3 (builder)");
+            console.log(await this.store_builder.store.get());
+            console.log("---> data at lvl-3 (generator)");
+            console.log(await this.store_generator.store.get());
+            console.log("---> data at lvl-3 (unlocker)");
+            console.log(await this.store_unlocker.store.get());
+            console.log("---> data at lvl-3 (results)");
+            console.log(await this.store_results.store.get());
           },
 
           del: async () => {
-            // delete all data on store2
-            let storeCurrent = await this.store2.get();
-            for (var i = 0; i < storeCurrent.length; i++) {
-              this.store2.del(storeCurrent[i].key);
+            // delete all data at store 2
+            let store2Current = await this.store2.get();
+            for (var i = 0; i < store2Current.length; i++) {
+              this.store2.del(store2Current[i].key);
             };
-            // log current values from store 2 after deleting all
+            // delete all data at store 3 - builder
+            let store3BCurrent = await this.store_builder.store.get();
+            for (var j = 0; j < store3BCurrent.length; j++) {
+              this.store_builder.store.del(store3BCurrent[j].key)
+            };
+            // delete all data at store 3 - generator
+            let store3GCurrent = await this.store_generator.store.get();
+            for (var j = 0; j < store3GCurrent.length; j++) {
+              this.store_generator.store.del(store3GCurrent[j].key)
+            };
+            // delete all data at store 3 - unlocker
+            let store3UCurrent = await this.store_unlocker.store.get();
+            for (var j = 0; j < store3UCurrent.length; j++) {
+              this.store_unlocker.store.del(store3UCurrent[j].key)
+            };
+            // delete all data at store 3 - unlocker
+            let store3RCurrent = await this.store_results.store.get();
+            for (var j = 0; j < store3RCurrent.length; j++) {
+              this.store_results.store.del(store3RCurrent[j].key)
+            };
+            // log current values from store 2 and 3 after deleting all
             console.log("---> saved data deleted.");
+            console.log("---> store2:");
             console.log(await this.store2.get());
-          },
+            console.log("---> store3 (builder):");
+            console.log(await this.store_builder.store.get());
+            console.log("---> store3 (generator):");
+            console.log(await this.store_generator.store.get());
+            console.log("---> store3 (unlocker)");
+            console.log(await this.store_unlocker.store.get());
+            console.log("---> store3 (results)");
+            console.log(await this.store_results.store.get());
+          }
 
         });
 
@@ -204,20 +296,22 @@
           "onfinish": {
             "log": true,
             "store": {
-              settings: {
-                name: "data-level-2"
+              "settings": {
+                "name": "gkolev2s_exam_builder",
+                "url": "https://ccm2.inf.h-brs.de"
               },
+              "key": examSignature
             },
             "alert": "Form data successfully saved!",
             callback: async () => {
              await getCurrentExamKey()
            },
            // render the exam_generator component when exam data is submitted
-            // "render": {
-            //   component: "../exam_generator/ccm.exam_generator.js",
-            //   // TODO: do I need a config here? I load the standard version of the component that works without, but its just on loading.
-            //   config: {} // config of exam generator component
-            // }
+            "render": {
+              // component: "../exam_generator/ccm.exam_generator.js",
+              // TODO: do I need a config here? I load the standard version of the component that works without, but its just on loading.
+              // config: {} // config of exam generator component
+            }
           }
         };
 
@@ -233,13 +327,18 @@
         // append 'info-form' to the html structure
         this.element.querySelector("#info-form").appendChild(submitInstance.root);
 
+        // start user instance and append it to html structure
+        await this.user.start();
+        this.element.querySelector("#user-login").appendChild(this.user.root);
 
         /**
          * get key of last saved exam
          */
         let getCurrentExamKey = async () => {
-          let results = await this.store2.get();
-          let key = results[results.length - 1].key[0];
+          // let results = await this.store2.get();
+          let results = await this.store_builder.store.get();
+          // let key = results[results.length - 1].key[0];
+          let key = results[results.length - 1].key;
           // show key to the user as alert
           $.onFinish(
             this,

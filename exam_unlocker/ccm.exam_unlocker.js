@@ -10,8 +10,12 @@
  * Done: Password and studentId are checked
  * Done: On submitting: Load different component
  * TODO: Load exam_reader
- * Done: Unlocked exam is saved on datstore lvl-2 together with the studentId + date and time of unlocking
+ * Done: Unlocked exam is saved on datstore lvl-3 together with the studentId + date and time of unlocking
  * TODO: Block exams and studentIds that have been already used
+ * TODO: Map the unlocked exams with the results
+ * TODO: Map the results with the original exam
+ * TODO: Fix! Now using just the first added exercise. (If two quizes - second one is ignored)
+ * TODO: ? Quiz: onfinish - Block user from getting back to the unlocker?
  */
 
 (() => {
@@ -68,16 +72,9 @@
                   tag: "button",
                   class: "btn btn-primary",
                   inner: "get current saved data",
-                  title: "get current data on lvl-2 in console",
+                  title: "get current data (check console)",
                   onclick: "%get%"
                 },
-                {
-                  tag: "button",
-                  class: "btn btn-primary",
-                  inner: "delete all saved data!",
-                  title: "delete all saved data on lvl-2 (check console)",
-                  onclick: "%del%"
-                }
               ]
             },
             {
@@ -111,15 +108,32 @@
 
       /*** ccm-Datastores ***/
 
-      // create db lvl-1 (lost after reload)
+      // db lvl-1 (lost after reload)
       store: [ "ccm.store" ],
 
       store_js: {
         store: [ "ccm.store",  "../exam_builder/resources/datasets.js" ],
       },
 
-      // create db lvl-2 (IndexedDB)
+      // db lvl-2 (IndexedDB)
       store2: [ "ccm.store", { name: "data-level-2" } ],
+
+      // db lvl-3 (hbrs-Server)
+      store_builder: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_builder", url: "https://ccm2.inf.h-brs.de" } ],
+      },
+
+      store_generator: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
+      },
+
+      store_unlocker: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_unlocker", url: "https://ccm2.inf.h-brs.de" } ],
+      },
+
+      store_results: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_results", url: "https://ccm2.inf.h-brs.de" } ],
+      },
 
       /*** css resources ***/
 
@@ -171,22 +185,16 @@
           get: async () => {
             console.log("---> data at lvl-1:");
             console.log(await this.store.get());
-            console.log("---> data at lvl-1 (.js):");
-            console.log(await this.store_js.store.get());
             console.log("---> data at lvl-2:");
             console.log(await this.store2.get());
-
-          },
-
-          del: async () => {
-            // delete all data on store2
-            let storeCurrent = await this.store2.get();
-            for (var i = 0; i < storeCurrent.length; i++) {
-              this.store2.del(storeCurrent[i].key);
-            };
-            // log current values from store 2 after deleting all
-            console.log("---> saved data deleted.");
-            console.log(await this.store2.get());
+            console.log("---> data at lvl-3 (builder)");
+            console.log(await this.store_builder.store.get());
+            console.log("---> data at lvl-3 (generator)");
+            console.log(await this.store_generator.store.get());
+            console.log("---> data at lvl-3 (unlocker)");
+            console.log(await this.store_unlocker.store.get());
+            console.log("---> data at lvl-3 (results)");
+            console.log(await this.store_results.store.get());
           },
         });
 
@@ -218,6 +226,7 @@
 
         // matrikelNr that are allowed to write the exam
         // TODO: get matrikelNr list from sis
+        // TODO: put student ids on server
         let studentIds = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
 
         /**
@@ -232,7 +241,7 @@
           console.log(`Looking for key: ${key}, matrnr: ${matrnr}.`);
 
           // get the config with specific key from stored exam on datastore lvl-2
-          let configToLoad = await this.store2.get(key);
+          let configToLoad = await this.store_generator.store.get(key);
           // if there is no such key --> inform the user
           console.log(configToLoad);
           if ( configToLoad == null ) {
@@ -256,6 +265,7 @@
               this,
               window.alert(`Exam Nr. ${key} has been unlocked. Click "OK" to start.`),
               storeUnlocked(),
+              blockAttempt(),
               startExam()
             );
 
@@ -276,18 +286,32 @@
          */
         let startExam = async () => {
 
-          // const blankInstance = await this.blank.instance();
-          // const blankResult = await blankInstance.start();
-
           // try to start quiz with one of created configs in exam_generator
           let key = submitInstance.getValue().password;
-          const quizConfig = await this.store2.get(key);
+          const quizConfig = await this.store_generator.store.get(key);
           const quizInstance = await this.quiz.instance(quizConfig);
           const quizResult = await quizInstance.start();
 
+          const storeGenerator = await this.store_generator.store.get();
+
           this.element.querySelector("#unlock-form").removeChild(submitInstance.root);
-          // this.element.querySelector("#unlock-form").appendChild(blankInstance.root);
           this.element.querySelector("#unlock-form").appendChild(quizInstance.root);
+          this.element.querySelector("#title").innerHTML = storeGenerator[0].subject;
+
+        };
+
+        /**
+         * block the student id and the exam id that were just used to unlock an exam
+         *
+         */
+        let blockAttempt = async () => {
+
+          let examId = submitInstance.getValue().password;
+          let matrNr = submitInstance.getValue().matrikelnr;
+
+          studentIds = studentIds.filter(item => item !== matrNr);
+          console.log("Student Ids left:");
+          console.log(studentIds);
 
         };
 
@@ -299,21 +323,25 @@
 
           let examId = submitInstance.getValue().password;
           let matrNr = submitInstance.getValue().matrikelnr;
-          let today = new Date();
-          let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-          let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+          let today = new Date().toLocaleString();
 
-          await this.store.set(
+          // TODO: save unlocker together with results
+          await this.store_unlocker.store.set(
             {
               "key": examId,
               "unlocked":
               {
                 "matrNr": matrNr,
-                "date": date,
-                "time": time
+                "dateTime": today,
               }
             }
           );
+
+        };
+
+        let updateUnlocked = async () => {
+
+
 
         };
 

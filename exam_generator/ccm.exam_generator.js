@@ -4,8 +4,9 @@
  * @license The MIT License (MIT)
  *
  * Done: Generator form (incl. Shuffling the Q&A)
- * Done: On submitting: save the generated configs on datastore lvl-2 with unique keys
- * Done: On submitting: save the general exam info as separate object on datastore lvl-2
+ * Done: On submitting: save the generated configs on datastore lvl-3 with unique keys
+ * Done: On submitting: save the general exam info as separate object on datastore lvl-3
+ * TODO: Block already unlocked exams and used student ids
  *
  */
 
@@ -77,16 +78,9 @@
                   tag: "button",
                   class: "btn btn-primary",
                   inner: "get current saved data",
-                  title: "get current data on lvl-1 & 2 in console",
+                  title: "get current data (check console)",
                   onclick: "%get%"
                 },
-                {
-                  tag: "button",
-                  class: "btn btn-primary",
-                  inner: "delete all saved data!",
-                  title: "delete all saved data on lvl-1 & 2 (check console)",
-                  onclick: "%del%"
-                }
               ]
             },
             {
@@ -113,7 +107,7 @@
 
       /*** ccm-Datastores ***/
 
-      // create db lvl-1 (lost after reload)
+      // db lvl-1 (lost after reload)
       store: [ "ccm.store" ],
 
       store_js: {
@@ -122,6 +116,23 @@
 
       // db lvl-2 (IndexedDB)
       store2: [ "ccm.store", { name: "data-level-2" } ],
+
+      // db lvl-3 (hbrs-Server)
+      store_builder: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_builder", url: "https://ccm2.inf.h-brs.de" } ],
+      },
+
+      store_generator: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
+      },
+
+      store_unlocker: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_unlocker", url: "https://ccm2.inf.h-brs.de" } ],
+      },
+
+      store_results: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_results", url: "https://ccm2.inf.h-brs.de" } ],
+      },
 
       /*** css resources ***/
 
@@ -179,7 +190,6 @@
           },
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
           "onfinish": {
-            // "alert": "Exam versions generated successfully!",
             "log": true,
             callback: function () {
               generate()
@@ -196,25 +206,19 @@
           // additional funtions to help working with data
           // will be deleted at the end
           get: async () => {
-            // log current data saved at store2
             console.log("---> data at lvl-1:");
             console.log(await this.store.get());
-            console.log("---> data at lvl-1 (datasets.js):");
-            console.log(await this.store_js.store.get());
             console.log("---> data at lvl-2:");
             console.log(await this.store2.get());
+            console.log("---> data at lvl-3 (builder)");
+            console.log(await this.store_builder.store.get());
+            console.log("---> data at lvl-3 (generator)");
+            console.log(await this.store_generator.store.get());
+            console.log("---> data at lvl-3 (unlocker)");
+            console.log(await this.store_unlocker.store.get());
+            console.log("---> data at lvl-3 (results)");
+            console.log(await this.store_results.store.get());
           },
-
-          del: async () => {
-            // delete all data on store2
-            let storeCurrent = await this.store2.get();
-            for (var i = 0; i < storeCurrent.length; i++) {
-              this.store2.del(storeCurrent[i].key);
-            };
-            // log current values from store 2 after deleting all
-            console.log("---> saved data deleted.");
-            console.log(await this.store2.get());
-          }
         });
 
         // render the sections to the given in config html structure
@@ -233,7 +237,8 @@
           let shuffleOption = submitInstance.getValue().shuffle;
 
           // get data from store2 (lvl-2)
-          let quizOrigin = await this.store2.get([examId]);
+          // let quizOrigin = await this.store2.get([examId]);
+          let quizOrigin = await this.store_builder.store.get(examId);
 
           if (quizOrigin == null) {
             window.alert(`The exam ID: ${examId} is wrong. Please try again.`);
@@ -284,7 +289,7 @@
             for (let i = 1; i < questMatrix.length; i++) {
               let quizOriginCopy = $.clone(quizOrigin);
               quizOriginCopy.quiz[0] = questMatrix[i];
-              quizOriginCopy.key[0] = $.generateKey();
+              quizOriginCopy.key = $.generateKey();
               configsArr.push(quizOriginCopy);
             };
 
@@ -292,11 +297,14 @@
             let resultsQuiz = quizOrigin.quiz[0];
             let defaultCss = await this.store_js.store.get("demo");
 
+            // get creators signature
+            let creatorSignature = quizOrigin.key;
+
             // store exam information
-            await this.store2.set(
+            await this.store_generator.store.set(
               {
                 // TODO generate key from the login data of user (exam creator)
-                "key": "gkolev2s_exam_info",
+                "key": creatorSignature + "_exam_info",
                 "subject": quizOrigin.subject,
                 "date": quizOrigin.date,
                 "time": quizOrigin.time,
@@ -306,9 +314,9 @@
 
             for (var i = 1; i < configsArr.length; i++) {
               // store original quiz config
-              await this.store2.set(
+              await this.store_generator.store.set(
                 {
-                  "key": configsArr[i].key[0],
+                  "key": configsArr[i].key,
                   "questions": configsArr[i].quiz[0],
                   "feedback": quizOrigin.quiz[0].feedback,
                   "navigation": quizOrigin.quiz[0].navigation,
@@ -326,8 +334,10 @@
                     "restart": false,
                     "store": {
                       "settings": {
-                        "name": "data-level-2"
-                      },
+                        "name": "gkolev2s_exam_results",
+                        "url": "https://ccm2.inf.h-brs.de"
+                      }
+                      // key
                     },
                     "alert": "Configurations, you've finished the quiz successfully!",
                   },
