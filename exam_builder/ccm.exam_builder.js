@@ -8,7 +8,8 @@
  * Done: At submitting the form save it on datastore lvl-3 with unique key
  * Done: Copying the generated exam key to the clipboard and inform the user for it
  * Done: Added login that is used for saving the unique exam id
- * TODO: Make login manditory
+ * Done: Make login manditory
+ * Done: If logged in as "admin" only then show data buttons
  *
  */
 
@@ -272,18 +273,20 @@
           start: async () => {
 
             let userStatus = this.user.isLoggedIn();
-            let userName = this.user.data().user;
-            console.log(userName);
 
             if (userStatus) {
+              // if user is logged in -> only then allow "start" button to show submit form
               await changeFormVisibility();
               let startBtn = this.element.querySelector("#start-btn");
               $.removeElement(startBtn);
 
+              let userName = this.user.data().user;
+              // if user == "admin" -> only then show get/delete data buttons
               if (userName == "admin") {
                 await changeBtnsVisibility();
-              }
+              };
             } else {
+              // inform user if not logged in
               window.alert("Please login first.");
             };
 
@@ -335,6 +338,7 @@
         let infoSection = this.element.querySelector("#info-section");
         infoSection.setAttribute("style", "visibility: hidden");
 
+        // show/hide submit form
         let changeFormVisibility = () => {
           if (infoSection.style.visibility === "hidden") {
             infoSection.style.visibility = "visible";
@@ -343,9 +347,11 @@
           }
         };
 
+        // hide additional buttons
         let btnsSection = this.element.querySelector("#data-btns");
         btnsSection.setAttribute("style", "visibility: hidden");
 
+        // show/hide additional buttons
         let changeBtnsVisibility = () => {
           if (btnsSection.style.visibility === "hidden") {
             btnsSection.style.visibility = "visible";

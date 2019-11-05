@@ -8,14 +8,15 @@
  * Done: Password is protected
  * Done: Password and studentId are checked
  * Done: On submitting: Load different component
- * TODO: Load exam_reader
+ * Done: Block used student ids
+ * Done: Block used exams
  * Done: Unlocked exam is saved on datstore lvl-3 together with the studentId + date and time of unlocking
+ * TODO: Load exam_reader
  * TODO: Map the unlocked exams with the results
  * TODO: Map the results with the original exam
  * TODO: Fix! Now using just the first added exercise. (If two quizes - second one is ignored)
  * TODO: ? Quiz: onfinish - Block user from getting back to the unlocker?
- * Done: Block used student ids
- * TODO: Block used exams
+ *
  */
 
 (() => {
@@ -262,7 +263,7 @@
           for (var i = 0; i < unlockedExams.length; i++) {
             usedKeys.push(unlockedExams[i].key)
           };
-          
+
           // check if the exam key has been already used
           if (usedKeys.includes(configToLoad.key)) {
             window.alert(`${configToLoad.key} has been already used.`);
@@ -313,6 +314,10 @@
 
           const storeGenerator = await this.store_generator.store.get();
 
+          console.log("<<<<<<<<<<>>>>>>>>>>");
+          console.log(quizInstance);
+          console.log($);
+
           this.element.querySelector("#unlock-form").removeChild(submitInstance.root);
           this.element.querySelector("#unlock-form").appendChild(quizInstance.root);
           this.element.querySelector("#title").innerHTML = storeGenerator[0].subject;
@@ -321,7 +326,6 @@
 
         /**
          * block the student id and the exam id that were just used to unlock an exam
-         * TODO: block already unlocked exam ids
          */
         let blockSecondAttempt = async ( examId, studId ) => {
 
@@ -343,14 +347,10 @@
          */
         let storeUnlocked = async ( examId, studId ) => {
 
-          // let today = new Date().toLocaleString();
-
           await this.store_unlocker.store.set(
             {
               "key": examId,
-              "studentId": studId,
-              // TODO: delete dateTime. no need of it.. there is already a created_at property
-              // "dateTime": today
+              "studentId": studId
             }
           );
 

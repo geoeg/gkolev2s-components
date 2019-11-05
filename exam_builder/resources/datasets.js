@@ -130,11 +130,13 @@ ccm.files[ 'datasets.js' ] = {
         "finish_anytime": true,
         "shuffle_answers": true,
         "shuffle_questions": true,
-        "start_label": "Start",
+        // "start_label": "Start",
         "previous_label": "Previous",
         "next_label": "Next",
         "submit_label": "Submit",
-        "finish_label": "Finish"
+        "finish_label": "Finish",
+        "clear_onfinish": true,
+        "restart_onfinish": false
       },
     ],
   },
@@ -228,77 +230,89 @@ ccm.files[ 'datasets.js' ] = {
           },
           "<legend>Advanced Settings</legend>",
 
-          {
-            "label": "Start button",
-            "name": "start_button",
-            "type": "checkbox",
-            "info": "If checked, the quiz will begin with a [start] button."
-          },
+          // {
+          //   "label": "Start button",
+          //   "name": "start_button",
+          //   "type": "checkbox",
+          //   "info": "When enabled, a start button is displayed before the quiz starts."
+          // },
           {
             "label": "Feedback",
             "name": "feedback",
             "type": "checkbox",
-            "info": "If selected, the user will get feedback on his answers immediately after finishing the quiz."
+            "info": "When enabled, automatic feedback will appear after answering a question."
           },
           {
             "label": "Navigation",
             "name": "navigation",
             "type": "checkbox",
-            "info": "If selected, the quiz will include a navigation bar."
+            "info": "When enabled, you can navigate between the questions."
           },
           {
             "label": "Skippable",
             "name": "skippable",
             "type": "checkbox",
-            "info": "If selected, the user will be able to skip questions."
+            "info": "When enabled, questions can be skipped."
           },
           {
             "label": "Finish anytime",
             "name": "finish_anytime",
             "type": "checkbox",
-            "info": "If selected, the user will be able to finish the quiz anytime."
+            "info": "When enabled, not all questions need to be answered in order to finish the quiz."
           },
           {
-            "label": "Shuffle questions (Test)",
+            "label": "Shuffle questions",
             "name": "shuffle_questions",
             "type": "checkbox",
-            "info": "If selected, the questions (and only the questions) will be shuffled."
+            "info": "If selected, the questions (and only the questions) will be shuffled. (This option is visible after generating multiple exams with exam_generator.)"
           },
           {
-            "label": "Random answers (Test)",
+            "label": "Random answers",
             "name": "shuffle_answers",
             "type": "checkbox",
-            "info": "If selected, the answers of every question will be shuffled."
+            "info": "If selected, the answers of every question will be shuffled. (This option is visible after generating multiple exams with exam_generator.)"
           },
-          {
-            "label": "Start button",
-            "name": "start_label",
-            "type": "text",
-            "info": "Add label for 'start button'."
-          },
+          // {
+          //   "label": "Start button",
+          //   "name": "start_label",
+          //   "type": "text",
+          //   "info": "Add label for 'start button'."
+          // },
           {
             "label": "Previous button",
             "name": "previous_label",
             "type": "text",
-            "info": "Add label for 'previous button'."
+            "info": "<i>Previous</i> is offered as a default button but can be renamed."
           },
           {
             "label": "Next button",
             "name": "next_label",
             "type": "text",
-            "info": "Add label for 'next button'"
+            "info": "<i>Next</i> is offered as a default button but can be renamed."
           },
           {
             "label": "Submit button",
             "name": "submit_label",
             "type": "text",
-            "info": "Add label for 'submit button'"
+            "info": "<i>Submit</i> is offered as a default button but can be renamed."
           },
           {
             "label": "Finish button",
             "name": "finish_label",
             "type": "text",
-            "info": "Add label for 'finish button'."
+            "info": "<i>Finish</i> is offered as a default button but can be renamed."
+          },
+          {
+            "label": "Clear on finish",
+            "name": "clear_onfinish",
+            "type": "checkbox",
+            "info": "If selected, after finishing the quiz the screen will be cleaned from all questions. (This option is helpful for exams, where the student are not allowed to get any feedback.)"
+          },
+          {
+            "label": "Restart on finish",
+            "name": "restart_onfinish",
+            "type": "checkbox",
+            "info": "If selected, after finishing the quiz it will be restarted and the user can have another attempt. (This option is helpful for preparation for real exams, where the students may have many attempts on the same set of exercises.)"
           },
             ]
           },

@@ -6,6 +6,7 @@
  * Done: Generator form (incl. Shuffling the Q&A)
  * Done: On submitting: save the generated configs on datastore lvl-3 with unique keys
  * Done: On submitting: save the general exam info as separate object on datastore lvl-3
+ * Done: On submitting: show generated exam ids to the user (able user to copy the ids)
  *
  */
 
@@ -251,14 +252,15 @@
               for (let i = 0; i < amount; i++) {
                 let arrCopy = $.clone(arrOrigin);
 
-                if (shuffleOption) {
-                  // shuffle questions
-                  arrCopy = $.shuffleArray(arrCopy);
-                  // shuffle answers of each question
-                  for (var j = 0; j < arrCopy.length; j++) {
-                    arrCopy[j].answers = $.shuffleArray(arrCopy[j].answers);
-                  }
-                };
+                // TODO: delete. no need of that shuffle.. using quiz shuffle
+                // if (shuffleOption) {
+                //   // shuffle questions
+                //   arrCopy = $.shuffleArray(arrCopy);
+                //   // shuffle answers of each question
+                //   for (var j = 0; j < arrCopy.length; j++) {
+                //     arrCopy[j].answers = $.shuffleArray(arrCopy[j].answers);
+                //   }
+                // };
                 // add new array with shuffled Q&A to the matrix
                 arrMatrix.push(arrCopy);
               }
@@ -307,27 +309,22 @@
                   "random": quizOrigin.quiz[0].shuffle_answers,
                   "shuffle": quizOrigin.quiz[0].shuffle_questions,
                   "placeholder": {
-                    "start": quizOrigin.quiz[0].start_label,
+                    // "start": quizOrigin.quiz[0].start_label,
                     "prev": quizOrigin.quiz[0].previous_label,
                     "next": quizOrigin.quiz[0].next_label,
                     "submit": quizOrigin.quiz[0].submit_label,
                     "finish": quizOrigin.quiz[0].finish_label
                   },
-                  // TODO: try "onstart"
-                  // "onstart": {},
-                  // "placeholder.finish": "Finish",
                   "onfinish": {
-                    "log": true,
-                    "restart": false,
-                    // "feedback": false??
+                    "clear": quizOrigin.quiz[0].clear_onfinish,
+                    "restart": quizOrigin.quiz[0].restart_onfinish,
                     "store": {
                       "settings": {
                         "name": "gkolev2s_exam_results",
                         "url": "https://ccm2.inf.h-brs.de"
                       }
-                      // key
                     },
-                    "alert": "Configurations, you've finished the quiz successfully!",
+                    "alert": "Configurations, you've finished the quiz successfully!"
                   },
                   "css": defaultCss.css
                 }
