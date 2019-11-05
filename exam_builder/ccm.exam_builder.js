@@ -272,12 +272,17 @@
           start: async () => {
 
             let userStatus = this.user.isLoggedIn();
+            let userName = this.user.data().user;
+            console.log(userName);
 
             if (userStatus) {
-              await changeVisibility();
-              let startBtnVisibility = this.element.querySelector("#start-btn");
-              startBtnVisibility.setAttribute("style", "visibility: hidden");
+              await changeFormVisibility();
+              let startBtn = this.element.querySelector("#start-btn");
+              $.removeElement(startBtn);
 
+              if (userName == "admin") {
+                await changeBtnsVisibility();
+              }
             } else {
               window.alert("Please login first.");
             };
@@ -330,11 +335,22 @@
         let infoSection = this.element.querySelector("#info-section");
         infoSection.setAttribute("style", "visibility: hidden");
 
-        let changeVisibility = () => {
-          if (infoSection.style.visibility === 'hidden') {
-            infoSection.style.visibility = 'visible';
+        let changeFormVisibility = () => {
+          if (infoSection.style.visibility === "hidden") {
+            infoSection.style.visibility = "visible";
           } else {
-            infoSection.style.visibility = 'hidden';
+            infoSection.style.visibility = "hidden";
+          }
+        };
+
+        let btnsSection = this.element.querySelector("#data-btns");
+        btnsSection.setAttribute("style", "visibility: hidden");
+
+        let changeBtnsVisibility = () => {
+          if (btnsSection.style.visibility === "hidden") {
+            btnsSection.style.visibility = "visible";
+          } else {
+            btnsSection.style.visibility = "hidden";
           }
         };
 

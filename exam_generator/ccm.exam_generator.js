@@ -79,13 +79,6 @@
                   inner: "get current saved data",
                   title: "get current data (check console)",
                   onclick: "%get%"
-                },
-                {
-                  tag: "button",
-                  class: "btn btn-primary",
-                  inner: "download exam ids",
-                  title: "download exam ids as pdf file",
-                  onclick: "%download%"
                 }
               ]
             },
@@ -96,6 +89,14 @@
               // generator form section
               tag: "div",
               id: "generator-form",
+              inner: []
+            },
+            {
+              tag: "hr"
+            },
+            {
+              tag: "div",
+              id: "generated-ids",
               inner: []
             }
           ]
@@ -161,14 +162,8 @@
        */
       this.start = async () => {
 
-        // get current date and time for logging the start
-        const today = new Date();
-        const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-        const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-        const logDateTime = (date, time) => { return date + "/" + time };
-
         // logging of "start" event
-        this.logger.log( "start-exam-generator", logDateTime(date, time) );
+        this.logger.log( "start-exam-generator" );
 
         // section topbar logo, title
         const topbar = $.html( this.html.topbar, {});
@@ -204,15 +199,8 @@
             console.log(await this.store_builder.store.get());
             console.log("---> data at lvl-3 (generator)");
             console.log(await this.store_generator.store.get());
-          },
-          // download the exam ids
-          // download: async () => {
-          //   let generatedConfigs = await this.store_unlocker.store.get();
-          //   let examIdsOnly = [];
-          //   for (let i = 1; i < generatedConfigs.length; i++) {
-          //     examIdsOnly.push(generatedConfigs[i].key);
-          //   };
-          // }
+          }
+
         });
 
         // render the sections to the given in config html structure
@@ -228,7 +216,9 @@
           // get amount for exams to create
           let amount = submitInstance.getValue().amount;
           // get shuffle option
-          let shuffleOption = submitInstance.getValue().shuffle;
+          // let shuffleOption = submitInstance.getValue().shuffle;
+          // TODO: fix shuffle questions (use shuffle answers of quiz)
+          let shuffleOption = false;
 
           // get data from store2 (lvl-2)
           // let quizOrigin = await this.store2.get([examId]);
@@ -314,6 +304,8 @@
                   "feedback": quizOrigin.quiz[0].feedback,
                   "navigation": quizOrigin.quiz[0].navigation,
                   "start_button": quizOrigin.quiz[0].start_button,
+                  "random": quizOrigin.quiz[0].shuffle_answers,
+                  "shuffle": quizOrigin.quiz[0].shuffle_questions,
                   "placeholder": {
                     "start": quizOrigin.quiz[0].start_label,
                     "prev": quizOrigin.quiz[0].previous_label,
@@ -321,10 +313,13 @@
                     "submit": quizOrigin.quiz[0].submit_label,
                     "finish": quizOrigin.quiz[0].finish_label
                   },
+                  // TODO: try "onstart"
+                  // "onstart": {},
                   // "placeholder.finish": "Finish",
                   "onfinish": {
                     "log": true,
                     "restart": false,
+                    // "feedback": false??
                     "store": {
                       "settings": {
                         "name": "gkolev2s_exam_results",
@@ -340,7 +335,33 @@
 
             };
 
-          window.alert(`Exam versions generated successfully!`);
+          window.alert(`Exam versions were generated successfully!`);
+
+          // create html table with generated ids and show in app
+          let generatedIds = [];
+          for (var i = 0; i < configsArr.length; i++) {
+            generatedIds.push(configsArr[i].key);
+          };
+
+          // Quelle: https://code-boxx.com/create-table-from-array-javascript/
+          let perrow = 1;
+          let html = "<table><caption>Generad Exam Ids</caption><tr>";
+
+          for (var i=1; i<generatedIds.length; i++) {
+            html += "<td>" + generatedIds[i] + "</td>";
+            // Break into next row
+            var next = i+1;
+            if (next%perrow==0 && next!=generatedIds.length) {
+              html += "</tr><tr>";
+            }
+          }
+          html += "</tr></table>";
+
+          // attach html to html container
+          this.element.querySelector("#generated-ids").innerHTML = html;
+
+          window.alert("Scroll down to see a list of generated exam ids. Give one to every exam participant so they will be allowed to unlock an exam with it.");
+
         };
 
       };

@@ -173,19 +173,12 @@
        */
       this.start = async () => {
 
-        // get current date and time for logging the start
-        const today = new Date();
-        const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-        const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-        const logDateTime = (date, time) => { return date + "/" + time };
-
         // logging of "start" event
-        this.logger.log( "start-exam-unlocker", logDateTime(date, time) );
+        this.logger.log( "start-exam-unlocker" );
 
-        // matrikelNr that are allowed to write the exam
-        // TODO: get matrikelNr list from sis
-        let studentIds = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
-        let studentIds2 = await this.store_students.store.get("allowed_ids");
+        // student ids that are allowed to write the exam
+        // TODO: get student ids list from sis
+        let studIds = await this.store_students.store.get("allowed_ids");
 
         // section unlocker form
         const form = $.html( this.html.form, {
@@ -256,7 +249,7 @@
           let studentid = submitInstance.getValue().studentid;
           console.log(`Looking for key: ${key}, studentid: ${studentid}.`);
 
-          // get the config with specific key from stored exam on datastore lvl-3
+          // get the config with specific key from stored exams on datastore lvl-3
           let configToLoad = await this.store_generator.store.get(key);
           // if there is no such key --> inform the user
           if ( configToLoad == null ) {
@@ -269,30 +262,27 @@
           for (var i = 0; i < unlockedExams.length; i++) {
             usedKeys.push(unlockedExams[i].key)
           };
-
+          
           // check if the exam key has been already used
           if (usedKeys.includes(configToLoad.key)) {
             window.alert(`${configToLoad.key} has been already used.`);
           } else {
 
-            // get the key
-            // TODO: try/catch error handling (if key == null)
-            let expected_key = configToLoad.key;
             let expected_studid = null;
 
             // check if the student with that studentid is allowed to write the exam
-            for (var i = 0; i < studentIds2.value.length; i++) {
-              if (studentIds2.value[i] == studentid) {
-                expected_studid = studentIds2.value[i];
+            for (var i = 0; i < studIds.value.length; i++) {
+              if (studIds.value[i] == studentid) {
+                expected_studid = studIds.value[i];
               };
             };
 
             // if studentid and password match - load the exam; else - try again
-            if ( ( studentid == expected_studid ) && (key.localeCompare(expected_key) == 0) ) {
+            if ( ( studentid == expected_studid ) && (key.localeCompare(configToLoad.key) == 0) ) {
 
               $.onFinish(
                 this,
-                window.alert(`Exam Nr. ${key} has been unlocked. Click "OK" to start.`),
+                window.alert(`Exam Nr. ${key} has been unlocked successfully. Click "OK" to start.`),
                 storeUnlocked(key, studentid),
                 blockSecondAttempt(key, studentid),
                 startExam(key)
@@ -335,14 +325,14 @@
          */
         let blockSecondAttempt = async ( examId, studId ) => {
 
-          for (var i = 0; i < studentIds2.value.length; i++) {
-            studentIds2.value = studentIds2.value.filter(item => item !== studId);
+          for (var i = 0; i < studIds.value.length; i++) {
+            studIds.value = studIds.value.filter(item => item !== studId);
           };
 
           await this.store_students.store.set(
             {
               "key": "allowed_ids",
-              "value": studentIds2.value
+              "value": studIds.value
             }
           );
 
@@ -353,14 +343,14 @@
          */
         let storeUnlocked = async ( examId, studId ) => {
 
-          let today = new Date().toLocaleString();
+          // let today = new Date().toLocaleString();
 
           await this.store_unlocker.store.set(
             {
               "key": examId,
               "studentId": studId,
               // TODO: delete dateTime. no need of it.. there is already a created_at property
-              "dateTime": today
+              // "dateTime": today
             }
           );
 

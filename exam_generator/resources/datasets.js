@@ -13,7 +13,7 @@ ccm.files[ 'datasets.js' ] = {
 
     "exam_id": "1572444407469X3812613927313322",
     "amount": 5,
-    "shuffle": true
+    // "shuffle": true
 
   },
 
@@ -38,12 +38,12 @@ ccm.files[ 'datasets.js' ] = {
         "info": "Add amount of exams to be generated.",
         "min": 1
       },
-      {
-        "label": "Shuffle Q&A",
-        "name": "shuffle",
-        "type": "checkbox",
-        "info": "Check if you want to shuffle all Q&A"
-      },
+      // {
+      //   "label": "Shuffle Q&A",
+      //   "name": "shuffle",
+      //   "type": "checkbox",
+      //   "info": "Check if you want to shuffle all Q&A"
+      // },
       {
         "type": "submit"
       }

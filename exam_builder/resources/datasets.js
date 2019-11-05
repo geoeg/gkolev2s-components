@@ -34,7 +34,7 @@ ccm.files[ 'datasets.js' ] = {
               },
               {
                 "text": "a-1.3",
-                "correct": true,
+                "correct": false,
                 "comment": "c-1.3",
               },
               {
@@ -50,17 +50,17 @@ ccm.files[ 'datasets.js' ] = {
             "answers": [
               {
                 "text": "a-2.1",
-                "correct": true,
+                "correct": false,
                 "comment": "c-2.1",
               },
               {
                 "text": "a-2.2",
-                "correct": false,
+                "correct": true,
                 "comment": "c-2.2",
               },
               {
                 "text": "a-2.3",
-                "correct": true,
+                "correct": false,
                 "comment": "c-2.3",
               },
               {
@@ -76,7 +76,7 @@ ccm.files[ 'datasets.js' ] = {
             "answers": [
               {
                 "text": "a-3.1",
-                "correct": true,
+                "correct": false,
                 "comment": "c-3.1",
               },
               {
@@ -102,7 +102,7 @@ ccm.files[ 'datasets.js' ] = {
             "answers": [
               {
                 "text": "a-4.1",
-                "correct": true,
+                "correct": false,
                 "comment": "c-4.1",
               },
               {
@@ -112,12 +112,12 @@ ccm.files[ 'datasets.js' ] = {
               },
               {
                 "text": "a-4.3",
-                "correct": true,
+                "correct": false,
                 "comment": "c-4.3",
               },
               {
                 "text": "a-4.4",
-                "correct": false,
+                "correct": true,
                 "comment": "",
               }
             ]
@@ -128,6 +128,8 @@ ccm.files[ 'datasets.js' ] = {
         "navigation": true,
         "skippable": true,
         "finish_anytime": true,
+        "shuffle_answers": true,
+        "shuffle_questions": true,
         "start_label": "Start",
         "previous_label": "Previous",
         "next_label": "Next",
@@ -255,6 +257,18 @@ ccm.files[ 'datasets.js' ] = {
             "name": "finish_anytime",
             "type": "checkbox",
             "info": "If selected, the user will be able to finish the quiz anytime."
+          },
+          {
+            "label": "Shuffle questions (Test)",
+            "name": "shuffle_questions",
+            "type": "checkbox",
+            "info": "If selected, the questions (and only the questions) will be shuffled."
+          },
+          {
+            "label": "Random answers (Test)",
+            "name": "shuffle_answers",
+            "type": "checkbox",
+            "info": "If selected, the answers of every question will be shuffled."
           },
           {
             "label": "Start button",
