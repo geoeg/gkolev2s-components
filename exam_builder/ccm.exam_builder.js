@@ -70,7 +70,7 @@
             {
               // button for starting the exam form
               tag: "button",
-              class: "btn btn-primary",
+              class: "btn btn-primary btn-outline-dark",
               id: "start-btn",
               inner: "Start",
               title: "Start exam builder (user have to be logged in)",
@@ -98,7 +98,10 @@
                   inner: "delete *.* !",
                   title: "delete all saved data (check console)",
                   onclick: "%del%"
-                }
+                },
+                {
+                  tag: "hr"
+                },
               ]
             }
 
@@ -113,9 +116,7 @@
           class: "info",
           id: "info-section",
           inner: [
-            {
-              tag: "hr"
-            },
+
             {
               // info form section
               tag: "div",
@@ -284,6 +285,9 @@
               // if user == "admin" -> only then show get/delete data buttons
               if (userName == "admin") {
                 await changeBtnsVisibility();
+              } else {
+                let btns = this.element.querySelector("#data-btns");
+                $.removeElement(btns);
               };
             } else {
               // inform user if not logged in

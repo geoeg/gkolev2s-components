@@ -146,9 +146,9 @@ ccm.files[ 'datasets.js' ] = {
     "key": "gkolev2s",
     "data": [
       // TODO: dete first submit button
-      {
-        "type": "submit"
-      },
+      // {
+      //   "type": "submit"
+      // },
       "<legend>General Exam Information</legend>",
 
       {
@@ -230,12 +230,12 @@ ccm.files[ 'datasets.js' ] = {
           },
           "<legend>Advanced Settings</legend>",
 
-          // {
-          //   "label": "Start button",
-          //   "name": "start_button",
-          //   "type": "checkbox",
-          //   "info": "When enabled, a start button is displayed before the quiz starts."
-          // },
+          {
+            "label": "Start button",
+            "name": "start_button",
+            "type": "checkbox",
+            "info": "When enabled, a start button is displayed before the quiz starts."
+          },
           {
             "label": "Feedback",
             "name": "feedback",

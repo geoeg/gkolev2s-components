@@ -11,7 +11,7 @@ ccm.files[ 'datasets.js' ] = {
   "gkolev2s_generator_init": {
     "key": "gkolev2s_generator_init",
 
-    "exam_id": "1572444407469X3812613927313322",
+    "exam_id": "be82ac37a9a2d0de5d5f80fa804dc86e",
     "amount": 5,
     // "shuffle": true
 
@@ -29,7 +29,7 @@ ccm.files[ 'datasets.js' ] = {
         "label": "Exam ID",
         "name": "exam_id",
         "type": "text",
-        "info": "Add exam's id."
+        "info": "Add exam's id. (The start value is just an example.)"
       },
       {
         "label": "Amount",

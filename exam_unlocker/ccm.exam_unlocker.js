@@ -314,10 +314,6 @@
 
           const storeGenerator = await this.store_generator.store.get();
 
-          console.log("<<<<<<<<<<>>>>>>>>>>");
-          console.log(quizInstance);
-          console.log($);
-
           this.element.querySelector("#unlock-form").removeChild(submitInstance.root);
           this.element.querySelector("#unlock-form").appendChild(quizInstance.root);
           this.element.querySelector("#title").innerHTML = storeGenerator[0].subject;

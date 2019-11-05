@@ -67,20 +67,20 @@
           tag: "div",
           class: "generator",
           inner: [
-            {
-              tag: "hr"
-            },
+            // {
+            //   tag: "hr"
+            // },
             {
               tag: "div",
               id: "data-btns",
               inner: [
-                {
-                  tag: "button",
-                  class: "btn btn-primary",
-                  inner: "get current saved data",
-                  title: "get current data (check console)",
-                  onclick: "%get%"
-                }
+                // {
+                //   tag: "button",
+                //   class: "btn btn-primary",
+                //   inner: "get current saved data",
+                //   title: "get current data (check console)",
+                //   onclick: "%get%"
+                // }
               ]
             },
             {
@@ -193,14 +193,14 @@
         const generator = $.html( this.html.generator, {
           // additional funtions to help working with data
           // will be deleted at the end
-          get: async () => {
-            console.log("---> data at lvl-1 (.js):");
-            console.log(await this.store_js.store.get());
-            console.log("---> data at lvl-3 (builder)");
-            console.log(await this.store_builder.store.get());
-            console.log("---> data at lvl-3 (generator)");
-            console.log(await this.store_generator.store.get());
-          }
+          // get: async () => {
+          //   console.log("---> data at lvl-1 (.js):");
+          //   console.log(await this.store_js.store.get());
+          //   console.log("---> data at lvl-3 (builder)");
+          //   console.log(await this.store_builder.store.get());
+          //   console.log("---> data at lvl-3 (generator)");
+          //   console.log(await this.store_generator.store.get());
+          // }
 
         });
 
@@ -261,6 +261,7 @@
                 //     arrCopy[j].answers = $.shuffleArray(arrCopy[j].answers);
                 //   }
                 // };
+
                 // add new array with shuffled Q&A to the matrix
                 arrMatrix.push(arrCopy);
               }
@@ -271,6 +272,11 @@
             // array with created configurations
             let configsArr = [];
             configsArr.push(quizOrigin);
+
+            console.log("---------------");
+            console.log(configsArr);
+            console.log("---------------");
+            console.log(quizOrigin);
 
             for (let i = 1; i < questMatrix.length; i++) {
               let quizOriginCopy = $.clone(quizOrigin);
@@ -298,7 +304,7 @@
             );
 
             for (var i = 1; i < configsArr.length; i++) {
-              // store original quiz config
+
               await this.store_generator.store.set(
                 {
                   "key": configsArr[i].key,
