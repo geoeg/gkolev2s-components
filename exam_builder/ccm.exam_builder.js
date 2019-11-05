@@ -61,9 +61,19 @@
               tag: "hr"
             },
             {
+              // user login
               tag: "div",
               id: "user-login",
               inner: []
+            },
+            {
+              // button for starting the exam form
+              tag: "button",
+              class: "btn btn-primary",
+              id: "start-btn",
+              inner: "Start",
+              title: "Start exam builder (user have to be logged in)",
+              onclick: "%start%"
             },
             {
               tag: "hr"
@@ -100,6 +110,7 @@
 
           tag: "div",
           class: "info",
+          id: "info-section",
           inner: [
             {
               tag: "hr"
@@ -126,7 +137,7 @@
 
       // add user instance
       user: [ 'ccm.instance','https://ccmjs.github.io/akless-components/user/versions/ccm.user-9.3.0.js',
-        [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','guest' ] ],
+        [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','compact' ] ],
 
       // Quelle: MKaul/klausur_reader
       hash: [ "ccm.load", { "url": "https://ccmjs.github.io/akless-components/modules/md5.mjs", "type": "module" } ],
@@ -194,8 +205,6 @@
        */
       this.start = async () => {
 
-        // TODO: make login manditory!
-
         /*** Quelle: MKaul/klausur_reader ***/
         /** @type {string} */
         const username = this.user && this.user.isLoggedIn() ? this.user.data().user : this.user;
@@ -211,18 +220,7 @@
         // logging of 'start' event
         // this.logger && this.logger.log( 'start-exam-builder', { name: this.name, user: username, date, signature } );
         this.logger && this.logger.log( 'start-exam-builder', { name: this.name, user: username, date } );
-
         /***********************************/
-        const examSignature = username + "_" + signature;
-
-        // get current date and time for logging the start
-        // const today = new Date();
-        // const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-        // const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-        // const logDateTime = (date, time) => { return date + "/" + time };
-
-        // logging of "start" event
-        // this.logger.log( "start-exam-builder", logDateTime(date, time) );
 
         // section topbar logo, title
         const topbar = $.html( this.html.topbar, {
@@ -269,18 +267,21 @@
             for (var j = 0; j < store3RCurrent.length; j++) {
               this.store_results.store.del(store3RCurrent[j].key)
             };
-            // log current values from store 2 and 3 after deleting all
-            console.log("---> saved data deleted.");
-            console.log("---> store2:");
-            console.log(await this.store2.get());
-            console.log("---> store3 (builder):");
-            console.log(await this.store_builder.store.get());
-            console.log("---> store3 (generator):");
-            console.log(await this.store_generator.store.get());
-            console.log("---> store3 (unlocker)");
-            console.log(await this.store_unlocker.store.get());
-            console.log("---> store3 (results)");
-            console.log(await this.store_results.store.get());
+          },
+
+          start: async () => {
+
+            let userStatus = this.user.isLoggedIn();
+
+            if (userStatus) {
+              await changeVisibility();
+              let startBtnVisibility = this.element.querySelector("#start-btn");
+              startBtnVisibility.setAttribute("style", "visibility: hidden");
+
+            } else {
+              window.alert("Please login first.");
+            };
+
           }
 
         });
@@ -300,18 +301,18 @@
                 "name": "gkolev2s_exam_builder",
                 "url": "https://ccm2.inf.h-brs.de"
               },
-              "key": examSignature
+              "key": signature
             },
             "alert": "Form data successfully saved!",
             callback: async () => {
              await getCurrentExamKey()
            },
            // render the exam_generator component when exam data is submitted
-            "render": {
+            // "render": {
               // component: "../exam_generator/ccm.exam_generator.js",
               // TODO: do I need a config here? I load the standard version of the component that works without, but its just on loading.
               // config: {} // config of exam generator component
-            }
+            // }
           }
         };
 
@@ -324,6 +325,19 @@
 
         // render the sections to the given in config html structure
         $.setContent( this.element, [ topbar, info ] );
+
+        // make login manditory
+        let infoSection = this.element.querySelector("#info-section");
+        infoSection.setAttribute("style", "visibility: hidden");
+
+        let changeVisibility = () => {
+          if (infoSection.style.visibility === 'hidden') {
+            infoSection.style.visibility = 'visible';
+          } else {
+            infoSection.style.visibility = 'hidden';
+          }
+        };
+
         // append 'info-form' to the html structure
         this.element.querySelector("#info-form").appendChild(submitInstance.root);
 

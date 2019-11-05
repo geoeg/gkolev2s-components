@@ -11,7 +11,7 @@ ccm.files[ 'datasets.js' ] = {
   "gkolev2s_unlocker_init": {
     "key": "gkolev2s_entrance_init",
     "password": "1234567890X1234567890",
-    "matrikelnr": "1234567"
+    "studentid": "1234567"
 
   },
 
@@ -23,10 +23,10 @@ ccm.files[ 'datasets.js' ] = {
       "<legend>Unlock Exam</legend>",
 
       {
-        "label": "MatrikelNr.",
-        "name": "matrikelnr",
+        "label": "Student Id",
+        "name": "studentid",
         "type": "number",
-        "info": "Add your MatrikelNr. in the field below."
+        "info": "Add your student id in the field below."
       },
       {
         "label": "Password",

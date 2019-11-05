@@ -6,7 +6,6 @@
  * Done: Generator form (incl. Shuffling the Q&A)
  * Done: On submitting: save the generated configs on datastore lvl-3 with unique keys
  * Done: On submitting: save the general exam info as separate object on datastore lvl-3
- * TODO: Block already unlocked exams and used student ids
  *
  */
 
@@ -81,6 +80,13 @@
                   title: "get current data (check console)",
                   onclick: "%get%"
                 },
+                {
+                  tag: "button",
+                  class: "btn btn-primary",
+                  inner: "download exam ids",
+                  title: "download exam ids as pdf file",
+                  onclick: "%download%"
+                }
               ]
             },
             {
@@ -108,14 +114,9 @@
       /*** ccm-Datastores ***/
 
       // db lvl-1 (lost after reload)
-      store: [ "ccm.store" ],
-
       store_js: {
         store: [ "ccm.store",  "../exam_builder/resources/datasets.js" ],
       },
-
-      // db lvl-2 (IndexedDB)
-      store2: [ "ccm.store", { name: "data-level-2" } ],
 
       // db lvl-3 (hbrs-Server)
       store_builder: {
@@ -124,14 +125,6 @@
 
       store_generator: {
         store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
-      },
-
-      store_unlocker: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_unlocker", url: "https://ccm2.inf.h-brs.de" } ],
-      },
-
-      store_results: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_results", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
       /*** css resources ***/
@@ -181,7 +174,6 @@
         const topbar = $.html( this.html.topbar, {});
 
         // Submit Config: 'Exam-Generator form'
-        // TODO: update submit form
         const submitConfig = {
           "entries": [ "ccm.get", "resources/datasets.js", "gkolev2s_generator.data" ],
           "data": {
@@ -206,19 +198,21 @@
           // additional funtions to help working with data
           // will be deleted at the end
           get: async () => {
-            console.log("---> data at lvl-1:");
-            console.log(await this.store.get());
-            console.log("---> data at lvl-2:");
-            console.log(await this.store2.get());
+            console.log("---> data at lvl-1 (.js):");
+            console.log(await this.store_js.store.get());
             console.log("---> data at lvl-3 (builder)");
             console.log(await this.store_builder.store.get());
             console.log("---> data at lvl-3 (generator)");
             console.log(await this.store_generator.store.get());
-            console.log("---> data at lvl-3 (unlocker)");
-            console.log(await this.store_unlocker.store.get());
-            console.log("---> data at lvl-3 (results)");
-            console.log(await this.store_results.store.get());
           },
+          // download the exam ids
+          // download: async () => {
+          //   let generatedConfigs = await this.store_unlocker.store.get();
+          //   let examIdsOnly = [];
+          //   for (let i = 1; i < generatedConfigs.length; i++) {
+          //     examIdsOnly.push(generatedConfigs[i].key);
+          //   };
+          // }
         });
 
         // render the sections to the given in config html structure
@@ -282,7 +276,7 @@
 
             await createVersion(questOrigin, questMatrix, amount);
 
-            // Experimenting..
+            // array with created configurations
             let configsArr = [];
             configsArr.push(quizOrigin);
 
@@ -303,7 +297,6 @@
             // store exam information
             await this.store_generator.store.set(
               {
-                // TODO generate key from the login data of user (exam creator)
                 "key": creatorSignature + "_exam_info",
                 "subject": quizOrigin.subject,
                 "date": quizOrigin.date,
