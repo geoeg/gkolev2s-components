@@ -110,6 +110,10 @@
       /*** ccm-Datastores ***/
 
       // db lvl-3 (hbrs-Server)
+      store_builder: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_builder", url: "https://ccm2.inf.h-brs.de" } ],
+      },
+
       store_generator: {
         store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
       },
@@ -304,11 +308,11 @@
           const quizInstance = await this.quiz.instance(quizConfig);
           const quizResult = await quizInstance.start();
 
-          const storeGenerator = await this.store_generator.store.get();
+          const storeBuilder = await this.store_builder.store.get();
 
           this.element.querySelector("#unlock-form").removeChild(submitInstance.root);
           this.element.querySelector("#unlock-form").appendChild(quizInstance.root);
-          this.element.querySelector("#title").innerHTML = storeGenerator[0].subject;
+          this.element.querySelector("#title").innerHTML = storeBuilder[0].subject;
 
         };
 

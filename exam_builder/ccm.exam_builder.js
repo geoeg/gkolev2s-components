@@ -168,7 +168,7 @@
       css: ["ccm.load",
         "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
         { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-          "resources/default.css"
+          // "resources/default.css"
       ],
 
 

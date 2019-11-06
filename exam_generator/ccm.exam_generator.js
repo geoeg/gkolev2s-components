@@ -230,7 +230,6 @@
             console.log(builderData);
 
             // default quiz css
-            // quelle: A.Kless/quiz/resoucres/config.js
             // TODO: fix it
             let defaultCss = await this.store_js.store.get("demo");
 
@@ -239,7 +238,7 @@
 
               await this.store_generator.store.set(
                 {
-                  "key": "quiz-" + i + $.generateKey(),
+                  "key": "quiz-" + i + "-" + $.generateKey(),
                   "questions": builderData[i].questions,
                   "feedback": builderData[i].feedback,
                   "navigation": builderData[i].navigation,
