@@ -201,15 +201,14 @@
           },
 
           reset: async () => {
-            let studentIds = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
+            let studentIds = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9017419 ];
             await this.store_students.store.set(
               {
                 key: "allowed_ids",
                 value: studentIds
               }
             );
-
-          }
+          },
 
         });
 
@@ -305,7 +304,6 @@
         /**
          * start the exam component
          * TODO: start exam_reader component?
-         * TODO: load as many as needed quiz instances (0, 1, 2, .., n) with the exact config (0, 1, 2, .., n)
          */
         let startExam = async ( examId, studId ) => {
 
@@ -316,30 +314,22 @@
           // remove the submit (unlocker) form
           this.element.querySelector("#unlock-form").removeChild(submitInstance.root);
 
-          // TODO: think about how to do this?
-          // ?????
-          // const results = examToLoad.answers.push({
-          //   "key": exercise / i,
-          //   "quiz_results": quizInstance.getValue()???
-          // });
-          // await this.store_generator.store.set({
-          //   "key": examId,
-          //   "answers": results
-          // })
-          // ?????
-
-          // change the storage of results
+          // create array with results for each student
+          let examResults = [];
+          // apply changes on onfinish() of each quiz
           // NOTE: now saving all the results at one storage, so only the key is helpful to find the results
           for (let i = 0; i < quizConfigsToLoad.length; i++) {
-            quizConfigsToLoad[i].onfinish.store.key = i + "_" + examToLoad.key;
+            // quizConfigsToLoad[i].onfinish.store.name = "gkolev2s_exam_results_" + studId;
+            quizConfigsToLoad[i].onfinish.store.key = examToLoad.key + "_" + i;
+            // ignore: experimenting with onfinish: callback
             quizConfigsToLoad[i].onfinish.callback = function (instance, results) {
-              console.log("Instance id:");
-              console.log(instance.id);
-              console.log("Results:");
-              console.log(results);
+              examResults.push({
+                "studId": studId,
+                "examId": examId,
+                "quizId": instance.id,
+                "results": results
+              });
             };
-            // TODO: ask if there is an easier way to save separately the student results
-            // quizConfigsToLoad[i].onfinish.store.settings.name = "gkolev2s_exam_results_" + examId + "_" + studId;
           };
 
           // iterate over the configs and render as many as needed quizes

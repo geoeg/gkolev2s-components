@@ -248,7 +248,7 @@
               exercises.push(
                 {
                   // "key": "quiz" + i,
-                  "key": "quiz-" + i + "-" + $.generateKey(),
+                  "key": (i + 1),
                   "questions": builderData[i].questions,
                   "feedback": builderData[i].feedback,
                   "navigation": builderData[i].navigation,
@@ -285,7 +285,7 @@
                 {
                   "key": versions[i].key,
                   "configs": exercises,
-                  "answers": [],
+                  "results": [],
                   "studentid": null
                 }
               );

@@ -92,6 +92,13 @@
                   onclick: "%del%"
                 },
                 {
+                  tag: "button",
+                  class: "btn btn-secondary",
+                  inner: "sort results",
+                  title: "sort the submitted exam results",
+                  onclick: "%sort%"
+                },
+                {
                   tag: "hr"
                 },
               ]
@@ -138,12 +145,6 @@
       SALT: "123",
 
       /*** ccm datastores ***/
-
-      // db lvl-1 (lost after reload)
-      store: [ "ccm.store" ],
-
-      // db lvl-2 (IndexedDB)
-      store2: [ "ccm.store", { name: "data-level-2" } ],
 
       // db lvl-3 (hbrs-Server)
       store_builder: {
@@ -224,10 +225,6 @@
           // additional funtions to help working with data
           // will be deleted at the end (or left just for the admin)
           get: async () => {
-            console.log("---> data at lvl-1:");
-            console.log(await this.store.get());
-            console.log("---> data at lvl-2:");
-            console.log(await this.store2.get());
             console.log("---> data at lvl-3 (builder)");
             console.log(await this.store_builder.store.get());
             console.log("---> data at lvl-3 (generator)");
@@ -289,6 +286,14 @@
               window.alert("Please login first.");
             };
 
+          },
+
+          sort: async () => {
+            // ignore: experimenting..
+            const res = await this.store_results.store.get();
+            const tosplit = res[0].key;
+            let split = tosplit.split("_");
+            console.log(split);
           }
 
         });
