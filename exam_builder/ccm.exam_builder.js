@@ -236,11 +236,6 @@
           },
 
           del: async () => {
-            // delete all data at store 2
-            let store2Current = await this.store2.get();
-            for (var i = 0; i < store2Current.length; i++) {
-              this.store2.del(store2Current[i].key);
-            };
             // delete all data at store 3 - builder
             let store3BCurrent = await this.store_builder.store.get();
             for (var j = 0; j < store3BCurrent.length; j++) {
