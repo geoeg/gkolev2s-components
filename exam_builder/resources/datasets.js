@@ -138,6 +138,76 @@ ccm.files[ 'datasets.js' ] = {
         "clear_onfinish": true,
         "restart_onfinish": false
       },
+      {
+        "questions": [
+          {
+            "text": "2q-1",
+            "description": "2d-1",
+            "answers": [
+              {
+                "text": "2a-1.1",
+                "correct": true,
+                "comment": "2c-1.1",
+              },
+              {
+                "text": "2a-1.2",
+                "correct": false,
+                "comment": "2c-1.2",
+              },
+              {
+                "text": "2a-1.3",
+                "correct": false,
+                "comment": "2c-1.3",
+              },
+              {
+                "text": "2a-1.4",
+                "correct": false,
+                "comment": "",
+              }
+            ]
+          },
+          {
+            "text": "2q-2",
+            "description": "2d-2",
+            "answers": [
+              {
+                "text": "2a-2.1",
+                "correct": false,
+                "comment": "2c-2.1",
+              },
+              {
+                "text": "2a-2.2",
+                "correct": true,
+                "comment": "2c-2.2",
+              },
+              {
+                "text": "2a-2.3",
+                "correct": false,
+                "comment": "2c-2.3",
+              },
+              {
+                "text": "2a-2.4",
+                "correct": false,
+                "comment": "",
+              }
+            ]
+          }
+        ],
+        "start_button": false,
+        "feedback": false,
+        "navigation": false,
+        "skippable": false,
+        "finish_anytime": false,
+        "shuffle_answers": false,
+        "shuffle_questions": false,
+        // "start_label": "Start",
+        "previous_label": "Previous-2",
+        "next_label": "Next-2",
+        "submit_label": "Submit-2",
+        "finish_label": "Finish-2",
+        "clear_onfinish": false,
+        "restart_onfinish": true
+      }
     ],
   },
 
@@ -146,9 +216,9 @@ ccm.files[ 'datasets.js' ] = {
     "key": "gkolev2s",
     "data": [
       // TODO: dete first submit button
-      // {
-      //   "type": "submit"
-      // },
+      {
+        "type": "submit"
+      },
       "<legend>General Exam Information</legend>",
 
       {
@@ -370,7 +440,6 @@ ccm.files[ 'datasets.js' ] = {
 
 
     /*** datasets for klausur_reader (Quelle: MKaul/klausur_reader/resources) ***/
-    // Info: check Ask and TODO from exam_builder
 
     // "se1_SoSe19": {
     //   "key": "se1_SoSe19",

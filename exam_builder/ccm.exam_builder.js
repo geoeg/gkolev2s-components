@@ -3,14 +3,6 @@
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  *
- * Done: Form for general exam information
- * Done: Flexible form for adding one or more quiz exercises
- * Done: At submitting the form save it on datastore lvl-3 with unique key
- * Done: Copying the generated exam key to the clipboard and inform the user for it
- * Done: Added login that is used for saving the unique exam id
- * Done: Make login manditory
- * Done: If logged in as "admin" only then show data buttons
- *
  */
 
 (() => {
