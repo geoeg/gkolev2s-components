@@ -168,7 +168,7 @@
       css: ["ccm.load",
         "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
         { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-          // "resources/default.css"
+          "resources/default.css"
       ],
 
 
@@ -199,7 +199,11 @@
        */
       this.start = async () => {
 
-        /*** Quelle: MKaul/klausur_reader ***/
+        /**
+         * get username, current date and create signature and log those in the app console (LOC:207-220)
+         * (signature is later used to get the builded exam)
+         * Quelle: MKaul/klausur_reader
+         */
         /** @type {string} */
         const username = this.user && this.user.isLoggedIn() ? this.user.data().user : this.user;
 
@@ -214,12 +218,11 @@
         // logging of 'start' event
         // this.logger && this.logger.log( 'start-exam-builder', { name: this.name, user: username, date, signature } );
         this.logger && this.logger.log( 'start-exam-builder', { name: this.name, user: username, date } );
-        /***********************************/
 
         // section topbar logo, title
         const topbar = $.html( this.html.topbar, {
           // additional funtions to help working with data
-          // will be deleted at the end
+          // will be deleted at the end (or left just for the admin)
           get: async () => {
             console.log("---> data at lvl-1:");
             console.log(await this.store.get());

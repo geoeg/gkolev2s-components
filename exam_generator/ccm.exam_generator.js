@@ -29,7 +29,7 @@
       /*** html structure ***/
       html: {
 
-        // TODO no need if loading the generator after submitting the data in exam_builder (there is already a topbar)
+        // TODO: no need if loading the generator after submitting the data in exam_builder (there is already a topbar)
         // topbar section:
         topbar: {
 
@@ -106,7 +106,7 @@
 
       // add logger instance
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
-      [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
+        [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
 
       /*** ccm-Datastores ***/
 
@@ -159,7 +159,7 @@
       this.start = async () => {
 
         // logging of "start" event
-        this.logger.log( "start-exam-generator" );
+        // this.logger.log( "start-exam-generator" );
 
         // section topbar logo, title
         const topbar = $.html( this.html.topbar, {});
@@ -189,6 +189,7 @@
           // additional funtions to help working with data
           // will be deleted at the end
           // get: async () => {
+          //   console.log(await this.store.get());
           //   console.log("---> data at lvl-1 (.js):");
           //   console.log(await this.store_js.store.get());
           //   console.log("---> data at lvl-3 (builder)");
@@ -209,14 +210,17 @@
 
           // get data form "Exam ID" field
           let examId = submitInstance.getValue().exam_id;
-          // get amount for exams to create
+          // get amount from "Amount" field (amount of exam variations to create)
           let amount = submitInstance.getValue().amount;
 
           let quizOrigin = await this.store_builder.store.get(examId);
 
           if (quizOrigin == null) {
+            // inform user
             window.alert(`The exam ID: ${examId} is wrong. Please try again.`);
+
           } else {
+
             // get the original questions
             let questOrigin = quizOrigin.quiz[0].questions;
 
@@ -226,18 +230,24 @@
               builderData.push(quizOrigin.quiz[i]);
             };
 
-            console.log("---> pure builder form data:");
-            console.log(builderData);
-
             // default quiz css
-            // TODO: fix it
-            let defaultCss = await this.store_js.store.get("demo");
+            const defaultQuizCss = [ "ccm.load", "https://ccmjs.github.io/akless-components/quiz/resources/weblysleek.css", { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/weblysleekui/font.css" } ];
 
-            // save separate quiz configs (one for each exercise that later will be started)
-            for (let i = 0; i < builderData.length; i++) {
-
+            // create amount of variations with unique key, that will be used to unlock exact this exam
+            for (var nr = 0; nr < amount; nr++) {
               await this.store_generator.store.set(
                 {
+                  "key": $.generateKey
+                }
+              );
+            };
+
+            const exercises = [];
+            // fill up array with the created quiz configs
+            for (var i = 0; i < builderData.length; i++) {
+              exercises.push(
+                {
+                  // "key": "quiz" + i,
                   "key": "quiz-" + i + "-" + $.generateKey(),
                   "questions": builderData[i].questions,
                   "feedback": builderData[i].feedback,
@@ -257,150 +267,64 @@
                     "store": {
                       "settings": {
                         "name": "gkolev2s_exam_results",
-                        "url": "https://ccm2.inf.h-brs.de"
-                      }
+                        "url": "https://ccm2.inf.h-brs.de",
+                      },
+                      "key": null
                     },
-                    "alert": "Configurations, you've finished the quiz successfully!"
+                    "alert": "Exercise results saved!",
                   },
-                  "css": defaultCss.css
+                  "css": defaultQuizCss
                 }
               );
-
             };
 
-            console.log("---> store_generator:");
-            console.log(await this.store_generator.store.get());
+            // get all the generated versions and render each of the quiz configs
+            const versions = await this.store_generator.store.get();
+            for (var i = 0; i < versions.length; i++) {
+              await this.store_generator.store.set(
+                {
+                  "key": versions[i].key,
+                  "configs": exercises,
+                  "answers": [],
+                  "studentid": null
+                }
+              );
+            };
 
-            /**************************down from here will be deleted..****************************/
+            // inform user
+            window.alert(`Exam versions were generated successfully!`);
+
+            // create array with the generated exam keys (and show those to the user)
+            let generatedIds = [];
+            for (var i = 0; i < versions.length; i++) {
+              generatedIds.push(versions[i].key);
+            };
 
             /**
-             * create a matrix out of array
-             * Quelle: https://stackoverflow.com/questions/4492385/how-to-convert-simple-array-into-two-dimensional-array-matrix-with-javascript
+             * create html table with generated ids and show those on page (LOC: 307-321)
+             * Quelle: https://code-boxx.com/create-table-from-array-javascript/
              */
-            // const toMatrix = (arr, width) =>
-            // arr.reduce((rows, key, index) => (index % width == 0 ? rows.push([key]) : rows[rows.length-1].push(key)) && rows, []);
-            //
-            // // create matrix with [0][i] original questions
-            // let questMatrix = toMatrix(questOrigin, questOrigin.length);
-            //
-            // /**
-            // * Copy values and add as new row in the matrix.
-            // * @param {array} arrOrigin array with original values (e.g. original questions)
-            // * @param {array} arrMatrix multidimensional array with the original values (arrMatrix[0][i]), where 'i' is the question number and new created versions of original values (arrMatrix[x][y]), where 'x' is the version number and 'y' is the question's current position in array
-            // * @param {integer} amount copies of original values to be done
-            // * @return {void}
-            // */
-            // const createVersion = (arrOrigin, arrMatrix, amount) => {
-            //   for (let i = 0; i < amount; i++) {
-            //     let arrCopy = $.clone(arrOrigin);
-            //     // add new array with shuffled Q&A to the matrix
-            //     arrMatrix.push(arrCopy);
-            //   }
-            // };
-            //
-            // await createVersion(questOrigin, questMatrix, amount);
-            //
-            // // array with created configurations
-            // let configsArr = [];
-            // configsArr.push(quizOrigin);
-            //
-            // for (let i = 1; i < questMatrix.length; i++) {
-            //   let quizOriginCopy = $.clone(quizOrigin);
-            //   quizOriginCopy.quiz[0] = questMatrix[i];
-            //   quizOriginCopy.key = $.generateKey();
-            //   configsArr.push(quizOriginCopy);
-            // };
-            //
-            // // get data from submit form
-            // let resultsQuiz = quizOrigin.quiz[0];
-            // let defaultCss = await this.store_js.store.get("demo");
-            //
-            // // get creators signature
-            // let creatorSignature = quizOrigin.key;
-            //
-            // // store exam information
-            // await this.store_generator.store.set(
-            //   {
-            //     "key": creatorSignature + "_exam_info",
-            //     "subject": quizOrigin.subject,
-            //     "date": quizOrigin.date,
-            //     "time": quizOrigin.time,
-            //     "textarea": quizOrigin.textarea
-            //   }
-            // );
-            //
-            // for (var i = 1; i < configsArr.length; i++) {
-            //
-            //   await this.store_generator.store.set(
-            //     {
-            //       "key": configsArr[i].key,
-            //       "questions": configsArr[i].quiz[0],
-            //       "feedback": quizOrigin.quiz[0].feedback,
-            //       "navigation": quizOrigin.quiz[0].navigation,
-            //       "start_button": quizOrigin.quiz[0].start_button,
-            //       "random": quizOrigin.quiz[0].shuffle_answers,
-            //       "shuffle": quizOrigin.quiz[0].shuffle_questions,
-            //       "placeholder": {
-            //         // "start": quizOrigin.quiz[0].start_label,
-            //         "prev": quizOrigin.quiz[0].previous_label,
-            //         "next": quizOrigin.quiz[0].next_label,
-            //         "submit": quizOrigin.quiz[0].submit_label,
-            //         "finish": quizOrigin.quiz[0].finish_label
-            //       },
-            //       "onfinish": {
-            //         "clear": quizOrigin.quiz[0].clear_onfinish,
-            //         "restart": quizOrigin.quiz[0].restart_onfinish,
-            //         "store": {
-            //           "settings": {
-            //             "name": "gkolev2s_exam_results",
-            //             "url": "https://ccm2.inf.h-brs.de"
-            //           }
-            //         },
-            //         "alert": "Configurations, you've finished the quiz successfully!"
-            //       },
-            //       // "css": defaultCss.css
-            //     }
-            //   );
-            //
-            // };
-            /**************************up from here will be deleted..****************************/
+            let perrow = 1;
+            let html = "<table><caption>Generated Exam Keys:</caption><tr>";
 
-          // window.alert(`Exam versions were generated successfully!`);
-          //
-          // // create html table with generated ids and show in app
-          // let generatedIds = [];
-          // for (var i = 0; i < configsArr.length; i++) {
-          //   generatedIds.push(configsArr[i].key);
-          // };
-          //
-          // // Quelle: https://code-boxx.com/create-table-from-array-javascript/
-          // let perrow = 1;
-          // let html = "<table><caption>Generad Exam Ids</caption><tr>";
-          //
-          // for (var i=1; i<generatedIds.length; i++) {
-          //   html += "<td>" + generatedIds[i] + "</td>";
-          //   // Break into next row
-          //   var next = i+1;
-          //   if (next%perrow==0 && next!=generatedIds.length) {
-          //     html += "</tr><tr>";
-          //   }
-          // }
-          // html += "</tr></table>";
-          //
-          // // attach html to html container
-          // this.element.querySelector("#generated-ids").innerHTML = html;
-          //
-          // window.alert("Scroll down to see a list of generated exam ids. Give one to every exam participant so they will be allowed to unlock an exam with it.");
+            for (var i = 0; i<generatedIds.length; i++) {
+              html += "<td>" + generatedIds[i] + "</td>";
+              // Break into next row
+              var next = i+1;
+              if (next%perrow==0 && next!=generatedIds.length) {
+                html += "</tr><tr>";
+              }
+            }
+            html += "</tr></table>";
+
+            // attach the generated keys to html container
+            this.element.querySelector("#generated-ids").innerHTML = html;
+
+            // inform user
+            window.alert("Scroll down to see a list of generated exam ids. Give one to every exam participant so they will be allowed to unlock an exam with it.");
+          };
 
         };
-
-
-
-
-
-
-
-      };
 
       };
 

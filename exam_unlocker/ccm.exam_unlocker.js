@@ -88,6 +88,14 @@
             }
           ]
 
+        },
+
+        task: {
+          inner: [
+            { tag: 'hr' },
+            { tag: "h2", inner: "Exercise %nr%: %title% (%points% pts.)" },
+            { class: "task", "data-type": "%type%", id: "task_%nr%" }
+          ]
         }
 
       },
@@ -97,10 +105,7 @@
       // add submit component
       submit: [ "ccm.component", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js" ],
 
-      // test
-      blank: [ "ccm.component", "https://ccmjs.github.io/akless-components/blank/ccm.blank.js" ],
-
-      // test
+      // add quiz component
       quiz: [ "ccm.component", "https://ccmjs.github.io/akless-components/quiz/versions/ccm.quiz-4.0.0.js" ],
 
       // add logger instance
@@ -110,22 +115,27 @@
       /*** ccm-Datastores ***/
 
       // db lvl-3 (hbrs-Server)
+      // original data (exam information + quiz form data)
       store_builder: {
         store: [ "ccm.store", { name: "gkolev2s_exam_builder", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
+      // generated versions of exam configs for each student
       store_generator: {
         store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
+      // unlocked exams and student ids that unlocked the exam
       store_unlocker: {
         store: [ "ccm.store", { name: "gkolev2s_exam_unlocker", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
+      // student ids that are allowed to write the exam (later the ids can be loaded here from SIS)
       store_students: {
         store: [ "ccm.store", { name: "gkolev2s_exam_students", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
+      // TODO: try to save the results at store_generator(key) to the exact student
       store_results: {
         store: [ "ccm.store", { name: "gkolev2s_exam_results", url: "https://ccm2.inf.h-brs.de" } ],
       },
@@ -236,7 +246,7 @@
 
           // get key (password) from the unlock form
           let key = submitInstance.getValue().password;
-          // get matrikelNr from the unlock form
+          // get studentid (matrikelnr) from the unlock form
           let studentid = submitInstance.getValue().studentid;
           console.log(`Looking for key: ${key}, studentid: ${studentid}.`);
 
@@ -250,29 +260,23 @@
           // get already unlocked exams
           let unlockedExams = await this.store_unlocker.store.get();
           let usedExamKeys = [];
-          for (var i = 0; i < unlockedExams.length; i++) {
+          for (let i = 0; i < unlockedExams.length; i++) {
             usedExamKeys.push(unlockedExams[i].key)
           };
 
           // check if the exam key has been already used
           if (usedExamKeys.includes(configToLoad.key)) {
-            window.alert(`${configToLoad.key} has been already used.`);
+            window.alert(`${configToLoad.key} has been already used once.`);
 
           } else {
 
             let expectedStudent = null;
-
-            console.log(allowedStudents);
-            console.log(expectedStudent);
             // check if the student with that studentid is allowed to write the exam
-            for (var i = 0; i < allowedStudents.value.length; i++) {
+            for (let i = 0; i < allowedStudents.value.length; i++) {
               if (allowedStudents.value[i] == studentid) {
                 expectedStudent = allowedStudents.value[i];
               };
             };
-
-            console.log(allowedStudents);
-            console.log(expectedStudent);
 
             // if studentid and password match - load the exam; else - try again
             if ( ( studentid == expectedStudent ) && (key.localeCompare(configToLoad.key) == 0) ) {
@@ -282,14 +286,14 @@
                 window.alert(`Exam Nr. ${key} has been unlocked successfully. Click "OK" to start.`),
                 storeUnlocked(key, studentid),
                 blockSecondAttempt(key, studentid),
-                startExam(key)
+                startExam(key, studentid)
               );
 
             } else {
 
               $.onFinish(
                 this,
-                window.alert(`The password: ${key} is wrong or the student id: ${studentid} has beed already used. Please try again.`),
+                window.alert(`The password: ${key} is wrong or the student id: ${studentid} already participated the exam. Please try again.`),
               );
 
             }
@@ -300,18 +304,55 @@
 
         /**
          * start the exam component
-         * TODO: set exam_reader component
+         * TODO: start exam_reader component?
+         * TODO: load as many as needed quiz instances (0, 1, 2, .., n) with the exact config (0, 1, 2, .., n)
          */
-        let startExam = async ( examId ) => {
+        let startExam = async ( examId, studId ) => {
 
-          const quizConfig = await this.store_generator.store.get(examId);
-          const quizInstance = await this.quiz.instance(quizConfig);
-          const quizResult = await quizInstance.start();
+          // get the config with specific key from stored exams on datastore lvl-3
+          const examToLoad = await this.store_generator.store.get(examId);
+          const quizConfigsToLoad = examToLoad.configs;
 
-          const storeBuilder = await this.store_builder.store.get();
-
+          // remove the submit (unlocker) form
           this.element.querySelector("#unlock-form").removeChild(submitInstance.root);
-          this.element.querySelector("#unlock-form").appendChild(quizInstance.root);
+
+          // TODO: think about how to do this?
+          // ?????
+          // const results = examToLoad.answers.push({
+          //   "key": exercise / i,
+          //   "quiz_results": quizInstance.getValue()???
+          // });
+          // await this.store_generator.store.set({
+          //   "key": examId,
+          //   "answers": results
+          // })
+          // ?????
+
+          // change the storage of results
+          // NOTE: now saving all the results at one storage, so only the key is helpful to find the results
+          for (let i = 0; i < quizConfigsToLoad.length; i++) {
+            quizConfigsToLoad[i].onfinish.store.key = i + "_" + examToLoad.key;
+            quizConfigsToLoad[i].onfinish.callback = function (instance, results) {
+              console.log("Instance id:");
+              console.log(instance.id);
+              console.log("Results:");
+              console.log(results);
+            };
+            // TODO: ask if there is an easier way to save separately the student results
+            // quizConfigsToLoad[i].onfinish.store.settings.name = "gkolev2s_exam_results_" + examId + "_" + studId;
+          };
+
+          // iterate over the configs and render as many as needed quizes
+          for (let i = 0; i < quizConfigsToLoad.length; i++) {
+            const quizInstance = await this.quiz.instance(quizConfigsToLoad[i]);
+            const quizResult = await quizInstance.start();
+            this.element.querySelector("#unlock-form").appendChild(quizInstance.root);
+          };
+
+
+          // render general exam information
+          // TODO: Load extra component or render all the exam general information on the top ot this one?
+          const storeBuilder = await this.store_builder.store.get();
           this.element.querySelector("#title").innerHTML = storeBuilder[0].subject;
 
         };
