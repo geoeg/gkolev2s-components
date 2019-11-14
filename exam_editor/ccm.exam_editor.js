@@ -1,7 +1,9 @@
 /**
- * @overview ccm component for building exams
+ * @overview ccm component for building an exam
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
+ * @version 1.0.0 // TODO: create a version of this ccm-component and save as versions/ccm.comp-1.0.0.js
+ * - TODO: describe what is done
  *
  */
 
@@ -14,30 +16,27 @@
     /**
      * unique component name
      */
-    name: 'exam_builder',
+    name: 'exam_editor',
 
     /**
      * recommended used framework version
      */
-    ccm: 'https://ccmjs.github.io/ccm/ccm.js',
+    ccm: 'https://ccmjs.github.io/ccm/versions/ccm-24.0.5.js',
+    // ccm: 'https://ccmjs.github.io/ccm/ccm.js',
 
     /**
      * default instance configuration
      */
     config: {
 
-      /*** html structure ***/
       html: {
 
-        // topbar section:
         topbar: {
 
-          // topbar main div container
           tag: "div",
           class: "topbar",
           inner: [
             {
-              // h-brs logo
               tag: "img",
               id: "hbrs-logo",
               src: "resources/hbrs-logo.svg",
@@ -45,16 +44,14 @@
               height: "auto"
             },
             {
-              // builder title
               tag: "h1",
               id: "builder-title",
-              inner: "Exam-Builder"
+              inner: "Exam-Editor"
             },
             {
               tag: "hr"
             },
             {
-              // user login
               tag: "div",
               id: "user-login",
               inner: []
@@ -73,7 +70,6 @@
             },
             {
               // additional buttons for easy work with saved data
-              // TODO: delete at the end
               tag: "div",
               id: "data-btns",
               inner: [
@@ -93,9 +89,23 @@
                 },
                 {
                   tag: "button",
+                  class: "btn btn-primary",
+                  inner: "check ids",
+                  title: "check student ids that are allowed to unlock an exam (check console)",
+                  onclick: "%check%"
+                },
+                {
+                  tag: "button",
+                  class: "btn btn-primary",
+                  inner: "reset ids",
+                  title: "reset student ids (check console)",
+                  onclick: "%reset%"
+                },
+                {
+                  tag: "button",
                   class: "btn btn-secondary",
                   inner: "sort results",
-                  title: "sort the submitted exam results",
+                  title: "sort the submitted exam results (check console)",
                   onclick: "%sort%"
                 },
                 {
@@ -108,7 +118,6 @@
 
         },
 
-        // exam info section:
         info: {
 
           tag: "div",
@@ -117,7 +126,6 @@
           inner: [
 
             {
-              // info form section
               tag: "div",
               id: "info-form",
               inner: []
@@ -127,28 +135,27 @@
 
       },
 
-      /*** ccm components ***/
-
-      // add submit component
+      /**
+       * used ccm components
+       */
       submit: [ "ccm.component", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js" ],
 
-      // add logger instance
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
         [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
 
-      // add user instance
       user: [ 'ccm.instance','https://ccmjs.github.io/akless-components/user/versions/ccm.user-9.3.0.js',
-        [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','compact' ] ],
+        [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','hbrsinfkaul' ] ],
+        // [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','compact' ] ],
 
-      // Quelle: MKaul/klausur_reader
-      hash: [ "ccm.load", { "url": "https://ccmjs.github.io/akless-components/modules/md5.mjs", "type": "module" } ],
-      SALT: "123",
-
-      /*** ccm datastores ***/
-
-      // db lvl-3 (hbrs-Server)
-      store_builder: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_builder", url: "https://ccm2.inf.h-brs.de" } ],
+      /**
+       * used ccm datastores
+       */
+      // TODO: delete
+      // store_builder: {
+      //   store: [ "ccm.store", { name: "gkolev2s_exam_builder", url: "https://ccm2.inf.h-brs.de" } ],
+      // },
+      store_editor: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_editor", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
       store_generator: {
@@ -159,17 +166,21 @@
         store: [ "ccm.store", { name: "gkolev2s_exam_unlocker", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
+      store_students: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_students", url: "https://ccm2.inf.h-brs.de" } ],
+      },
+
       store_results: {
         store: [ "ccm.store", { name: "gkolev2s_exam_results", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
-      /*** css resources ***/
-
-      // load bootstrap and default css file
+      /**
+       * css resources
+       */
       css: ["ccm.load",
         "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
         { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-          "resources/default.css"
+          // "resources/default.css"
       ],
 
 
@@ -182,8 +193,8 @@
     Instance: function () {
 
       /**
-      * shortcut to help functions
-      */
+       * shortcut to help functions
+       */
       let $;
 
       /**
@@ -200,33 +211,15 @@
        */
       this.start = async () => {
 
-        /**
-         * get username, current date and create signature and log those in the app console (LOC:207-220)
-         * (signature is later used to get the builded exam)
-         * Quelle: MKaul/klausur_reader
-         */
-        /** @type {string} */
-        const username = this.user && this.user.isLoggedIn() ? this.user.data().user : this.user;
-
-        // set a date that will be used for this instance
-        /** @type {string} */
-        const date = new Date().toLocaleString();
-
-        // set signature for the instance -> = unique code
-        /** @type {string} */
-        const signature = this.hash && this.hash.md5( this.name + username + date.slice(0,10) + this.SALT );
-
         // logging of 'start' event
-        // this.logger && this.logger.log( 'start-exam-builder', { name: this.name, user: username, date, signature } );
-        this.logger && this.logger.log( 'start-exam-builder', { name: this.name, user: username, date } );
+        this.logger && this.logger.log( 'start-exam-editor' );
 
-        // section topbar logo, title
+        // functionality of admin panel buttons (helpers for working with data)
         const topbar = $.html( this.html.topbar, {
-          // additional funtions to help working with data
-          // will be deleted at the end (or left just for the admin)
+
           get: async () => {
-            console.log("---> data at lvl-3 (builder)");
-            console.log(await this.store_builder.store.get());
+            console.log("---> data at lvl-3 (editor)");
+            console.log(await this.store_editor.store.get());
             console.log("---> data at lvl-3 (generator)");
             console.log(await this.store_generator.store.get());
             console.log("---> data at lvl-3 (unlocker)");
@@ -236,22 +229,18 @@
           },
 
           del: async () => {
-            // delete all data at store 3 - builder
-            let store3BCurrent = await this.store_builder.store.get();
+            let store3BCurrent = await this.store_editor.store.get();
             for (var j = 0; j < store3BCurrent.length; j++) {
-              this.store_builder.store.del(store3BCurrent[j].key)
+              this.store_editor.store.del(store3BCurrent[j].key)
             };
-            // delete all data at store 3 - generator
             let store3GCurrent = await this.store_generator.store.get();
             for (var j = 0; j < store3GCurrent.length; j++) {
               this.store_generator.store.del(store3GCurrent[j].key)
             };
-            // delete all data at store 3 - unlocker
             let store3UCurrent = await this.store_unlocker.store.get();
             for (var j = 0; j < store3UCurrent.length; j++) {
               this.store_unlocker.store.del(store3UCurrent[j].key)
             };
-            // delete all data at store 3 - unlocker
             let store3RCurrent = await this.store_results.store.get();
             for (var j = 0; j < store3RCurrent.length; j++) {
               this.store_results.store.del(store3RCurrent[j].key)
@@ -259,7 +248,6 @@
           },
 
           start: async () => {
-
             let userStatus = this.user.isLoggedIn();
 
             if (userStatus) {
@@ -270,7 +258,7 @@
 
               let userName = this.user.data().user;
               // if user == "admin" -> only then show get/delete data buttons
-              if (userName == "admin") {
+              if (userName == "gkolev2s") {
                 await changeBtnsVisibility();
               } else {
                 let btns = this.element.querySelector("#data-btns");
@@ -280,20 +268,42 @@
               // inform user if not logged in
               window.alert("Please login first.");
             };
-
           },
 
+          check: async () => {
+            let res = await this.store_students.store.get("allowed_ids");
+            console.log("---> allowed students to unlock exam:");
+            console.log(res.value);
+          },
+
+          reset: async () => {
+            let studentIds = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9017419 ];
+            await this.store_students.store.set(
+              {
+                key: "allowed_ids",
+                value: studentIds
+              }
+            );
+          },
+
+          // ignore:
           sort: async () => {
-            // ignore: experimenting..
             const res = await this.store_results.store.get();
-            const tosplit = res[0].key;
-            let split = tosplit.split("_");
-            console.log(split);
+            let splitedResults = [];
+            for (var i = 0; i < res.length; i++) {
+              let tosplit = res[i].key;
+              splitedResults.push(tosplit.split("quiz"));
+            };
+            console.log("---> splited exam result ids :");
+            console.log(splitedResults);
           }
 
         });
 
-        // Submit Config: 'Exam-Builder as one form'
+        // generate unique key for the exam
+        let configKey = $.generateKey();
+
+        // submit config for 'exam-editor's form
         const submitConfig = {
           "entries": [ "ccm.get", "resources/datasets.js", "gkolev2s.data" ],
           "data": {
@@ -305,10 +315,10 @@
             "log": true,
             "store": {
               "settings": {
-                "name": "gkolev2s_exam_builder",
+                "name": "gkolev2s_exam_editor",
                 "url": "https://ccm2.inf.h-brs.de"
               },
-              "key": signature
+              "key": configKey
             },
             "alert": "Form data successfully saved!",
             callback: async () => {
@@ -317,13 +327,14 @@
            // render the exam_generator component when exam data is submitted
             // "render": {
               // component: "../exam_generator/ccm.exam_generator.js",
-              // TODO: do I need a config here? I load the standard version of the component that works without, but its just on loading.
+              // TODO: fix. Not rendering successfully.
+              // Ask: do I need a config here? I load the standard version of the component that works without, but its just on loading.
               // config: {} // config of exam generator component
             // }
           }
         };
 
-        // create, start and append submit instance (info form) to html structure
+        // create and start the submit instance to html structure
         const submitInstance = await this.submit.instance(submitConfig);
         const submitResult = await submitInstance.start();
 
@@ -359,7 +370,7 @@
           }
         };
 
-        // append 'info-form' to the html structure
+        // append submit form to the html structure
         this.element.querySelector("#info-form").appendChild(submitInstance.root);
 
         // start user instance and append it to html structure
@@ -370,11 +381,9 @@
          * get key of last saved exam
          */
         let getCurrentExamKey = async () => {
-          // let results = await this.store2.get();
-          let results = await this.store_builder.store.get();
+          let results = await this.store_editor.store.get();
           // let key = results[results.length - 1].key[0];
           let key = results[results.length - 1].key;
-          // show key to the user as alert
           $.onFinish(
             this,
             copyStringToClipboard(key),
@@ -408,5 +417,7 @@
 
   };
 
+  // create custom element and start the component
+  // Quelle: AKless-components; MKaul-components
   let b="ccm."+component.name+(component.version?"-"+component.version.join("."):"")+".js";if(window.ccm&&null===window.ccm.files[b])return window.ccm.files[b]=component;(b=window.ccm&&window.ccm.components[component.name])&&b.ccm&&(component.ccm=b.ccm);"string"===typeof component.ccm&&(component.ccm={url:component.ccm});let c=(component.ccm.url.match(/(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/)||["latest"])[0];if(window.ccm&&window.ccm[c])window.ccm[c].component(component);else{var a=document.createElement("script");document.head.appendChild(a);component.ccm.integrity&&a.setAttribute("integrity",component.ccm.integrity);component.ccm.crossorigin&&a.setAttribute("crossorigin",component.ccm.crossorigin);a.onload=function(){window.ccm[c].component(component);document.head.removeChild(a)};a.src=component.ccm.url}
 } )();

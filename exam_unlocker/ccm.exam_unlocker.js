@@ -1,7 +1,9 @@
 /**
- * @overview ccm component for opening a locked exam
+ * @overview ccm component for unlocking exam version
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
+ * @version 1.0.0 // TODO: create a version of this ccm-component and save as versions/ccm.comp-1.0.0.js
+ * - TODO: describe what is done
  *
  */
 
@@ -19,14 +21,14 @@
     /**
      * recommended used framework version
      */
-    ccm: 'https://ccmjs.github.io/ccm/ccm.js',
+    ccm: 'https://ccmjs.github.io/ccm/versions/ccm-24.0.5.js',
+    // ccm: 'https://ccmjs.github.io/ccm/ccm.js',
 
     /**
      * default instance configuration
      */
     config: {
 
-      /*** html-Structure ***/
       html: {
 
         form: {
@@ -47,36 +49,9 @@
               inner: "Exam-Unlocker"
             },
             {
-              tag: "hr"
-            },
-            // additional buttons for easy work with saved data
-            // TODO: delete at the end
-            {
               tag: "div",
               id: "data-btns",
-              inner: [
-                {
-                  tag: "button",
-                  class: "btn btn-primary",
-                  inner: "get current saved data",
-                  title: "get current data (check console)",
-                  onclick: "%get%"
-                },
-                {
-                  tag: "button",
-                  class: "btn btn-primary",
-                  inner: "check ids",
-                  title: "check student ids that are allowed to unlock an exam (check console)",
-                  onclick: "%check%"
-                },
-                {
-                  tag: "button",
-                  class: "btn btn-primary",
-                  inner: "reset ids",
-                  title: "reset student ids (check console)",
-                  onclick: "%reset%"
-                },
-              ]
+              inner: []
             },
             {
               tag: "hr"
@@ -90,62 +65,56 @@
 
         },
 
-        task: {
-          inner: [
-            { tag: 'hr' },
-            { tag: "h2", inner: "Exercise %nr%: %title% (%points% pts.)" },
-            { class: "task", "data-type": "%type%", id: "task_%nr%" }
-          ]
-        }
+        // task: {
+        //   inner: [
+        //     { tag: 'hr' },
+        //     { tag: "h2", inner: "Exercise %nr%: %title% (%points% pts.)" },
+        //     { class: "task", "data-type": "%type%", id: "task_%nr%" }
+        //   ]
+        // }
 
       },
 
-      /*** ccm-Components ***/
-
-      // add submit component
+      /**
+       * used ccm components
+       */
       submit: [ "ccm.component", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js" ],
 
-      // add quiz component
       quiz: [ "ccm.component", "https://ccmjs.github.io/akless-components/quiz/versions/ccm.quiz-4.0.0.js" ],
 
-      // add logger instance
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
       [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
 
-      /*** ccm-Datastores ***/
-
-      // db lvl-3 (hbrs-Server)
-      // original data (exam information + quiz form data)
-      store_builder: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_builder", url: "https://ccm2.inf.h-brs.de" } ],
+      /**
+       * used ccm datastores
+       */
+      store_editor: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_editor", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
-      // generated versions of exam configs for each student
       store_generator: {
         store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
-      // unlocked exams and student ids that unlocked the exam
       store_unlocker: {
         store: [ "ccm.store", { name: "gkolev2s_exam_unlocker", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
-      // student ids that are allowed to write the exam (later the ids can be loaded here from SIS)
       store_students: {
         store: [ "ccm.store", { name: "gkolev2s_exam_students", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
-      // TODO: try to save the results at store_generator(key) to the exact student
       store_results: {
         store: [ "ccm.store", { name: "gkolev2s_exam_results", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
-      /*** css resources ***/
-
+      /**
+       * css resources
+       */
       css: ["ccm.load",
         "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
         { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-          "resources/default.css"
+          // "resources/default.css"
       ],
     },
 
@@ -156,8 +125,8 @@
     Instance: function () {
 
       /**
-      * shortcut to help functions
-      */
+       * shortcut to help functions
+       */
       let $;
 
       /**
@@ -174,45 +143,18 @@
        */
       this.start = async () => {
 
-        // logging of "start" event
+        // logging of 'start' event
         this.logger.log( "start-exam-unlocker" );
 
-        // student ids that are allowed to write the exam
-        // TODO: get student ids list from sis
+        console.log("---> generated exams:");
+        console.log(await this.store_generator.store.get());
+
+        // get student ids that are allowed to unlock (participate) an exam
         let allowedStudents = await this.store_students.store.get("allowed_ids");
 
-        // section unlocker form
-        const form = $.html( this.html.form, {
-          // additional funtions to help working with data
-          // will be deleted at the end
-          get: async () => {
-            console.log("---> data at lvl-3 (generator)");
-            console.log(await this.store_generator.store.get());
-            console.log("---> data at lvl-3 (unlocker)");
-            console.log(await this.store_unlocker.store.get());
-            console.log("---> data at lvl-3 (results)");
-            console.log(await this.store_results.store.get());
-          },
+        const form = $.html( this.html.form, {});
 
-          check: async () => {
-            let res = await this.store_students.store.get("allowed_ids");
-            console.log("---> allowed students to unlock exam:");
-            console.log(res.value);
-          },
-
-          reset: async () => {
-            let studentIds = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9017419 ];
-            await this.store_students.store.set(
-              {
-                key: "allowed_ids",
-                value: studentIds
-              }
-            );
-          },
-
-        });
-
-        // Submit Config: 'Exam-unlocker as one form'
+        // submit config for 'exam-unlocker's form
         const submitConfig = {
           "entries": [ "ccm.get", "resources/datasets.js", "gkolev2s_unlocker.data" ],
           "data": {
@@ -223,45 +165,44 @@
           "onfinish": {
             "log": true,
             callback: async () => {
-              await auth()
+              await authentification()
             }
           },
 
         };
 
-        // create, start and append submit instance for 'Unlock Form' to html structure
+        // create and start the submit instance to html structure
         const submitInstance = await this.submit.instance(submitConfig);
         const submitResult = await submitInstance.start();
 
         // render the sections to the given in config html structure
         $.setContent( this.element, [ form ] );
-        // append 'unlock-form' to the html structure
+        // append submit form to the html structure
         this.element.querySelector("#unlock-form").appendChild(submitInstance.root);
 
-        /**
-         * authentication logic
-         */
-        let auth = async () => {
+        // authentification's logic
+        let authentification = async () => {
 
-          // get key (password) from the unlock form
+          // get data from unlocker's form
           let key = submitInstance.getValue().password;
-          // get studentid (matrikelnr) from the unlock form
           let studentid = submitInstance.getValue().studentid;
           console.log(`Looking for key: ${key}, studentid: ${studentid}.`);
 
-          // get the config with specific key from stored exams on datastore lvl-3
+          // get the exam's configuration that will be loaded
           let configToLoad = await this.store_generator.store.get(key);
-          // if there is no such key --> inform the user
-          if ( configToLoad == null ) {
-            window.alert(`The password is wrong! Try again.`);
+
+          if (configToLoad == null)  {
+            window.alert(`The password ${examId} is wrong! Try again.`);
           };
 
           // get already unlocked exams
           let unlockedExams = await this.store_unlocker.store.get();
           let usedExamKeys = [];
-          for (let i = 0; i < unlockedExams.length; i++) {
-            usedExamKeys.push(unlockedExams[i].key)
-          };
+          for (var i = 0; i < unlockedExams.length; i++) {
+            usedExamKeys.push(unlockedExams[i].key);
+          }
+          console.log("--- already unlocked exams:");
+          console.log(usedExamKeys);
 
           // check if the exam key has been already used
           if (usedExamKeys.includes(configToLoad.key)) {
@@ -277,7 +218,8 @@
               };
             };
 
-            // if studentid and password match - load the exam; else - try again
+            // if the student is allowed to participate an exam
+            // and the exam key is not used - load the exam; else - try again
             if ( ( studentid == expectedStudent ) && (key.localeCompare(configToLoad.key) == 0) ) {
 
               $.onFinish(
@@ -301,15 +243,16 @@
 
         };
 
-        /**
-         * start the exam component
-         * TODO: start exam_reader component?
-         */
         let startExam = async ( examId, studId ) => {
 
           // get the config with specific key from stored exams on datastore lvl-3
           const examToLoad = await this.store_generator.store.get(examId);
+          console.log("--- exam to load:");
+          console.log(examToLoad);
+
           const quizConfigsToLoad = examToLoad.configs;
+          console.log("--- configs to load:");
+          console.log(quizConfigsToLoad);
 
           // remove the submit (unlocker) form
           this.element.querySelector("#unlock-form").removeChild(submitInstance.root);
@@ -317,10 +260,9 @@
           // create array with results for each student
           let examResults = [];
           // apply changes on onfinish() of each quiz
-          // NOTE: now saving all the results at one storage, so only the key is helpful to find the results
           for (let i = 0; i < quizConfigsToLoad.length; i++) {
             // quizConfigsToLoad[i].onfinish.store.name = "gkolev2s_exam_results_" + studId;
-            quizConfigsToLoad[i].onfinish.store.key = examToLoad.key + "_" + i;
+            quizConfigsToLoad[i].onfinish.store.key = examToLoad.key + examToLoad.configs[i].key;
             // ignore: experimenting with onfinish: callback
             quizConfigsToLoad[i].onfinish.callback = function (instance, results) {
               examResults.push({
@@ -338,12 +280,9 @@
             const quizResult = await quizInstance.start();
             this.element.querySelector("#unlock-form").appendChild(quizInstance.root);
           };
-
-
-          // render general exam information
-          // TODO: Load extra component or render all the exam general information on the top ot this one?
-          const storeBuilder = await this.store_builder.store.get();
-          this.element.querySelector("#title").innerHTML = storeBuilder[0].subject;
+          // TODO: render general exam information
+          // const storeBuilder = await this.store_builder.store.get();
+          // this.element.querySelector("#title").innerHTML = storeBuilder[0].subject;
 
         };
 
@@ -385,5 +324,7 @@
 
   };
 
+  // create custom element and start the component
+  // Quelle: AKless-components; MKaul-components
   let b="ccm."+component.name+(component.version?"-"+component.version.join("."):"")+".js";if(window.ccm&&null===window.ccm.files[b])return window.ccm.files[b]=component;(b=window.ccm&&window.ccm.components[component.name])&&b.ccm&&(component.ccm=b.ccm);"string"===typeof component.ccm&&(component.ccm={url:component.ccm});let c=(component.ccm.url.match(/(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/)||["latest"])[0];if(window.ccm&&window.ccm[c])window.ccm[c].component(component);else{var a=document.createElement("script");document.head.appendChild(a);component.ccm.integrity&&a.setAttribute("integrity",component.ccm.integrity);component.ccm.crossorigin&&a.setAttribute("crossorigin",component.ccm.crossorigin);a.onload=function(){window.ccm[c].component(component);document.head.removeChild(a)};a.src=component.ccm.url}
 } )();
