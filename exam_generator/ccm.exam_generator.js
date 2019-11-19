@@ -212,6 +212,7 @@
               generatedQuizConfigs.push(
                 {
                   "key": "quiz" + i,
+                  "quiz_title": builderData[i].exc_title,
                   "questions": builderData[i].questions,
                   "feedback": builderData[i].feedback,
                   "navigation": builderData[i].navigation,

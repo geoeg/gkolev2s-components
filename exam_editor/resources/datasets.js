@@ -17,6 +17,7 @@ ccm.files[ 'datasets.js' ] = {
     "textarea": "120 Pts. = 120 Mins.",
     "quiz": [
       {
+        "exc_title": "Exercise 1 title",
         "questions": [
           {
             "text": "q-1",
@@ -139,6 +140,7 @@ ccm.files[ 'datasets.js' ] = {
         "restart_onfinish": false
       },
       {
+        "exc_title": "Exercise 2 title",
         "questions": [
           {
             "text": "2q-1",
@@ -249,8 +251,14 @@ ccm.files[ 'datasets.js' ] = {
         "label": "Quiz",
         "name": "quiz",
         "type": "several",
-        "info": "This is a quiz exercise.",
+        "info": "This is a quiz exercise. One quiz exercise can have one or more single or multiple choise questions.",
         "items": [
+          {
+            "label": "Exercise title",
+            "name": "exc_title",
+            "type": "text",
+            "info": "Here add the exercise title."
+          },
           "<legend>Questions & Answers</legend>",
           {
             "label": "Questions",

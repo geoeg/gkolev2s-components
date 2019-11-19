@@ -261,9 +261,9 @@
           let examResults = [];
           // apply changes on onfinish() of each quiz
           for (let i = 0; i < quizConfigsToLoad.length; i++) {
-            // quizConfigsToLoad[i].onfinish.store.name = "gkolev2s_exam_results_" + studId;
             quizConfigsToLoad[i].onfinish.store.key = examToLoad.key + examToLoad.configs[i].key;
-            // ignore: experimenting with onfinish: callback
+            // ignore: experimenting with onfinish:
+            // quizConfigsToLoad[i].onfinish.store.name = "gkolev2s_exam_results_" + studId;
             quizConfigsToLoad[i].onfinish.callback = function (instance, results) {
               examResults.push({
                 "studId": studId,
@@ -281,8 +281,8 @@
             this.element.querySelector("#unlock-form").appendChild(quizInstance.root);
           };
           // TODO: render general exam information
-          // const storeBuilder = await this.store_builder.store.get();
-          // this.element.querySelector("#title").innerHTML = storeBuilder[0].subject;
+          // const storeEditor = await this.store_editor.store.get();
+          // this.element.querySelector("#title").innerHTML = storeEditor[0].subject;
 
         };
 

@@ -21,8 +21,8 @@
     /**
      * recommended used framework version
      */
-    ccm: 'https://ccmjs.github.io/ccm/versions/ccm-24.0.5.js',
-    // ccm: 'https://ccmjs.github.io/ccm/ccm.js',
+    // ccm: 'https://ccmjs.github.io/ccm/versions/ccm-24.0.5.js',
+    ccm: 'https://ccmjs.github.io/ccm/ccm.js',
 
     /**
      * default instance configuration
@@ -74,37 +74,42 @@
               id: "data-btns",
               inner: [
                 {
+                  tag: "h4",
+                  id: "btns-title",
+                  inner: "Admin panel"
+                },
+                {
                   tag: "button",
-                  class: "btn btn-primary",
-                  inner: "get current saved data",
+                  class: "btn btn-primary btn-sm btn-block",
+                  inner: "Get currently saved exam data from the server",
                   title: "get current data (check console)",
                   onclick: "%get%"
                 },
                 {
                   tag: "button",
-                  class: "btn btn-primary",
-                  inner: "delete *.* !",
+                  class: "btn btn-primary btn-sm btn-block",
+                  inner: "!!! Del all saved exam data on server !!!",
                   title: "delete all saved data (check console)",
                   onclick: "%del%"
                 },
                 {
                   tag: "button",
-                  class: "btn btn-primary",
-                  inner: "check ids",
-                  title: "check student ids that are allowed to unlock an exam (check console)",
+                  class: "btn btn-primary btn-sm btn-block",
+                  inner: "Get admin usernames and the student ids allowed to participate an exam",
+                  title: "check student ids that are allowed to unlock an exam and the admins users for exam editor (check console)",
                   onclick: "%check%"
                 },
                 {
                   tag: "button",
-                  class: "btn btn-primary",
-                  inner: "reset ids",
+                  class: "btn btn-primary btn-sm btn-block",
+                  inner: "Reset the student ids",
                   title: "reset student ids (check console)",
                   onclick: "%reset%"
                 },
                 {
                   tag: "button",
-                  class: "btn btn-secondary",
-                  inner: "sort results",
+                  class: "btn btn-secondary btn-sm btn-block",
+                  inner: "Sort the saved results of exams",
                   title: "sort the submitted exam results (check console)",
                   onclick: "%sort%"
                 },
@@ -158,6 +163,10 @@
         store: [ "ccm.store", { name: "gkolev2s_exam_editor", url: "https://ccm2.inf.h-brs.de" } ],
       },
 
+      store_admins: {
+        store: [ "ccm.store", { name: "gkolev2s_exam_admins", url: "https://ccm2.inf.h-brs.de" } ],
+      },
+
       store_generator: {
         store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
       },
@@ -193,6 +202,11 @@
     Instance: function () {
 
       /**
+       * own reference for inner functions
+       */
+      // const self = this;
+
+      /**
        * shortcut to help functions
        */
       let $;
@@ -217,6 +231,7 @@
         // functionality of admin panel buttons (helpers for working with data)
         const topbar = $.html( this.html.topbar, {
 
+
           get: async () => {
             console.log("---> data at lvl-3 (editor)");
             console.log(await this.store_editor.store.get());
@@ -229,9 +244,9 @@
           },
 
           del: async () => {
-            let store3BCurrent = await this.store_editor.store.get();
-            for (var j = 0; j < store3BCurrent.length; j++) {
-              this.store_editor.store.del(store3BCurrent[j].key)
+            let store3ECurrent = await this.store_editor.store.get();
+            for (var j = 0; j < store3ECurrent.length; j++) {
+              this.store_editor.store.del(store3ECurrent[j].key)
             };
             let store3GCurrent = await this.store_generator.store.get();
             for (var j = 0; j < store3GCurrent.length; j++) {
@@ -252,14 +267,16 @@
 
             if (userStatus) {
               // if user is logged in -> only then allow "start" button to show submit form
-              await changeFormVisibility();
+              await changeVisibility(infoSection);
               let startBtn = this.element.querySelector("#start-btn");
               $.removeElement(startBtn);
 
+              let admins = await this.store_admins.store.get();
               let userName = this.user.data().user;
-              // if user == "admin" -> only then show get/delete data buttons
-              if (userName == "gkolev2s") {
-                await changeBtnsVisibility();
+              // if user == exact username (from admin list) -> only then show get/delete data buttons
+              if (admins[0].value.includes(userName)) {
+                await changeVisibility(btnsSection);
+                console.log("Logged in user is an administrator.");
               } else {
                 let btns = this.element.querySelector("#data-btns");
                 $.removeElement(btns);
@@ -271,6 +288,9 @@
           },
 
           check: async () => {
+            let adminUsers = await this.store_admins.store.get("exam_editor_admins");
+            console.log("---> exam editor admin users:");
+            console.log(adminUsers.value);
             let res = await this.store_students.store.get("allowed_ids");
             console.log("---> allowed students to unlock exam:");
             console.log(res.value);
@@ -344,29 +364,20 @@
         // render the sections to the given in config html structure
         $.setContent( this.element, [ topbar, info ] );
 
-        // make login manditory
+        // set login visibility
         let infoSection = this.element.querySelector("#info-section");
         infoSection.setAttribute("style", "visibility: hidden");
 
-        // show/hide submit form
-        let changeFormVisibility = () => {
-          if (infoSection.style.visibility === "hidden") {
-            infoSection.style.visibility = "visible";
-          } else {
-            infoSection.style.visibility = "hidden";
-          }
-        };
-
-        // hide additional buttons
+        // set additional buttons visibility
         let btnsSection = this.element.querySelector("#data-btns");
         btnsSection.setAttribute("style", "visibility: hidden");
 
-        // show/hide additional buttons
-        let changeBtnsVisibility = () => {
-          if (btnsSection.style.visibility === "hidden") {
-            btnsSection.style.visibility = "visible";
+        // show/hide elements
+        let changeVisibility = (elem) => {
+          if (elem.style.visibility === "hidden") {
+            elem.style.visibility = "visible";
           } else {
-            btnsSection.style.visibility = "hidden";
+            elem.style.visibility = "hidden";
           }
         };
 
