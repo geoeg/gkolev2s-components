@@ -222,7 +222,6 @@ ccm.files[ 'datasets.js' ] = {
         "type": "submit"
       },
       "<legend>General Exam Information</legend>",
-
       {
         "label": "Subject",
         "name": "subject",

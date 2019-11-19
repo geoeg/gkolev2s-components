@@ -74,8 +74,7 @@
               id: "data-btns",
               inner: [
                 {
-                  tag: "h4",
-                  id: "btns-title",
+                  tag: "legend",
                   inner: "Admin panel"
                 },
                 {
@@ -189,7 +188,7 @@
       css: ["ccm.load",
         "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
         { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-          // "resources/default.css"
+          "./resources/default.css"
       ],
 
 
@@ -325,9 +324,9 @@
 
         // submit config for 'exam-editor's form
         const submitConfig = {
-          "entries": [ "ccm.get", "resources/datasets.js", "gkolev2s.data" ],
+          "entries": [ "ccm.get", "./resources/datasets.js", "gkolev2s.data" ],
           "data": {
-            "store": [ "ccm.store", "resources/datasets.js" ],
+            "store": [ "ccm.store", "./resources/datasets.js" ],
             "key": "gkolev2s_init"
           },
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],

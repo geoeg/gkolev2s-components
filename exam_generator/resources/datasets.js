@@ -11,9 +11,8 @@ ccm.files[ 'datasets.js' ] = {
   "gkolev2s_generator_init": {
     "key": "gkolev2s_generator_init",
 
-    "exam_id": "be82ac37a9a2d0de5d5f80fa804dc86e",
-    "amount": 5,
-    // "shuffle": true
+    "exam_id": "1574166350409X46041033972781253",
+    "amount": 5
 
   },
 

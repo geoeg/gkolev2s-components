@@ -45,7 +45,7 @@
             },
             {
               tag: "h1",
-              id: "builder-title",
+              id: "generator-title",
               inner: "Exam-Generator"
             }
 
@@ -104,7 +104,7 @@
       css: ["ccm.load",
       "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
       { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-        // "resources/default.css"
+        "./resources/default.css"
       ],
     },
 
@@ -140,9 +140,9 @@
 
         // submit config for 'exam-generators's form
         const submitConfig = {
-          "entries": [ "ccm.get", "resources/datasets.js", "gkolev2s_generator.data" ],
+          "entries": [ "ccm.get", "./resources/datasets.js", "gkolev2s_generator.data" ],
           "data": {
-            "store": [ "ccm.store", "resources/datasets.js" ],
+            "store": [ "ccm.store", "./resources/datasets.js" ],
             "key": "gkolev2s_generator_init"
           },
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],

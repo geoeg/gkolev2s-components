@@ -6,7 +6,7 @@
  * @license The MIT License (MIT)
  */
 
-a, input[type="checkbox"], select {
+/* a, input[type="checkbox"], select {
   cursor: pointer;
 }
 
@@ -60,7 +60,7 @@ a {
 
 .btn-group > .btn.active {
   z-index: unset !important;
-}
+} */
 
 /* added by Georgi from here */
 #hbrs-logo, #title {

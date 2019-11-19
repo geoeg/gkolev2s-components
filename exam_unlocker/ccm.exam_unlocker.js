@@ -45,7 +45,7 @@
             },
             {
               tag: "h1",
-              id: "title",
+              id: "unlocker-title",
               inner: "Exam-Unlocker"
             },
             {
@@ -114,7 +114,7 @@
       css: ["ccm.load",
         "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
         { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-          // "resources/default.css"
+          "./resources/default.css"
       ],
     },
 
@@ -156,9 +156,9 @@
 
         // submit config for 'exam-unlocker's form
         const submitConfig = {
-          "entries": [ "ccm.get", "resources/datasets.js", "gkolev2s_unlocker.data" ],
+          "entries": [ "ccm.get", "./resources/datasets.js", "gkolev2s_unlocker.data" ],
           "data": {
-            "store": [ "ccm.store", "resources/datasets.js" ],
+            "store": [ "ccm.store", "./resources/datasets.js" ],
             "key": "gkolev2s_unlocker_init"
           },
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
@@ -282,7 +282,7 @@
           };
           // TODO: render general exam information
           // const storeEditor = await this.store_editor.store.get();
-          // this.element.querySelector("#title").innerHTML = storeEditor[0].subject;
+          // this.element.querySelector("#unlocker-title").innerHTML = storeEditor[0].subject;
 
         };
 
