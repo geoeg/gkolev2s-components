@@ -281,8 +281,8 @@
             this.element.querySelector("#unlock-form").appendChild(quizInstance.root);
           };
           // TODO: render general exam information
-          // const storeEditor = await this.store_editor.store.get();
-          // this.element.querySelector("#unlocker-title").innerHTML = storeEditor[0].subject;
+          const storeEditor = await this.store_editor.store.get();
+          this.element.querySelector("#unlocker-title").innerHTML = storeEditor[0].subject;
 
         };
 
