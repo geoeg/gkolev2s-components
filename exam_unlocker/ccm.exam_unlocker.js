@@ -66,6 +66,8 @@
         },
 
         // task: {
+        //   tag: "div",
+        //   class: "task",
         //   inner: [
         //     { tag: 'hr' },
         //     { tag: "h2", inner: "Exercise %nr%: %title% (%points% pts.)" },

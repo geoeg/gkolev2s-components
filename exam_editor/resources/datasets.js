@@ -20,106 +20,106 @@ ccm.files[ 'datasets.js' ] = {
         "exc_title": "Exercise 1 title",
         "questions": [
           {
-            "text": "q-1",
-            "description": "d-1",
+            "text": "Question 1",
+            "description": "Exercise 1.1",
             "answers": [
               {
-                "text": "a-1.1",
+                "text": "Answer 1.1",
                 "correct": true,
-                "comment": "c-1.1",
+                "comment": "Comment 1.1",
               },
               {
-                "text": "a-1.2",
+                "text": "Answer 1.2",
                 "correct": false,
-                "comment": "c-1.2",
+                "comment": "Comment 1.2",
               },
               {
-                "text": "a-1.3",
+                "text": "Answer 1.3",
                 "correct": false,
-                "comment": "c-1.3",
+                "comment": "Comment 1.3",
               },
               {
-                "text": "a-1.4",
+                "text": "Answer 1.4",
                 "correct": false,
-                "comment": "",
+                "comment": "Comment 1.4",
               }
             ]
           },
           {
-            "text": "q-2",
-            "description": "d-2",
+            "text": "Question 2",
+            "description": "Exercise 1.2",
             "answers": [
               {
-                "text": "a-2.1",
+                "text": "Answer 2.1",
                 "correct": false,
-                "comment": "c-2.1",
+                "comment": "Comment 2.1",
               },
               {
-                "text": "a-2.2",
+                "text": "Answer 2.2",
                 "correct": true,
-                "comment": "c-2.2",
+                "comment": "Comment 2.2",
               },
               {
-                "text": "a-2.3",
+                "text": "Answer 2.3",
                 "correct": false,
-                "comment": "c-2.3",
+                "comment": "Comment 2.3",
               },
               {
-                "text": "a-2.4",
+                "text": "Answer 2.4",
                 "correct": false,
-                "comment": "",
+                "comment": "Comment 2.4",
               }
             ]
           },
           {
-            "text": "q-3",
-            "description": "d-3",
+            "text": "Question 3",
+            "description": "Exercise 1.3",
             "answers": [
               {
-                "text": "a-3.1",
+                "text": "Answer 3.1",
                 "correct": false,
-                "comment": "c-3.1",
+                "comment": "Comment 3.1",
               },
               {
-                "text": "a-3.2",
+                "text": "Answer 3.2",
                 "correct": false,
-                "comment": "c-3.2",
+                "comment": "Comment 3.2",
               },
               {
-                "text": "a-3.3",
+                "text": "Answer 3.3",
                 "correct": true,
-                "comment": "c-3.3",
+                "comment": "Comment 3.3",
               },
               {
-                "text": "a-3.4",
+                "text": "Answer 3.4",
                 "correct": false,
-                "comment": "",
+                "comment": "Comment 3.4",
               }
             ]
           },
           {
-            "text": "q-4",
-            "description": "d-4",
+            "text": "Question 4",
+            "description": "Exercise 1.4",
             "answers": [
               {
-                "text": "a-4.1",
+                "text": "Answer 4.1",
                 "correct": false,
-                "comment": "c-4.1",
+                "comment": "Comment 4.1",
               },
               {
-                "text": "a-4.2",
+                "text": "Answer 4.2",
                 "correct": false,
-                "comment": "c-4.2",
+                "comment": "Comment 4.2",
               },
               {
-                "text": "a-4.3",
+                "text": "Answer 4.3",
                 "correct": false,
-                "comment": "c-4.3",
+                "comment": "Comment 4.3",
               },
               {
-                "text": "a-4.4",
+                "text": "Answer 4.4",
                 "correct": true,
-                "comment": "",
+                "comment": "Comment 4.4",
               }
             ]
           }
@@ -143,54 +143,151 @@ ccm.files[ 'datasets.js' ] = {
         "exc_title": "Exercise 2 title",
         "questions": [
           {
-            "text": "2q-1",
-            "description": "2d-1",
+            "text": "Question 1",
+            "description": "Exercise 2.1",
             "answers": [
               {
-                "text": "2a-1.1",
+                "text": "Answer 1.1",
                 "correct": true,
-                "comment": "2c-1.1",
+                "comment": "Comment 1.1",
               },
               {
-                "text": "2a-1.2",
+                "text": "Answer 1.2",
                 "correct": false,
-                "comment": "2c-1.2",
+                "comment": "Comment 1.2",
               },
               {
-                "text": "2a-1.3",
+                "text": "Answer 1.3",
                 "correct": false,
-                "comment": "2c-1.3",
+                "comment": "Comment 1.3",
               },
               {
-                "text": "2a-1.4",
+                "text": "Answer 1.4",
                 "correct": false,
-                "comment": "",
+                "comment": "Comment 1.4",
               }
             ]
           },
           {
-            "text": "2q-2",
-            "description": "2d-2",
+            "text": "Question 2",
+            "description": "Exercise 2.2",
             "answers": [
               {
-                "text": "2a-2.1",
+                "text": "Answer 2.1",
                 "correct": false,
-                "comment": "2c-2.1",
+                "comment": "Comment 2.1",
               },
               {
-                "text": "2a-2.2",
+                "text": "Answer 2.2",
                 "correct": true,
-                "comment": "2c-2.2",
+                "comment": "Comment 2.2",
               },
               {
-                "text": "2a-2.3",
+                "text": "Answer 2.3",
                 "correct": false,
-                "comment": "2c-2.3",
+                "comment": "Comment 2.3",
               },
               {
-                "text": "2a-2.4",
+                "text": "Answer 2.4",
                 "correct": false,
-                "comment": "",
+                "comment": "Comment 2.4",
+              }
+            ]
+          },
+          {
+            "text": "Question 3",
+            "description": "Exercise 2.3",
+            "answers": [
+              {
+                "text": "Answer 3.1",
+                "correct": false,
+                "comment": "Comment 3.1",
+              },
+              {
+                "text": "Answer 3.2",
+                "correct": false,
+                "comment": "Comment 3.2",
+              },
+              {
+                "text": "Answer 3.3",
+                "correct": true,
+                "comment": "Comment 3.3",
+              },
+              {
+                "text": "Answer 3.4",
+                "correct": false,
+                "comment": "Comment 3.4",
+              }
+            ]
+          }
+        ],
+        "start_button": false,
+        "feedback": false,
+        "navigation": true,
+        "skippable": true,
+        "finish_anytime": true,
+        "shuffle_answers": true,
+        "shuffle_questions": true,
+        // "start_label": "Start",
+        "previous_label": "Previous",
+        "next_label": "Next",
+        "submit_label": "Submit",
+        "finish_label": "Finish",
+        "clear_onfinish": true,
+        "restart_onfinish": false
+      },
+      {
+        "exc_title": "Exercise 3 title",
+        "questions": [
+          {
+            "text": "Question 1",
+            "description": "Exercise 3.1",
+            "answers": [
+              {
+                "text": "Answer 1.1",
+                "correct": true,
+                "comment": "Comment 1.1",
+              },
+              {
+                "text": "Answer 1.2",
+                "correct": false,
+                "comment": "Comment 1.2",
+              },
+              {
+                "text": "Answer 1.3",
+                "correct": false,
+                "comment": "Comment 1.3",
+              },
+              {
+                "text": "Answer 1.4",
+                "correct": false,
+                "comment": "Comment 1.4",
+              }
+            ]
+          },
+          {
+            "text": "Question 2",
+            "description": "Exercise 3.2",
+            "answers": [
+              {
+                "text": "Answer 2.1",
+                "correct": false,
+                "comment": "Comment 2.1",
+              },
+              {
+                "text": "Answer 2.2",
+                "correct": true,
+                "comment": "Comment 2.2",
+              },
+              {
+                "text": "Answer 2.3",
+                "correct": false,
+                "comment": "Comment 2.3",
+              },
+              {
+                "text": "Answer 2.4",
+                "correct": false,
+                "comment": "Comment 2.4",
               }
             ]
           }
@@ -210,6 +307,7 @@ ccm.files[ 'datasets.js' ] = {
         "clear_onfinish": true,
         "restart_onfinish": false
       }
+
     ],
   },
 

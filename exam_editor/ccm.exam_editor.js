@@ -230,8 +230,14 @@
         // functionality of admin panel buttons (helpers for working with data)
         const topbar = $.html( this.html.topbar, {
 
-
           get: async () => {
+
+            // ['store_editor','store_generator','store_unlocker','store_results']
+            //   .forEach( async store => console.log(await store.store.get()) );
+
+            // ['store_editor','store_generator','store_unlocker','store_results']
+            //   .forEach( async name => console.log(await this.ccm.get({name: name},{})) );
+
             console.log("---> data at lvl-3 (editor)");
             console.log(await this.store_editor.store.get());
             console.log("---> data at lvl-3 (generator)");
