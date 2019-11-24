@@ -98,14 +98,14 @@
                 {
                   tag: "button",
                   class: "btn btn-primary btn-sm btn-block",
-                  inner: "(Test) Get student ids allowed to participate an exam",
+                  inner: "Get student ids allowed to participate an exam",
                   title: "check student ids that are allowed to unlock an exam and the admins users for exam editor (check console)",
                   onclick: "%check%"
                 },
                 {
                   tag: "button",
                   class: "btn btn-primary btn-sm btn-block",
-                  inner: "(Test) Reset the student ids",
+                  inner: "Reset the student ids",
                   title: "reset student ids (check console)",
                   onclick: "%reset%"
                 },
