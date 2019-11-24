@@ -21,8 +21,8 @@
     /**
      * recommended used framework version
      */
-    // ccm: 'https://ccmjs.github.io/ccm/versions/ccm-24.0.5.js',
-    ccm: 'https://ccmjs.github.io/ccm/ccm.js',
+    ccm: 'https://ccmjs.github.io/ccm/versions/ccm-24.0.5.js',
+    // ccm: 'https://ccmjs.github.io/ccm/ccm.js',
 
     /**
      * default instance configuration
@@ -78,9 +78,13 @@
                   inner: "Admin panel"
                 },
                 {
+                  tag: "div",
+                  id: "current-parent-exams",
+                },
+                {
                   tag: "button",
                   class: "btn btn-primary btn-sm btn-block",
-                  inner: "Get currently saved exam data from the server",
+                  inner: "Get currently saved exam data from server",
                   title: "get current data (check console)",
                   onclick: "%get%"
                 },
@@ -94,27 +98,27 @@
                 {
                   tag: "button",
                   class: "btn btn-primary btn-sm btn-block",
-                  inner: "Get admin usernames and the student ids allowed to participate an exam",
+                  inner: "(Test) Get student ids allowed to participate an exam",
                   title: "check student ids that are allowed to unlock an exam and the admins users for exam editor (check console)",
                   onclick: "%check%"
                 },
                 {
                   tag: "button",
                   class: "btn btn-primary btn-sm btn-block",
-                  inner: "Reset the student ids",
+                  inner: "(Test) Reset the student ids",
                   title: "reset student ids (check console)",
                   onclick: "%reset%"
                 },
                 {
                   tag: "button",
                   class: "btn btn-secondary btn-sm btn-block",
-                  inner: "Sort the saved results of exams",
+                  inner: "(Test) Sort the saved results of exams",
                   title: "sort the submitted exam results (check console)",
                   onclick: "%sort%"
                 },
                 {
                   tag: "hr"
-                },
+                }
               ]
             }
 
@@ -139,58 +143,22 @@
 
       },
 
-      /**
-       * used ccm components
-       */
       submit: [ "ccm.component", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js" ],
 
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
         [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
 
       user: [ 'ccm.instance','https://ccmjs.github.io/akless-components/user/versions/ccm.user-9.3.0.js',
-        [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','hbrsinfkaul' ] ],
-        // [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','compact' ] ],
+        [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','guest' ] ],
+        // [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','hbrsinfkaul' ] ],
 
-      /**
-       * used ccm datastores
-       */
-      // TODO: delete
-      // store_builder: {
-      //   store: [ "ccm.store", { name: "gkolev2s_exam_builder", url: "https://ccm2.inf.h-brs.de" } ],
-      // },
-      store_editor: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_editor", url: "https://ccm2.inf.h-brs.de" } ],
-      },
+      // db_lvl2: [ "ccm.store", { name: "store-lvl-2" } ],
 
-      store_admins: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_admins", url: "https://ccm2.inf.h-brs.de" } ],
-      },
-
-      store_generator: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
-      },
-
-      store_unlocker: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_unlocker", url: "https://ccm2.inf.h-brs.de" } ],
-      },
-
-      store_students: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_students", url: "https://ccm2.inf.h-brs.de" } ],
-      },
-
-      store_results: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_results", url: "https://ccm2.inf.h-brs.de" } ],
-      },
-
-      /**
-       * css resources
-       */
       css: ["ccm.load",
         "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
         { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-          "./resources/default.css"
+          "https://geoeg.github.io/gkolev2s-components/exam_editor/resources/default.css"
       ],
-
 
     },
 
@@ -199,11 +167,6 @@
      * @constructor
      */
     Instance: function () {
-
-      /**
-       * own reference for inner functions
-       */
-      // const self = this;
 
       /**
        * shortcut to help functions
@@ -232,39 +195,62 @@
 
           get: async () => {
 
-            // ['store_editor','store_generator','store_unlocker','store_results']
-            //   .forEach( async store => console.log(await store.store.get()) );
 
-            // ['store_editor','store_generator','store_unlocker','store_results']
-            //   .forEach( async name => console.log(await this.ccm.get({name: name},{})) );
+            let currentTable = this.element.querySelector("#current-parent-exams");
+            if ( currentTable.hasChildNodes() ) {
+              currentTable.removeChild(currentTable.firstChild);
+            };
 
-            console.log("---> data at lvl-3 (editor)");
-            console.log(await this.store_editor.store.get());
-            console.log("---> data at lvl-3 (generator)");
-            console.log(await this.store_generator.store.get());
-            console.log("---> data at lvl-3 (unlocker)");
-            console.log(await this.store_unlocker.store.get());
-            console.log("---> data at lvl-3 (results)");
-            console.log(await this.store_results.store.get());
+            let parentExams = await this.store_settings.editor.store.get();
+            if ( parentExams.length == 0 ) {
+              window.alert( "The storage is emtpy." );
+            } else {
+              let parentExamsTableData = [[["Position:"],["Key:"],["Value:"]]];
+              for (var i = 0; i < parentExams.length; i++) {
+                for (const [key, value] of Object.entries(parentExams[i])) {
+                  if (key == "key" || key == "subject") {
+                    parentExamsTableData.push([[i],[key],[value]]);
+                  }
+                };
+              };
+              await createTable(parentExamsTableData);
+            }
+
+            // get data from following data stores:
+            let storedData = [ "editor" ,"generator" ,"unlocker" ,"results", "myself" ];
+            for (var i = 0; i < storedData.length; i++) {
+              console.log(await this.store_settings[storedData[i]].store.get());
+            };
+
           },
 
           del: async () => {
-            let store3ECurrent = await this.store_editor.store.get();
-            for (var j = 0; j < store3ECurrent.length; j++) {
-              this.store_editor.store.del(store3ECurrent[j].key)
+
+            let parentExams = await this.store_settings.editor.store.get();
+            if ( parentExams.length == 0 ) {
+              window.alert( "The storage is already emtpy." );
+            } else {
+              let currentTable = this.element.querySelector("#current-parent-exams");
+              if (currentTable.children.length !== 0) {
+                currentTable.removeChild(currentTable.firstChild);
+              }
+              let editorData = await this.store_settings.editor.store.get();
+              for (let i = 0; i < editorData.length; i++) {
+                this.store_settings.editor.store.del(editorData[i].key)
+              };
+
+              window.alert("All data involved in the process of creating, generating and unlocking an exam was successfully deleted from h-brs server.");
             };
-            let store3GCurrent = await this.store_generator.store.get();
-            for (var j = 0; j < store3GCurrent.length; j++) {
-              this.store_generator.store.del(store3GCurrent[j].key)
+
+            // delete all stored data at following data stores:
+            let storedData = [ "editor" ,"generator" ,"unlocker" ,"results", "myself" ];
+            for (let i = 0; i < storedData.length; i++) {
+              let data = await this.store_settings[storedData[i]].store.get();
+              for (let j = 0; j < data.length; j++) {
+                await this.store_settings[storedData[i]].store.del(data[j].key)
+              };
             };
-            let store3UCurrent = await this.store_unlocker.store.get();
-            for (var j = 0; j < store3UCurrent.length; j++) {
-              this.store_unlocker.store.del(store3UCurrent[j].key)
-            };
-            let store3RCurrent = await this.store_results.store.get();
-            for (var j = 0; j < store3RCurrent.length; j++) {
-              this.store_results.store.del(store3RCurrent[j].key)
-            };
+
           },
 
           start: async () => {
@@ -276,7 +262,7 @@
               let startBtn = this.element.querySelector("#start-btn");
               $.removeElement(startBtn);
 
-              let admins = await this.store_admins.store.get();
+              let admins = await this.store_settings.admins.store.get();
               let userName = this.user.data().user;
               // if user == exact username (from admin list) -> only then show get/delete data buttons
               if (admins[0].value.includes(userName)) {
@@ -293,27 +279,30 @@
           },
 
           check: async () => {
-            let adminUsers = await this.store_admins.store.get("exam_editor_admins");
-            console.log("---> exam editor admin users:");
-            console.log(adminUsers.value);
-            let res = await this.store_students.store.get("allowed_ids");
+            // let adminUsers = await this.store_settings.admins.store.get("exam_editor_admins");
+            // console.log("---> exam editor admin users:");
+            // console.log(adminUsers.value);
+            let res = await this.store_settings.students.store.get("allowed_ids");
             console.log("---> allowed students to unlock exam:");
             console.log(res.value);
+            window.alert(`students allowed to participate: ${res.value}`);
           },
 
           reset: async () => {
             let studentIds = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9017419 ];
-            await this.store_students.store.set(
+            await this.store_settings.students.store.set(
               {
                 key: "allowed_ids",
                 value: studentIds
               }
             );
+          let res = await this.store_settings.students.store.get("allowed_ids");
+          window.alert(`Reset of ids was successful. Students allowed to participate: ${res.value}`);
           },
 
           // ignore:
           sort: async () => {
-            const res = await this.store_results.store.get();
+            const res = await this.store_settings.results.store.get();
             let splitedResults = [];
             for (var i = 0; i < res.length; i++) {
               let tosplit = res[i].key;
@@ -326,35 +315,27 @@
         });
 
         // generate unique key for the exam
-        let configKey = $.generateKey();
+        const configKey = $.generateKey();
 
         // submit config for 'exam-editor's form
         const submitConfig = {
-          "entries": [ "ccm.get", "./resources/datasets.js", "gkolev2s.data" ],
-          "data": {
-            "store": [ "ccm.store", "./resources/datasets.js" ],
-            "key": "gkolev2s_init"
-          },
+
+          "entries": this.submit_settings.entries,
+          "data": this.submit_settings.data,
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
           "onfinish": {
             "log": true,
-            "store": {
-              "settings": {
-                "name": "gkolev2s_exam_editor",
-                "url": "https://ccm2.inf.h-brs.de"
-              },
-              "key": configKey
-            },
+            "store": this.submit_settings.store,
+            // "store.key": configKey,
             "alert": "Form data successfully saved!",
             callback: async () => {
              await getCurrentExamKey()
+             // await copyStringToClipboard(configKey)
            },
            // render the exam_generator component when exam data is submitted
             // "render": {
-              // component: "../exam_generator/ccm.exam_generator.js",
-              // TODO: fix. Not rendering successfully.
-              // Ask: do I need a config here? I load the standard version of the component that works without, but its just on loading.
-              // config: {} // config of exam generator component
+            //   component: "https://geoeg.github.io/gkolev2s-components/exam_generator/ccm.exam_generator.js",
+            //   // config: {} // config of exam generator component
             // }
           }
         };
@@ -397,13 +378,14 @@
          * get key of last saved exam
          */
         let getCurrentExamKey = async () => {
-          let results = await this.store_editor.store.get();
-          // let key = results[results.length - 1].key[0];
-          let key = results[results.length - 1].key;
+
+          let savedData = await this.store_settings.editor.store.get();
+          const FINAL_KEY = savedData[savedData.length - 1].key;
+
           $.onFinish(
             this,
-            copyStringToClipboard(key),
-            window.alert(`Here is your exam id: ${key}. Don't worry. It's already in your clipboard. Just paste it in the exam generator.`));
+            copyStringToClipboard(FINAL_KEY),
+            window.alert(`Here is your exam id: ${FINAL_KEY}. Don't worry. It's already in your clipboard. Just paste it in the exam generator to generate as many as wished exam variations.`));
         };
 
         /**
@@ -425,6 +407,29 @@
            document.execCommand('copy');
            // Remove temporary element
            document.body.removeChild(el);
+        };
+
+        // create table from 2d array
+        // Quelle: https://stackoverflow.com/questions/15164655/generate-html-table-from-2d-javascript-array
+        const createTable = (tableData) => {
+          var table = document.createElement('table');
+          var tableBody = document.createElement('tbody');
+
+          tableData.forEach(function(rowData) {
+            var row = document.createElement('tr');
+
+            rowData.forEach(function(cellData) {
+              var cell = document.createElement('td');
+              cell.appendChild(document.createTextNode(cellData));
+              row.appendChild(cell);
+            });
+
+            tableBody.appendChild(row);
+          });
+
+          table.appendChild(tableBody);
+          // document.body.appendChild(table);
+          this.element.querySelector("#current-parent-exams").appendChild(table);
         };
 
       };

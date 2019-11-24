@@ -50,8 +50,24 @@
             },
             {
               tag: "div",
-              id: "data-btns",
-              inner: []
+              id: "exam-info",
+              inner: [
+                {
+                  tag: "h4",
+                  id: "date",
+                  inner: []
+                },
+                {
+                  tag: "h4",
+                  id: "begin",
+                  inner: []
+                },
+                {
+                  tag: "h4",
+                  id: "info",
+                  inner: []
+                }
+              ]
             },
             {
               tag: "hr"
@@ -64,16 +80,6 @@
           ]
 
         },
-
-        // task: {
-        //   tag: "div",
-        //   class: "task",
-        //   inner: [
-        //     { tag: 'hr' },
-        //     { tag: "h2", inner: "Exercise %nr%: %title% (%points% pts.)" },
-        //     { class: "task", "data-type": "%type%", id: "task_%nr%" }
-        //   ]
-        // }
 
       },
 
@@ -90,25 +96,25 @@
       /**
        * used ccm datastores
        */
-      store_editor: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_editor", url: "https://ccm2.inf.h-brs.de" } ],
-      },
-
-      store_generator: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
-      },
-
-      store_unlocker: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_unlocker", url: "https://ccm2.inf.h-brs.de" } ],
-      },
-
-      store_students: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_students", url: "https://ccm2.inf.h-brs.de" } ],
-      },
-
-      store_results: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_results", url: "https://ccm2.inf.h-brs.de" } ],
-      },
+      // store_editor: {
+      //   store: [ "ccm.store", { name: "gkolev2s_exam_editor", url: "https://ccm2.inf.h-brs.de" } ],
+      // },
+      //
+      // store_generator: {
+      //   store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
+      // },
+      //
+      // store_unlocker: {
+      //   store: [ "ccm.store", { name: "gkolev2s_exam_unlocker", url: "https://ccm2.inf.h-brs.de" } ],
+      // },
+      //
+      // store_students: {
+      //   store: [ "ccm.store", { name: "gkolev2s_exam_students", url: "https://ccm2.inf.h-brs.de" } ],
+      // },
+      //
+      // store_results: {
+      //   store: [ "ccm.store", { name: "gkolev2s_exam_results", url: "https://ccm2.inf.h-brs.de" } ],
+      // },
 
       /**
        * css resources
@@ -116,7 +122,7 @@
       css: ["ccm.load",
         "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
         { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-          "./resources/default.css"
+          "https://geoeg.github.io/gkolev2s-components/exam_unlocker/resources/default.css"
       ],
     },
 
@@ -148,20 +154,19 @@
         // logging of 'start' event
         this.logger.log( "start-exam-unlocker" );
 
-        console.log("---> generated exams:");
-        console.log(await this.store_generator.store.get());
-
         // get student ids that are allowed to unlock (participate) an exam
-        let allowedStudents = await this.store_students.store.get("allowed_ids");
+        let allowedStudents = await this.store_settings.students.store.get("allowed_ids");
 
         const form = $.html( this.html.form, {});
 
         // submit config for 'exam-unlocker's form
         const submitConfig = {
-          "entries": [ "ccm.get", "./resources/datasets.js", "gkolev2s_unlocker.data" ],
+          // TODO: change file path to github.io..
+          "entries": [ "ccm.get", "https://geoeg.github.io/gkolev2s-components/exam_unlocker/resources/datasets.js", "unlocker.data" ],
           "data": {
-            "store": [ "ccm.store", "./resources/datasets.js" ],
-            "key": "gkolev2s_unlocker_init"
+            // TODO: change file path to github.io..
+            "store": [ "ccm.store", "https://geoeg.github.io/gkolev2s-components/exam_unlocker/resources/datasets.js" ],
+            "key": "unlocker_init"
           },
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
           "onfinish": {
@@ -191,15 +196,16 @@
           console.log(`Looking for key: ${key}, studentid: ${studentid}.`);
 
           // get the exam's configuration that will be loaded
-          let configToLoad = await this.store_generator.store.get(key);
+          let configToLoad = await this.store_settings.generator.store.get(key);
 
           if (configToLoad == null)  {
             window.alert(`The password ${examId} is wrong! Try again.`);
           };
 
           // get already unlocked exams
-          let unlockedExams = await this.store_unlocker.store.get();
+          let unlockedExams = await this.store_settings.unlocker.store.get();
           let usedExamKeys = [];
+
           for (var i = 0; i < unlockedExams.length; i++) {
             usedExamKeys.push(unlockedExams[i].key);
           }
@@ -248,45 +254,47 @@
         let startExam = async ( examId, studId ) => {
 
           // get the config with specific key from stored exams on datastore lvl-3
-          const examToLoad = await this.store_generator.store.get(examId);
-          console.log("--- exam to load:");
-          console.log(examToLoad);
+          const examToLoad = await this.store_settings.generator.store.get(examId);
+          const configsToLoad = examToLoad.configs;
 
-          const quizConfigsToLoad = examToLoad.configs;
-          console.log("--- configs to load:");
-          console.log(quizConfigsToLoad);
+          // get general exam information
+          const storeEditor = await this.store_settings.editor.store.get(examToLoad.parent);
 
           // remove the submit (unlocker) form
           this.element.querySelector("#unlock-form").removeChild(submitInstance.root);
 
-          // create array with results for each student
-          let examResults = [];
-          // apply changes on onfinish() of each quiz
-          for (let i = 0; i < quizConfigsToLoad.length; i++) {
-            quizConfigsToLoad[i].onfinish.store.key = examToLoad.key + examToLoad.configs[i].key;
-            // ignore: experimenting with onfinish:
-            // quizConfigsToLoad[i].onfinish.store.name = "gkolev2s_exam_results_" + studId;
-            quizConfigsToLoad[i].onfinish.callback = function (instance, results) {
-              examResults.push({
-                "studId": studId,
-                "examId": examId,
-                "quizId": instance.id,
-                "results": results
-              });
-            };
+          // apply changes on onfinish() of each exercise
+          for (let i = 0; i < configsToLoad.length; i++) {
+            configsToLoad[i].onfinish.store.key = examToLoad.key + examToLoad.configs[i].key;
+            configsToLoad[i].onfinish.store.settings.name = storeEditor._.creator + "_" + studId;
+            console.log(storeEditor._.creator + "_" + studId);
+            // possible ways to save exam results in the future:
+            // configsToLoad[i].onfinish.store.settings.name = "gkolev2s_" + studId;
+            // configsToLoad[i].onfinish.store.settings.name = studId + "_" + examId;
           };
 
-          // iterate over the configs and render as many as needed quizes
-          for (let i = 0; i < quizConfigsToLoad.length; i++) {
-            const quizInstance = await this.quiz.instance(quizConfigsToLoad[i]);
-            const quizResult = await quizInstance.start();
-            this.element.querySelector("#unlock-form").appendChild(quizInstance.root);
-          };
-          // TODO: render general exam information
-          const storeEditor = await this.store_editor.store.get();
-          this.element.querySelector("#unlocker-title").innerHTML = storeEditor[0].subject;
+          // iterate over the configs and render as many as needed exercises
 
+          for (let i = 0; i < configsToLoad.length; i++) {
+            const exInstance = await this.ex_types[configsToLoad[i].type].instance(configsToLoad[i]);
+            const exResults = await exInstance.start();
+
+            // if ( configsToLoad[i].hasOwnProperty("group_title") ) {
+            //   let h3 = document.createElement("h3");
+            //   h3.textContent = configsToLoad[i].group_title;
+            //   this.element.querySelector("#unlock-form").appendChild(h3);
+            // };
+
+            this.element.querySelector("#unlock-form").appendChild(exInstance.root);
+          };
+
+          // render general exam information
+          this.element.querySelector("#unlocker-title").innerHTML = storeEditor.subject;
+          this.element.querySelector("#date").innerHTML = "Date: " + storeEditor.date;
+          this.element.querySelector("#begin").innerHTML = "Begin: " + storeEditor.time;
+          this.element.querySelector("#info").innerHTML = "Information: " + storeEditor.examinfo;
         };
+
 
         /**
          * block the student id and the exam id that were just used to unlock an exam
@@ -297,7 +305,7 @@
             allowedStudents.value = allowedStudents.value.filter(item => item !== studId);
           };
 
-          await this.store_students.store.set(
+          await this.store_settings.students.store.set(
             {
               "key": "allowed_ids",
               "value": allowedStudents.value
@@ -311,10 +319,11 @@
          */
         let storeUnlocked = async ( examId, studId ) => {
 
-          await this.store_unlocker.store.set(
+          await this.store_settings.unlocker.store.set(
             {
               "key": examId,
               "studentId": studId
+              // "results": examResults // getValue() from all exercises ?
             }
           );
 

@@ -8,16 +8,16 @@
 ccm.files[ 'datasets.js' ] = {
 
   // initial values for gkolev2s
-  "gkolev2s_unlocker_init": {
-    "key": "gkolev2s_entrance_init",
+  "unlocker_init": {
+    "key": "unlocker_init",
     "password": "1234567890X1234567890",
     "studentid": "1234567"
 
   },
 
   // special HTML structure for gkolev2s
-  "gkolev2s_unlocker": {
-    "key": "gkolev2s_unlocker",
+  "unlocker": {
+    "key": "unlocker",
     "data": [
 
       "<legend>Unlock Exam</legend>",

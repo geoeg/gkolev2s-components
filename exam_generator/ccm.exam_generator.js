@@ -13,20 +13,10 @@
 
   const component = {
 
-    /**
-     * unique component name
-     */
     name: 'exam_generator',
 
-    /**
-     * recommended used framework version
-     */
     ccm: 'https://ccmjs.github.io/ccm/versions/ccm-24.0.5.js',
-    // ccm: 'https://ccmjs.github.io/ccm/ccm.js',
 
-    /**
-     * default instance configuration
-     */
     config: {
 
       html: {
@@ -78,72 +68,48 @@
         }
       },
 
-      /**
-       * used ccm components
-       */
       submit: [ "ccm.component", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js" ],
 
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
         [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
 
-      /**
-       * used ccm datastores
-       */
+      store: [ "ccm.store" ],
 
-      store_editor: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_editor", url: "https://ccm2.inf.h-brs.de" } ],
-      },
+      types: {
+       store: [ "ccm.store",  "resources/type.js" ],
+     },
 
-      store_generator: {
-        store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
-      },
-
-      /**
-       * css resources
-       */
       css: ["ccm.load",
       "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
       { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
-        "./resources/default.css"
+        "https://geoeg.github.io/gkolev2s-components/exam_generator/resources/default.css"
       ],
     },
 
-    /**
-     * for creating instances of this component
-     * @constructor
-     */
     Instance: function () {
 
-      /**
-       * shortcut to help functions
-       */
       let $;
 
-       /**
-        * init is called once after all dependencies are solved and is then deleted
-        */
        this.init = async () => {
 
         $ = this.ccm.helper;
 
       };
 
-      /**
-       * starts the instance
-       */
       this.start = async () => {
 
-        // logging of 'start' event
         this.logger.log( "start-exam-generator" );
 
         const topbar = $.html( this.html.topbar, {});
 
         // submit config for 'exam-generators's form
         const submitConfig = {
-          "entries": [ "ccm.get", "./resources/datasets.js", "gkolev2s_generator.data" ],
+          // TODO: change file path to github.io..
+          "entries": [ "ccm.get", "https://geoeg.github.io/gkolev2s-components/exam_generator/resources/datasets.js", "generator.data" ],
           "data": {
-            "store": [ "ccm.store", "./resources/datasets.js" ],
-            "key": "gkolev2s_generator_init"
+            // TODO: change file path to github.io..
+            "store": [ "ccm.store", "https://geoeg.github.io/gkolev2s-components/exam_generator/resources/datasets.js" ],
+            "key": "generator_init"
           },
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
           "onfinish": {
@@ -179,103 +145,64 @@
         let generate = async () => {
 
           let examId = submitInstance.getValue().exam_id;
-          console.log(`examId: ${examId}`);
-
           let amount = submitInstance.getValue().amount;
-          console.log(`amount: ${amount}`);
 
-          let quizOrigin = await this.store_editor.store.get(examId);
-          // [] is different, cause when storing on lvl 2 the key is a value in array and not just a string as key!
-          // let quizOrigin = await this.store2.get([examId]);
-          console.log("--- original quiz data:");
-          console.log(quizOrigin);
+          let keysToShowAtEnd = [];
 
-          if (isExisting(quizOrigin)) {
+          // get the original exam data
+          let originalExamData = await this.store_settings.editor.store.get(examId);
 
-            let builderData = [...quizOrigin.quiz];
-            console.log(builderData);
-
-            const defaultQuizCss = [ "ccm.load", "https://ccmjs.github.io/akless-components/quiz/resources/weblysleek.css", { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/weblysleekui/font.css" } ];
+          // if an exam with that id is existing on the server/exam_editor
+          if (isExisting(originalExamData)) {
 
             // create amount of variations with unique key, that will be used to unlock exact this exam
             for (let nr = 0; nr < amount; nr++) {
-              await this.store_generator.store.set(
-                {
-                  "key": $.generateKey
-                }
-              );
+              keysToShowAtEnd.push( $.generateKey() );
+              await this.store_settings.generator.store.set(
+                // { "key": $.generateKey() });
+                { "key": keysToShowAtEnd[nr] });
             };
 
-            const generatedQuizConfigs = [];
-            // fill up array with the created quiz configs
+            // copy the exercises to be able to manipulate
+            let builderData = [...originalExamData.exercises];
+            // store generated configs here
+            let generatedExcConfigs = [];
+
+            // for each type of exercise
             for (var i = 0; i < builderData.length; i++) {
-              generatedQuizConfigs.push(
-                {
-                  "key": "quiz" + i,
-                  "quiz_title": builderData[i].exc_title,
-                  "questions": builderData[i].questions,
-                  "feedback": builderData[i].feedback,
-                  "navigation": builderData[i].navigation,
-                  "start_button": builderData[i].start_button,
-                  "random": builderData[i].shuffle_answers,
-                  "shuffle": builderData[i].shuffle_questions,
-                  "placeholder": {
-                    "prev": builderData[i].previous_label,
-                    "next": builderData[i].next_label,
-                    "submit": builderData[i].submit_label,
-                    "finish": builderData[i].finish_label
-                  },
-                  "onfinish": {
-                    "clear": builderData[i].clear_onfinish,
-                    "restart": builderData[i].restart_onfinish,
-                    "store": {
-                      "settings": {
-                        "name": "gkolev2s_exam_results",
-                        "url": "https://ccm2.inf.h-brs.de",
-                      },
-                      "key": null
-                    },
-                    "alert": "Exercise results saved!",
-                  },
-                  "css": defaultQuizCss
-                }
-              );
+              // get the needed config template
+              let storedTemplate = await this.types.store.get(builderData[i].type);
+
+              // fill up the templates with current data from the original exam
+              let filledTemplate = await $.integrate( builderData[i], storedTemplate.config );
+              filledTemplate.key = builderData[i].type + i;
+              filledTemplate.onfinish = await $.integrate( storedTemplate.onfinish, filledTemplate.onfinish );
+              filledTemplate.onfinish.store.key = builderData[i].type + i;
+
+              // save all filled templates at one place
+              generatedExcConfigs.push(filledTemplate);
             };
 
-            console.log("--- generated quiz configs array:");
-            console.log(generatedQuizConfigs);
-
-            // get all the generated versions and render each of the quiz configs
-            const versions = await this.store_generator.store.get();
-            console.log("--- generated versions:");
-            console.log(versions);
-
+            // for every generated version add the shuffled generated configs
+            let versions = await this.store_settings.generator.store.get();
             for (var i = 0; i < versions.length; i++) {
 
-             let clonedQuizConfigs = [...generatedQuizConfigs];
-             $.shuffleArray(clonedQuizConfigs);
-             console.log("--- shuffled cloned quiz configs:");
-             console.log(clonedQuizConfigs);
-
-             await this.store_generator.store.set(
+             // the order of the exercises will be shuffled for security
+             let clonedConfigs = [...generatedExcConfigs];
+             $.shuffleArray(clonedConfigs);
+             // save each shuffled generated exam structure to the generated exam variations with unique id
+             await this.store_settings.generator.store.set(
                {
                 "key": versions[i].key,
-                "configs": clonedQuizConfigs,
+                "parent": examId,
+                "configs": clonedConfigs,
                 "results": [],
                 "studentid": null
                }
              );
             };
 
-            console.log(await this.store_generator.store.get());
-
             window.alert(`Exam versions were generated successfully!`);
-
-            // create array with the generated exam keys (and show those to the user)
-            let generatedIds = [];
-            for (var i = 0; i < versions.length; i++) {
-              generatedIds.push(versions[i].key);
-            };
 
             /**
              * create html table with generated ids and show those on page (LOC: 307-321)
@@ -283,12 +210,11 @@
              */
             let perrow = 1;
             let html = "<table><caption>Generated Exam Keys:</caption><tr>";
-
-            for (var i = 0; i<generatedIds.length; i++) {
-              html += "<td>" + generatedIds[i] + "</td>";
+            for (var i = 0; i<keysToShowAtEnd.length; i++) {
+              html += "<td>" + keysToShowAtEnd[i] + "</td>";
               // Break into next row
               var next = i+1;
-              if (next%perrow==0 && next!=generatedIds.length) {
+              if (next%perrow==0 && next!=keysToShowAtEnd.length) {
                 html += "</tr><tr>";
               }
             }
@@ -299,6 +225,9 @@
 
             // inform user
             window.alert("Scroll down to see a list of generated exam ids. Give one to every exam participant so they will be allowed to unlock an exam with it.");
+
+          } else {
+            window.alert("No such exam found. Please try again.");
           };
 
         };

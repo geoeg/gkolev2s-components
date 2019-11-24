@@ -8,8 +8,8 @@
 ccm.files[ 'datasets.js' ] = {
 
   // initial values for gkolev2s_generator
-  "gkolev2s_generator_init": {
-    "key": "gkolev2s_generator_init",
+  "generator_init": {
+    "key": "generator_init",
 
     "exam_id": "1574166350409X46041033972781253",
     "amount": 5
@@ -17,8 +17,8 @@ ccm.files[ 'datasets.js' ] = {
   },
 
   // special HTML structure for gkolev2s_generator
-  "gkolev2s_generator": {
-    "key": "gkolev2s_generator",
+  "generator": {
+    "key": "generator",
 
     "data": [
 
@@ -37,12 +37,6 @@ ccm.files[ 'datasets.js' ] = {
         "info": "Add amount of exams to be generated.",
         "min": 1
       },
-      // {
-      //   "label": "Shuffle Q&A",
-      //   "name": "shuffle",
-      //   "type": "checkbox",
-      //   "info": "Check if you want to shuffle all Q&A"
-      // },
       {
         "type": "submit"
       }
