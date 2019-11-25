@@ -76,7 +76,7 @@
       store: [ "ccm.store" ],
 
       types: {
-       store: [ "ccm.store",  "resources/type.js" ],
+       store: [ "ccm.store", "https://geoeg.github.io/gkolev2s-components/exam_generator/resources/type.js" ],
      },
 
       css: ["ccm.load",
