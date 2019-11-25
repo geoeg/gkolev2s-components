@@ -39,7 +39,7 @@
             {
               tag: "img",
               id: "hbrs-logo",
-              src: "resources/hbrs-logo.svg",
+              src: "https://geoeg.github.io/gkolev2s-components/exam_unlocker/resources/hbrs-logo.svg",
               width: "300rem",
               height: "auto"
             },
