@@ -26,13 +26,13 @@
           tag: "div",
           class: "topbar",
           inner: [
-            {
-              tag: "img",
-              id: "hbrs-logo",
-              src: "resources/hbrs-logo.svg",
-              width: "300rem",
-              height: "auto"
-            },
+            // {
+            //   tag: "img",
+            //   id: "hbrs-logo",
+            //   src: "resources/hbrs-logo.svg",
+            //   width: "300rem",
+            //   height: "auto"
+            // },
             {
               tag: "h1",
               id: "generator-title",

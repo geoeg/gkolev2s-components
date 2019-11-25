@@ -335,7 +335,7 @@
            // render the exam_generator component when exam data is submitted
             "render": {
               "component": "https://geoeg.github.io/gkolev2s-components/exam_generator/ccm.exam_generator.js",
-              "config": ["ccm.get","https://geoeg.github.io/gkolev2s-components/exam_generator/resources/configs.js","demo"] // config of exam generator component
+              "config": [ "ccm.get", "https://geoeg.github.io/gkolev2s-components/exam_generator/resources/configs.js","demo" ]
             }
           }
         };
