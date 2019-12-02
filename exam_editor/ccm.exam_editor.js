@@ -320,6 +320,7 @@
           "entries": this.submit_settings.entries,
           "data": this.submit_settings.data,
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
+          // ignore onchange
           "onchange": () => { this.onchange(); console.log(this.getValue()); },
           "onfinish": {
             "log": true,
@@ -430,6 +431,7 @@
 
       };
 
+      // ignore getValue
       this.getValue = () => submit.getValue();
 
     }
