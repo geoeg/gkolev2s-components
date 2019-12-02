@@ -6,13 +6,13 @@ ccm.files[ 'configs.js' ] = {
     "submit_settings": {
 
       // structure of the exam form (general information and exercises)
-      // TODO: change file path to github.io..
       "entries": [ "ccm.get", "https://geoeg.github.io/gkolev2s-components/exam_editor/resources/datasets.js", "form.data" ],
+      // "entries": [ "ccm.get", "./resources/datasets.js", "form.data" ],
 
       // initial data for the exam form
       "data": {
-        // TODO: change file path to github.io..
         "store": [ "ccm.store", "https://geoeg.github.io/gkolev2s-components/exam_editor/resources/datasets.js" ],
+        // "store": [ "ccm.store", "./resources/datasets.js" ],
         "key": "form_init"
       },
 
@@ -28,8 +28,10 @@ ccm.files[ 'configs.js' ] = {
     },
 
     // user login settings (if no given, the default "guest" config will be loaded)
-    "user": [ 'ccm.instance','https://ccmjs.github.io/akless-components/user/versions/ccm.user-9.3.0.js',
-    [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','hbrsinfkaul' ] ],
+    "user": [ 'ccm.instance','https://ccmjs.github.io/akless-components/user/versions/ccm.user-9.3.0.js', {
+      "key": [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','hbrsinfkaul' ],
+      "logged_in": true
+    } ],
     // [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','compact' ] ],
 
     // those are additional settings for working with admin panel
@@ -97,6 +99,7 @@ ccm.files[ 'configs.js' ] = {
 
   "localform" : {
 
+    "onchange": console.log,
     // obligatory settings needed to run the form for creating an exam
     "submit_settings": {
 
@@ -123,8 +126,10 @@ ccm.files[ 'configs.js' ] = {
     },
 
     // user login settings (if no given, the default "guest" config will be loaded)
-    "user": [ 'ccm.instance','https://ccmjs.github.io/akless-components/user/versions/ccm.user-9.3.0.js',
-    [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','hbrsinfkaul' ] ],
+    "user": [ 'ccm.instance','https://ccmjs.github.io/akless-components/user/versions/ccm.user-9.3.0.js', {
+      "key": [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','hbrsinfkaul' ],
+      "logged_in": true
+    } ],
     // [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','compact' ] ],
 
     // those are additional settings for working with admin panel

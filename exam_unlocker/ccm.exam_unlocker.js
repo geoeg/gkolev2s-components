@@ -94,29 +94,6 @@
       [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
 
       /**
-       * used ccm datastores
-       */
-      // store_editor: {
-      //   store: [ "ccm.store", { name: "gkolev2s_exam_editor", url: "https://ccm2.inf.h-brs.de" } ],
-      // },
-      //
-      // store_generator: {
-      //   store: [ "ccm.store", { name: "gkolev2s_exam_generator", url: "https://ccm2.inf.h-brs.de" } ],
-      // },
-      //
-      // store_unlocker: {
-      //   store: [ "ccm.store", { name: "gkolev2s_exam_unlocker", url: "https://ccm2.inf.h-brs.de" } ],
-      // },
-      //
-      // store_students: {
-      //   store: [ "ccm.store", { name: "gkolev2s_exam_students", url: "https://ccm2.inf.h-brs.de" } ],
-      // },
-      //
-      // store_results: {
-      //   store: [ "ccm.store", { name: "gkolev2s_exam_results", url: "https://ccm2.inf.h-brs.de" } ],
-      // },
-
-      /**
        * css resources
        */
       css: ["ccm.load",
@@ -161,10 +138,8 @@
 
         // submit config for 'exam-unlocker's form
         const submitConfig = {
-          // TODO: change file path to github.io..
           "entries": [ "ccm.get", "https://geoeg.github.io/gkolev2s-components/exam_unlocker/resources/datasets.js", "unlocker.data" ],
           "data": {
-            // TODO: change file path to github.io..
             "store": [ "ccm.store", "https://geoeg.github.io/gkolev2s-components/exam_unlocker/resources/datasets.js" ],
             "key": "unlocker_init"
           },
@@ -274,11 +249,11 @@
           };
 
           // iterate over the configs and render as many as needed exercises
-
           for (let i = 0; i < configsToLoad.length; i++) {
             const exInstance = await this.ex_types[configsToLoad[i].type].instance(configsToLoad[i]);
             const exResults = await exInstance.start();
 
+            // render exercise group title
             // if ( configsToLoad[i].hasOwnProperty("group_title") ) {
             //   let h3 = document.createElement("h3");
             //   h3.textContent = configsToLoad[i].group_title;
@@ -294,7 +269,6 @@
           this.element.querySelector("#begin").innerHTML = "Begin: " + storeEditor.time;
           this.element.querySelector("#info").innerHTML = "Information: " + storeEditor.examinfo;
         };
-
 
         /**
          * block the student id and the exam id that were just used to unlock an exam

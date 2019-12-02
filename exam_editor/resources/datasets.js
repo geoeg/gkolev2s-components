@@ -5,25 +5,22 @@
  * @license The MIT License (MIT)
  */
 
-ccm.files[ 'datasets.js' ] = {
+ccm.files['datasets.js'] = {
 
   // initial values for gkolev2s
   "form_init": {
     "key": "form_init",
 
-    "subject": "Some Exam Title",
+    "subject": "Test Exam Title",
     "date": "2020-01-30",
     "time": "09:00",
     "examinfo": "120 Pts. = 120 Mins.",
-    "exercises": [
-      {
+    "exercises": [{
         "group_title": "Question Group Title 1",
-        "questions": [
-          {
+        "questions": [{
             "text": "Question 1",
             "description": "Exercise 1.1",
-            "answers": [
-              {
+            "answers": [{
                 "text": "Answer 1.1",
                 "correct": true,
                 "comment": "Comment 1.1",
@@ -48,8 +45,7 @@ ccm.files[ 'datasets.js' ] = {
           {
             "text": "Question 2",
             "description": "Exercise 1.2",
-            "answers": [
-              {
+            "answers": [{
                 "text": "Answer 2.1",
                 "correct": false,
                 "comment": "Comment 2.1",
@@ -74,8 +70,7 @@ ccm.files[ 'datasets.js' ] = {
           {
             "text": "Question 3",
             "description": "Exercise 1.3",
-            "answers": [
-              {
+            "answers": [{
                 "text": "Answer 3.1",
                 "correct": false,
                 "comment": "Comment 3.1",
@@ -100,8 +95,7 @@ ccm.files[ 'datasets.js' ] = {
           {
             "text": "Question 4",
             "description": "Exercise 1.4",
-            "answers": [
-              {
+            "answers": [{
                 "text": "Answer 4.1",
                 "correct": false,
                 "comment": "Comment 4.1",
@@ -141,12 +135,10 @@ ccm.files[ 'datasets.js' ] = {
       },
       {
         "group_title": "Question Group Title 2",
-        "questions": [
-          {
+        "questions": [{
             "text": "Question 1",
             "description": "Exercise 2.1",
-            "answers": [
-              {
+            "answers": [{
                 "text": "Answer 1.1",
                 "correct": true,
                 "comment": "Comment 1.1",
@@ -171,8 +163,7 @@ ccm.files[ 'datasets.js' ] = {
           {
             "text": "Question 2",
             "description": "Exercise 2.2",
-            "answers": [
-              {
+            "answers": [{
                 "text": "Answer 2.1",
                 "correct": false,
                 "comment": "Comment 2.1",
@@ -197,8 +188,7 @@ ccm.files[ 'datasets.js' ] = {
           {
             "text": "Question 3",
             "description": "Exercise 2.3",
-            "answers": [
-              {
+            "answers": [{
                 "text": "Answer 3.1",
                 "correct": false,
                 "comment": "Comment 3.1",
@@ -238,12 +228,10 @@ ccm.files[ 'datasets.js' ] = {
       },
       {
         "group_title": "Question Group Title 3",
-        "questions": [
-          {
+        "questions": [{
             "text": "Question 1",
             "description": "Exercise 3.1",
-            "answers": [
-              {
+            "answers": [{
                 "text": "Answer 1.1",
                 "correct": true,
                 "comment": "Comment 1.1",
@@ -268,8 +256,7 @@ ccm.files[ 'datasets.js' ] = {
           {
             "text": "Question 2",
             "description": "Exercise 3.2",
-            "answers": [
-              {
+            "answers": [{
                 "text": "Answer 2.1",
                 "correct": false,
                 "comment": "Comment 2.1",
@@ -349,18 +336,15 @@ ccm.files[ 'datasets.js' ] = {
         "name": "exercises",
         "type": "several",
         "info": "This is a quiz exercise. One quiz exercise can have one or more single or multiple choise questions.",
-        "items": [
-          {
+        "items": [{
             "label": "Type",
             "name": "type",
             "type": "select",
             "info": "Text Text Text",
-            "items": [
-              {
-                "inner": "quiz",
-                "value": "quiz"
-              }
-            ]
+            "items": [{
+              "inner": "quiz",
+              "value": "quiz"
+            }]
           },
           {
             "label": "Exercise group title",
@@ -380,8 +364,7 @@ ccm.files[ 'datasets.js' ] = {
             "name": "questions",
             "type": "several",
             "info": "Fill up the form with quiz questions and answers.",
-            "items": [
-              {
+            "items": [{
                 "label": "Question text",
                 "name": "text",
                 "type": "text",
@@ -398,8 +381,7 @@ ccm.files[ 'datasets.js' ] = {
                 "name": "answers",
                 "type": "several",
                 "info": "Fill up the form with answers.",
-                "items": [
-                  {
+                "items": [{
                     "label": "Answer text",
                     "name": "text",
                     "type": "text",
@@ -507,12 +489,12 @@ ccm.files[ 'datasets.js' ] = {
             "type": "checkbox",
             "info": "If selected, after finishing the quiz it will be restarted and the user can have another attempt. (This option is helpful for preparation for real exams, where the students may have many attempts on the same set of exercises.)"
           },
-            ]
-          },
-          {
-            "type": "submit"
-          },
         ]
       },
+      {
+        "type": "submit"
+      },
+    ]
+  },
 
 };

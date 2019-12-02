@@ -1,68 +1,9 @@
 /**
- * @overview default layout of ccm component for building a fill-in-the-blank text
- * @author André Kless <andre.kless@web.de.de> 2017-2018
- * @author Tea Kless <tea.kless@web.de.de> 2017
- * @editor Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
+ * @overview default layout of ccm component for building an exam
+ * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  */
 
-/* a, input[type="checkbox"], select {
-  cursor: pointer;
-}
-
-a + div.alert {
-  display: none;
-}
-
-a.active + div.alert {
-  display: block;
-}
-
-a + div + div.alert {
-  display: none;
-}
-
-a.active + div + div.alert {
-  display: block;
-}
-
-.alert {
-  margin-bottom: 0 !important;
-}
-
-label {
-  font-size: 1.1em;
-}
-
-a {
-  padding-left: 0.3em;
-}
-
-.checkbox {
-  margin-left: 1em;
-  vertical-align: bottom !important;
-}
-
-#navigation {
-  padding-bottom: 1em;
-}
-
-#grid {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  grid-gap: 1em;
-}
-
-#button-submit {
-  margin-top: 0.5em;
-  margin-bottom: 2em;
-}
-
-.btn-group > .btn.active {
-  z-index: unset !important;
-} */
-
-/* added by Georgi from here */
 #hbrs-logo, #builder-title {
   display: inline-block;
 }

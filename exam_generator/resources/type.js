@@ -12,7 +12,7 @@ ccm.files[ 'type.js' ] = {
 
     "onfinish": {
       "store": {
-        "key": null, // examId + "-" + excId
+        "key": null,
         "settings": {
           // "name": "gkolev2s_exam_results",
           "name": null,

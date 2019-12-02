@@ -73,7 +73,7 @@
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
         [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
 
-      store: [ "ccm.store" ],
+      // store: [ "ccm.store" ],
 
       types: {
        store: [ "ccm.store", "https://geoeg.github.io/gkolev2s-components/exam_generator/resources/type.js" ],
@@ -104,10 +104,8 @@
 
         // submit config for 'exam-generators's form
         const submitConfig = {
-          // TODO: change file path to github.io..
           "entries": [ "ccm.get", "https://geoeg.github.io/gkolev2s-components/exam_generator/resources/datasets.js", "generator.data" ],
           "data": {
-            // TODO: change file path to github.io..
             "store": [ "ccm.store", "https://geoeg.github.io/gkolev2s-components/exam_generator/resources/datasets.js" ],
             "key": "generator_init"
           },
@@ -159,7 +157,6 @@
             for (let nr = 0; nr < amount; nr++) {
               keysToShowAtEnd.push( $.generateKey() );
               await this.store_settings.generator.store.set(
-                // { "key": $.generateKey() });
                 { "key": keysToShowAtEnd[nr] });
             };
 

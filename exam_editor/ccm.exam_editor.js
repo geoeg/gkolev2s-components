@@ -150,9 +150,6 @@
 
       user: [ 'ccm.instance','https://ccmjs.github.io/akless-components/user/versions/ccm.user-9.3.0.js',
         [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','guest' ] ],
-        // [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','hbrsinfkaul' ] ],
-
-      // db_lvl2: [ "ccm.store", { name: "store-lvl-2" } ],
 
       css: ["ccm.load",
         "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
@@ -171,7 +168,7 @@
       /**
        * shortcut to help functions
        */
-      let $;
+      let $, submit;
 
       /**
        * init is called once after all dependencies are solved and is then deleted
@@ -323,14 +320,13 @@
           "entries": this.submit_settings.entries,
           "data": this.submit_settings.data,
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
+          "onchange": () => { this.onchange(); console.log(this.getValue()); },
           "onfinish": {
             "log": true,
             "store": this.submit_settings.store,
-            // "store.key": configKey,
             "alert": "Form data successfully saved!",
             callback: async () => {
              await getCurrentExamKey()
-             // await copyStringToClipboard(configKey)
            },
            // render the exam_generator component when exam data is submitted
             "render": {
@@ -341,7 +337,7 @@
         };
 
         // create and start the submit instance to html structure
-        const submitInstance = await this.submit.instance(submitConfig);
+        const submitInstance = submit = await this.submit.instance(submitConfig);
         const submitResult = await submitInstance.start();
 
         // section exam info
@@ -433,6 +429,8 @@
         };
 
       };
+
+      this.getValue = () => submit.getValue();
 
     }
 
