@@ -99,7 +99,7 @@ ccm.files[ 'configs.js' ] = {
 
   "localform" : {
 
-    "onchange": console.log,
+    // "onchange": console.log,
     // obligatory settings needed to run the form for creating an exam
     "submit_settings": {
 
