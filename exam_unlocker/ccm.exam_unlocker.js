@@ -242,13 +242,13 @@
 
           // apply changes on onfinish() of each exercise
           for (let i = 0; i < configsToLoad.length; i++) {
-
-            configsToLoad[i].onfinish.store.key = [examToLoad.key + "_" + examToLoad.configs[i].key, studId];
+            // ignore: old way of saving
+            // configsToLoad[i].onfinish.store.key = [examToLoad.key + "_" + examToLoad.configs[i].key, studId];
+            // edited way of saving
+            configsToLoad[i].onfinish.store.key = [examToLoad.configs[i].key, studId, examToLoad.key];
             configsToLoad[i].onfinish.store.settings.name = storeEditor._.creator + "_exam_results";
-
             // possible ways to save exam results in the future:
             // configsToLoad[i].onfinish.store.settings.name = "gkolev2s_" + studId;
-            // configsToLoad[i].onfinish.store.settings.name = studId + "_" + examId;
           };
 
           // iterate over the configs and render as many as needed exercises
