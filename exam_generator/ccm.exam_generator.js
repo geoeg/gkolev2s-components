@@ -2,10 +2,15 @@
  * @overview ccm component for generating many unique exam variations
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
- * @version 1.0.0 // TODO: create a version of this ccm-component and save as versions/ccm.comp-1.0.0.js
- * - TODO: describe what is done
- *
+ * @version 1.0.0 // TODO: app versions
+ * - using submit component for showing a form for choosing an exam and amount of variations to generate
+ * - generating exam variations based on the added exam id and amount in the submit form
+ * - the generated versions are saved in the generator storage (check config file - storage_settings)
  */
+
+  // TODO: fix storage key pair (key, user/studentId)
+  // TODO: check config and datasets
+  // TODO: check every file comments
 
 (() => {
 
@@ -13,10 +18,20 @@
 
   const component = {
 
+    /**
+     * unique component name
+     */
     name: 'exam_generator',
+    // version: [1, 0, 0],
 
+    /**
+     * recommended used framework version
+     */
     ccm: 'https://ccmjs.github.io/ccm/versions/ccm-24.0.5.js',
 
+    /**
+     * default instance configuration
+     */
     config: {
 
       html: {
@@ -26,13 +41,6 @@
           tag: "div",
           class: "topbar",
           inner: [
-            // {
-            //   tag: "img",
-            //   id: "hbrs-logo",
-            //   src: "resources/hbrs-logo.svg",
-            //   width: "300rem",
-            //   height: "auto"
-            // },
             {
               tag: "h1",
               id: "generator-title",
@@ -68,17 +76,21 @@
         }
       },
 
+      /**
+       * used ccm components
+       */
       submit: [ "ccm.component", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js" ],
 
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
         [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
 
-      // store: [ "ccm.store" ],
-
       types: {
        store: [ "ccm.store", "https://geoeg.github.io/gkolev2s-components/exam_generator/resources/type.js" ],
      },
 
+     /**
+      * css resources
+      */
       css: ["ccm.load",
       "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
       { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
@@ -86,18 +98,32 @@
       ],
     },
 
+    /**
+     * for creating instances of this component
+     * @constructor
+     */
     Instance: function () {
 
+      /**
+       * shortcut to help functions
+       */
       let $;
 
+      /**
+       * init is called once after all dependencies are solved and is then deleted
+       */
        this.init = async () => {
 
         $ = this.ccm.helper;
 
       };
 
+      /**
+       * starts the instance
+       */
       this.start = async () => {
 
+        // logging of 'start' event
         this.logger.log( "start-exam-generator" );
 
         const topbar = $.html( this.html.topbar, {});

@@ -2,10 +2,16 @@
  * @overview ccm component for building an exam
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
- * @version 1.0.0 // TODO: create a version of this ccm-component and save as versions/ccm.comp-1.0.0.js
- * - TODO: describe what is done
- *
+ * @version 1.0.0 // TODO: app versions
+ * - using user component for logging in
+ * - admin users are listed in admin storage (check config file - storage_settings)
+ * - using submit component for showing a form for adding an exercise content/settings
+ * - saving exam at the storage being set in the config file
+ * - after submitting the form the exam-generator component will be loaded and exam variations can be created
  */
+
+ // TODO: fix the admin panel view
+ // TODO: check every file comments
 
 (() => {
 
@@ -17,12 +23,12 @@
      * unique component name
      */
     name: 'exam_editor',
+    // version: [1, 0, 0],
 
     /**
      * recommended used framework version
      */
     ccm: 'https://ccmjs.github.io/ccm/versions/ccm-24.0.5.js',
-    // ccm: 'https://ccmjs.github.io/ccm/ccm.js',
 
     /**
      * default instance configuration
@@ -84,7 +90,7 @@
                 {
                   tag: "button",
                   class: "btn btn-primary btn-sm btn-block",
-                  inner: "Get currently saved exam data from server",
+                  inner: "Get current saved exam data",
                   title: "get current data (check console)",
                   onclick: "%get%"
                 },
@@ -98,23 +104,16 @@
                 {
                   tag: "button",
                   class: "btn btn-primary btn-sm btn-block",
-                  inner: "Get student ids allowed to participate an exam",
+                  inner: "(Demo) Get student ids allowed to participate an exam",
                   title: "check student ids that are allowed to unlock an exam and the admins users for exam editor (check console)",
                   onclick: "%check%"
                 },
                 {
                   tag: "button",
                   class: "btn btn-primary btn-sm btn-block",
-                  inner: "Reset the student ids",
+                  inner: "(Demo) Reset the student ids",
                   title: "reset student ids (check console)",
                   onclick: "%reset%"
-                },
-                {
-                  tag: "button",
-                  class: "btn btn-secondary btn-sm btn-block",
-                  inner: "(Test) Sort the saved results of exams",
-                  title: "sort the submitted exam results (check console)",
-                  onclick: "%sort%"
                 },
                 {
                   tag: "hr"
@@ -143,6 +142,9 @@
 
       },
 
+      /**
+       * used ccm components
+       */
       submit: [ "ccm.component", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js" ],
 
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
@@ -151,6 +153,9 @@
       user: [ 'ccm.instance','https://ccmjs.github.io/akless-components/user/versions/ccm.user-9.3.0.js',
         [ 'ccm.get','https://ccmjs.github.io/akless-components/user/resources/configs.js','guest' ] ],
 
+      /**
+       * css resources
+       */
       css: ["ccm.load",
         "https://ccmjs.github.io/akless-components/libs/bootstrap/css/bootstrap.css",
         { "context": "head", "url": "https://ccmjs.github.io/akless-components/libs/bootstrap/css/font-face.css" },
@@ -168,7 +173,7 @@
       /**
        * shortcut to help functions
        */
-      let $, submit;
+      let $;
 
       /**
        * init is called once after all dependencies are solved and is then deleted
@@ -214,7 +219,7 @@
             }
 
             // get data from following data stores:
-            let storedData = [ "editor" ,"generator" ,"unlocker" ,"results", "myself" ];
+            let storedData = [ "editor" ,"generator" ,"unlocker" ,"results" ];
             for (var i = 0; i < storedData.length; i++) {
               console.log(await this.store_settings[storedData[i]].store.get());
             };
@@ -240,7 +245,7 @@
             };
 
             // delete all stored data at following data stores:
-            let storedData = [ "editor" ,"generator" ,"unlocker" ,"results", "myself" ];
+            let storedData = [ "editor" ,"generator" ,"unlocker" ,"results" ];
             for (let i = 0; i < storedData.length; i++) {
               let data = await this.store_settings[storedData[i]].store.get();
               for (let j = 0; j < data.length; j++) {
@@ -276,9 +281,6 @@
           },
 
           check: async () => {
-            // let adminUsers = await this.store_settings.admins.store.get("exam_editor_admins");
-            // console.log("---> exam editor admin users:");
-            // console.log(adminUsers.value);
             let res = await this.store_settings.students.store.get("allowed_ids");
             console.log("---> allowed students to unlock exam:");
             console.log(res.value);
@@ -286,7 +288,7 @@
           },
 
           reset: async () => {
-            let studentIds = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9017419 ];
+            let studentIds = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ];
             await this.store_settings.students.store.set(
               {
                 key: "allowed_ids",
@@ -296,18 +298,6 @@
           let res = await this.store_settings.students.store.get("allowed_ids");
           window.alert(`Reset of ids was successful. Students allowed to participate: ${res.value}`);
           },
-
-          // ignore:
-          sort: async () => {
-            const res = await this.store_settings.results.store.get();
-            let splitedResults = [];
-            for (var i = 0; i < res.length; i++) {
-              let tosplit = res[i].key;
-              splitedResults.push(tosplit.split("quiz"));
-            };
-            console.log("---> splited exam result ids :");
-            console.log(splitedResults);
-          }
 
         });
 
@@ -320,8 +310,6 @@
           "entries": this.submit_settings.entries,
           "data": this.submit_settings.data,
           "content": [ "ccm.component", "https://ccmjs.github.io/akless-components/content/versions/ccm.content-5.0.1.js" ],
-          // ignore onchange
-          // "onchange": () => { this.onchange(); console.log(this.getValue()); },
           "onfinish": {
             "log": true,
             "store": this.submit_settings.store,
@@ -338,7 +326,7 @@
         };
 
         // create and start the submit instance to html structure
-        const submitInstance = submit = await this.submit.instance(submitConfig);
+        const submitInstance = await this.submit.instance(submitConfig);
         const submitResult = await submitInstance.start();
 
         // section exam info
@@ -425,14 +413,10 @@
           });
 
           table.appendChild(tableBody);
-          // document.body.appendChild(table);
           this.element.querySelector("#current-parent-exams").appendChild(table);
         };
 
       };
-
-      // ignore getValue
-      // this.getValue = () => submit.getValue();
 
     }
 

@@ -1,13 +1,12 @@
 /**
- * @overview  datasets of ccm component for building exams
- * @author André Kless <andre.kless@web.de> 2017-2018
- * @editor Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
+ * @overview  datasets of ccm component for building exams (submitting data)
+ * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  */
 
 ccm.files['datasets.js'] = {
 
-  // initial values for gkolev2s
+  // initial values for submit form
   "form_init": {
     "key": "form_init",
 
@@ -298,11 +297,10 @@ ccm.files['datasets.js'] = {
     ],
   },
 
-  // special HTML structure for gkolev2s
+  // structure of submit form
   "form": {
     "key": "form",
     "data": [
-      // TODO: delete first submit button
       {
         "type": "submit"
       },
@@ -352,12 +350,6 @@ ccm.files['datasets.js'] = {
             "type": "text",
             "info": "Here add the title for this group of questions."
           },
-          // {
-          //   "label": "Exercise type",
-          //   "name": "type",
-          //   "type": "hidden",
-          //   "info": "Here add the exercise type."
-          // },
           "<legend>Questions & Answers</legend>",
           {
             "label": "Questions",

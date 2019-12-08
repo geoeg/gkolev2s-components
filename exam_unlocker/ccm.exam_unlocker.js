@@ -2,10 +2,17 @@
  * @overview ccm component for unlocking exam version
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
- * @version 1.0.0 // TODO: create a version of this ccm-component and save as versions/ccm.comp-1.0.0.js
- * - TODO: describe what is done
- *
+ * @version 1.0.0 // TODO: app versions
+ * - unlocking exam by adding the exam key and adding a student id
+ * - exams to be unlocked are read from the generator storage (check config file - storage_settings)
+ * - student ids allowed to participate an exam are read from the student storage (check config file - storage_settings)
+ * - unlocked exam and student id are blocked after unlocking successfully a variation and the pair is stored in the unlocker storage (check config file - storage_settings)
+ * - answers of the exam are saved in a results storage after finishing the exercises (check config file - storage_settings)
  */
+
+ // TODO: fix storage key pair (key, user/studentId)
+ // TODO: check config and datasets
+ // TODO: check every file comments
 
 (() => {
 
@@ -17,12 +24,12 @@
      * unique component name
      */
     name: 'exam_unlocker',
+    // version: [1, 0, 0],
 
     /**
      * recommended used framework version
      */
     ccm: 'https://ccmjs.github.io/ccm/versions/ccm-24.0.5.js',
-    // ccm: 'https://ccmjs.github.io/ccm/ccm.js',
 
     /**
      * default instance configuration
@@ -87,8 +94,6 @@
        * used ccm components
        */
       submit: [ "ccm.component", "https://ccmjs.github.io/akless-components/submit/versions/ccm.submit-7.1.3.js" ],
-
-      quiz: [ "ccm.component", "https://ccmjs.github.io/akless-components/quiz/versions/ccm.quiz-4.0.0.js" ],
 
       logger: [ "ccm.instance", "https://ccmjs.github.io/akless-components/log/versions/ccm.log-4.0.1.js",
       [ "ccm.get", "https://ccmjs.github.io/akless-components/log/resources/configs.js", "greedy" ] ],
@@ -240,9 +245,10 @@
 
           // apply changes on onfinish() of each exercise
           for (let i = 0; i < configsToLoad.length; i++) {
-            configsToLoad[i].onfinish.store.key = examToLoad.key + examToLoad.configs[i].key;
-            configsToLoad[i].onfinish.store.settings.name = storeEditor._.creator + "_" + studId;
-            console.log(storeEditor._.creator + "_" + studId);
+
+            configsToLoad[i].onfinish.store.key = [examToLoad.key + "_" + examToLoad.configs[i].key, studId];
+            configsToLoad[i].onfinish.store.settings.name = storeEditor._.creator + "_exam_results";
+
             // possible ways to save exam results in the future:
             // configsToLoad[i].onfinish.store.settings.name = "gkolev2s_" + studId;
             // configsToLoad[i].onfinish.store.settings.name = studId + "_" + examId;
@@ -253,7 +259,7 @@
             const exInstance = await this.ex_types[configsToLoad[i].type].instance(configsToLoad[i]);
             const exResults = await exInstance.start();
 
-            // render exercise group title
+            // possible way to render exercise group title
             // if ( configsToLoad[i].hasOwnProperty("group_title") ) {
             //   let h3 = document.createElement("h3");
             //   h3.textContent = configsToLoad[i].group_title;
@@ -297,7 +303,6 @@
             {
               "key": examId,
               "studentId": studId
-              // "results": examResults // getValue() from all exercises ?
             }
           );
 
