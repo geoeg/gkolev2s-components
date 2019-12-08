@@ -21,7 +21,7 @@
      */
     name: 'exam_unlocker',
 
-    version: [1, 0, 0],
+    // version: [1, 0, 0],
 
     /**
      * recommended used framework version
