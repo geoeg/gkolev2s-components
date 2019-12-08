@@ -2,16 +2,13 @@
  * @overview ccm component for building an exam
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
- * @version 1.0.0 // TODO: app versions
+ * @version 1.0.0
  * - using user component for logging in
  * - admin users are listed in admin storage (check config file - storage_settings)
  * - using submit component for showing a form for adding an exercise content/settings
  * - saving exam at the storage being set in the config file
  * - after submitting the form the exam-generator component will be loaded and exam variations can be created
  */
-
- // TODO: fix the admin panel view
- // TODO: check every file comments
 
 (() => {
 
@@ -20,10 +17,11 @@
   const component = {
 
     /**
-     * unique component name
+     * unique component name and version
      */
     name: 'exam_editor',
-    // version: [1, 0, 0],
+
+    version: [1, 0, 0],
 
     /**
      * recommended used framework version

@@ -7,7 +7,7 @@
 
 ccm.files[ 'datasets.js' ] = {
 
-  // initial values for gkolev2s_generator
+  // initial values for submit form
   "generator_init": {
     "key": "generator_init",
 
@@ -16,7 +16,7 @@ ccm.files[ 'datasets.js' ] = {
 
   },
 
-  // special HTML structure for gkolev2s_generator
+  // structure of submit form
   "generator": {
     "key": "generator",
 

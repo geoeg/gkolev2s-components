@@ -1,10 +1,11 @@
 /**
- * @overview  datasets of ccm component for building exams (submitting data)
- * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
+ * @overview datasets of ccm component for submitting data
+ * @author André Kless <andre.kless@web.de> 2017-2018
+ * @editor Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  */
 
-ccm.files['datasets.js'] = {
+ccm.files[ 'datasets.js' ] = {
 
   // initial values for submit form
   "form_init": {
@@ -15,7 +16,7 @@ ccm.files['datasets.js'] = {
     "time": "09:00",
     "examinfo": "120 Pts. = 120 Mins.",
     "exercises": [{
-        "group_title": "Question Group Title 1",
+        // "group_title": "Question Group Title 1",
         "questions": [{
             "text": "Question 1",
             "description": "Exercise 1.1",
@@ -133,7 +134,7 @@ ccm.files['datasets.js'] = {
         "onfinish.restart": false
       },
       {
-        "group_title": "Question Group Title 2",
+        // "group_title": "Question Group Title 2",
         "questions": [{
             "text": "Question 1",
             "description": "Exercise 2.1",
@@ -226,7 +227,7 @@ ccm.files['datasets.js'] = {
         "onfinish.restart": false
       },
       {
-        "group_title": "Question Group Title 3",
+        // "group_title": "Question Group Title 3",
         "questions": [{
             "text": "Question 1",
             "description": "Exercise 3.1",
@@ -338,18 +339,18 @@ ccm.files['datasets.js'] = {
             "label": "Type",
             "name": "type",
             "type": "select",
-            "info": "Text Text Text",
+            "info": "Select exercise type.",
             "items": [{
               "inner": "quiz",
               "value": "quiz"
             }]
           },
-          {
-            "label": "Exercise group title",
-            "name": "group_title",
-            "type": "text",
-            "info": "Here add the title for this group of questions."
-          },
+          // {
+          //   "label": "Exercise group title",
+          //   "name": "group_title",
+          //   "type": "text",
+          //   "info": "Here add the title for this group of questions."
+          // },
           "<legend>Questions & Answers</legend>",
           {
             "label": "Questions",

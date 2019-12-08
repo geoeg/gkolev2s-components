@@ -2,15 +2,11 @@
  * @overview ccm component for generating many unique exam variations
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
- * @version 1.0.0 // TODO: app versions
+ * @version 1.0.0
  * - using submit component for showing a form for choosing an exam and amount of variations to generate
  * - generating exam variations based on the added exam id and amount in the submit form
  * - the generated versions are saved in the generator storage (check config file - storage_settings)
  */
-
-  // TODO: fix storage key pair (key, user/studentId)
-  // TODO: check config and datasets
-  // TODO: check every file comments
 
 (() => {
 
@@ -19,10 +15,11 @@
   const component = {
 
     /**
-     * unique component name
+    * unique component name and version
      */
     name: 'exam_generator',
-    // version: [1, 0, 0],
+
+    version: [1, 0, 0],
 
     /**
      * recommended used framework version

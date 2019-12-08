@@ -1,18 +1,14 @@
 /**
- * @overview ccm component for unlocking exam version
+ * @overview ccm component for unlocking exam version and participating an exam
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
- * @version 1.0.0 // TODO: app versions
+ * @version 1.0.0
  * - unlocking exam by adding the exam key and adding a student id
  * - exams to be unlocked are read from the generator storage (check config file - storage_settings)
  * - student ids allowed to participate an exam are read from the student storage (check config file - storage_settings)
  * - unlocked exam and student id are blocked after unlocking successfully a variation and the pair is stored in the unlocker storage (check config file - storage_settings)
  * - answers of the exam are saved in a results storage after finishing the exercises (check config file - storage_settings)
  */
-
- // TODO: fix storage key pair (key, user/studentId)
- // TODO: check config and datasets
- // TODO: check every file comments
 
 (() => {
 
@@ -21,10 +17,11 @@
   const component = {
 
     /**
-     * unique component name
+     * unique component name and version
      */
     name: 'exam_unlocker',
-    // version: [1, 0, 0],
+
+    version: [1, 0, 0],
 
     /**
      * recommended used framework version

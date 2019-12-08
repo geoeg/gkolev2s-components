@@ -1,5 +1,5 @@
 /**
- * @overview datasets of ccm component for submitting data
+ * @overview datasets of ccm component for (submitting data)
  * @author André Kless <andre.kless@web.de> 2017-2018
  * @editor Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
@@ -7,7 +7,7 @@
 
 ccm.files[ 'datasets.js' ] = {
 
-  // initial values for gkolev2s
+  // initial values for submit form
   "unlocker_init": {
     "key": "unlocker_init",
     "password": "1234567890X1234567890",
@@ -15,7 +15,7 @@ ccm.files[ 'datasets.js' ] = {
 
   },
 
-  // special HTML structure for gkolev2s
+  // structure of submit form
   "unlocker": {
     "key": "unlocker",
     "data": [
