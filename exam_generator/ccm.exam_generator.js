@@ -1,5 +1,5 @@
 /**
- * @overview ccm component for generating many unique exam variations
+ * @overview ccm component for generating unique exam variations
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  * @version 1.0.0

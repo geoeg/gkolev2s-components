@@ -1,3 +1,9 @@
+/**
+ * @overview configurations of ccm components that are used for generating unique exam varations
+ * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
+ * @license The MIT License (MIT)
+ */
+
 ccm.files[ 'type.js' ] = {
 
   "quiz": {
@@ -14,7 +20,6 @@ ccm.files[ 'type.js' ] = {
       "store": {
         "key": null,
         "settings": {
-          // "name": "gkolev2s_exam_results",
           "name": null,
           "url": "https://ccm2.inf.h-brs.de",
         },

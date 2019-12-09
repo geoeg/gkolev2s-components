@@ -88,29 +88,29 @@
                 {
                   tag: "button",
                   class: "btn btn-primary btn-sm btn-block",
-                  inner: "Get current saved exam data",
-                  title: "get current data (check console)",
+                  inner: "Get saved exams",
+                  title: "Click to get currenttly saved exam titles and ids.",
                   onclick: "%get%"
                 },
                 {
                   tag: "button",
                   class: "btn btn-primary btn-sm btn-block",
-                  inner: "!!! Del all saved exam data on server !!!",
-                  title: "delete all saved data (check console)",
+                  inner: "(Demo) ! Del all saved exam data !",
+                  title: "Click to delete all saved exam data (created exams, generated varations, exam results)",
                   onclick: "%del%"
                 },
                 {
                   tag: "button",
                   class: "btn btn-primary btn-sm btn-block",
-                  inner: "(Demo) Get student ids allowed to participate an exam",
-                  title: "check student ids that are allowed to unlock an exam and the admins users for exam editor (check console)",
+                  inner: "(Demo) Get students allowed to participate an exam",
+                  title: "Click to check the student ids that are allowed to participate/unlock an exam.",
                   onclick: "%check%"
                 },
                 {
                   tag: "button",
                   class: "btn btn-primary btn-sm btn-block",
                   inner: "(Demo) Reset the student ids",
-                  title: "reset student ids (check console)",
+                  title: "Click to reset the list of student ids.",
                   onclick: "%reset%"
                 },
                 {

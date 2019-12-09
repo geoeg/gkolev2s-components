@@ -1,5 +1,5 @@
 /**
- * @overview ccm component for unlocking exam version and participating an exam
+ * @overview ccm component for unlocking exam variation and participating an exam
  * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
  * @license The MIT License (MIT)
  * @version 1.0.0
@@ -242,9 +242,6 @@
 
           // apply changes on onfinish() of each exercise
           for (let i = 0; i < configsToLoad.length; i++) {
-            // ignore: old way of saving
-            // configsToLoad[i].onfinish.store.key = [examToLoad.key + "_" + examToLoad.configs[i].key, studId];
-            // edited way of saving
             configsToLoad[i].onfinish.store.key = [examToLoad.configs[i].key, studId, examToLoad.key];
             configsToLoad[i].onfinish.store.settings.name = storeEditor._.creator + "_exam_results";
             // possible ways to save exam results in the future:

@@ -1,3 +1,9 @@
+/**
+ * @overview configurations of ccm component for unlocking exam variation and participating an exam
+ * @author Georgi Kolev <georgi.kolev@smail.inf.h-brs.de> 2019
+ * @license The MIT License (MIT)
+ */
+
 ccm.files[ 'configs.js' ] = {
 
   "demo" : {
