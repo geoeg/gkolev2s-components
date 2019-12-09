@@ -283,7 +283,10 @@
                  */
                 let row = [
                   ( Array.isArray( result.key ) && result.key[ 1 ] ) || '',                       // 0: User
+                  // edited by gkolev2s
+                  // original value
                   // result._name || '',                                                          // 1: Component
+                  // edited value
                   result._name || result.key[ 2 ],                                                  // 1: Component
                   result._app || ( Array.isArray( result.key ) ? result.key[ 0 ] : result.key ),  // 2: App
                   result.correct,                                                                 // 3: Correct
